@@ -16,8 +16,8 @@
     </div>
     <div class="right-side">
         <div class="tab-container">
-            <div class="tab active" onclick="showTab('login')">Login</div>
-            <div class="tab" onclick="showTab('register')">Register</div>
+            <div class="tab login active" onclick="showTab('login')">Login</div>
+            <div class="tab register" onclick="showTab('register')">Register</div>
         </div>
         <div class="form-container">
             <!-- Login Form -->
@@ -30,10 +30,10 @@
             </form>
             <!-- Register Form -->
             <form id="registerForm" style="display:none;">
-                <input type="text" placeholder="Username" required>
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <select required>
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+                <select id="role" required>
                     <option value="">Select Role</option>
                     <option value="admin">Admin</option>
                     <option value="group_coordinator">Group Coordinator</option>
@@ -57,7 +57,7 @@
 <script>
     function showTab(tabName) {
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelector(`.tab:nth-child(${tabName === 'login' ? '1' : '2'})`).classList.add('active');
+        document.querySelector(`.tab.${tabName}`).classList.add('active');
         document.getElementById('loginForm').style.display = tabName === 'login' ? 'block' : 'none';
         document.getElementById('registerForm').style.display = tabName === 'register' ? 'block' : 'none';
         document.getElementById('passwordResetForm').style.display = 'none'; // Hide password reset form when switching tabs
