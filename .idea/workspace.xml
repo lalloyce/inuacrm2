@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3588af31-40ee-4ba3-b203-e054b459d22e" name="Changes" comment="revised the backend">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="origin/main" />
+    <option name="OPTIONS">
+      <set>
+        <option value="ALLOW_UNRELATED_HISTORIES" />
+      </set>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;lalloyce&quot;
+  }
+}</component>
+  <component name="GitHubPullRequestState">{
+  &quot;prStates&quot;: [
+    {
+      &quot;id&quot;: {
+        &quot;id&quot;: &quot;PR_kwDOMfKFF853eJt1&quot;,
+        &quot;number&quot;: 4
+      },
+      &quot;lastSeen&quot;: 1722876309993
+    }
+  ]
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/lalloyce/inua-crm.git&quot;,
+    &quot;accountId&quot;: &quot;a5b98839-c892-4d32-9910-d0ed915e87ff&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;lalloyce&quot;,
+    &quot;repository&quot;: &quot;inua-crm&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2jyp5esTzFBo9NYcGSXDhL9DYUX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript Debug.index.html.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "master",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.build.tools.auto.reload": "ALL",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.19072.23" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3588af31-40ee-4ba3-b203-e054b459d22e" name="Changes" comment="" />
+      <created>1722368990111</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1722368990111</updated>
+      <workItem from="1722368991455" duration="4789000" />
+      <workItem from="1722403783987" duration="1190000" />
+      <workItem from="1722784998334" duration="515000" />
+      <workItem from="1722788647290" duration="8263000" />
+      <workItem from="1722869555329" duration="4414000" />
+      <workItem from="1723271461503" duration="197000" />
+      <workItem from="1723271688904" duration="424000" />
+      <workItem from="1724141284693" duration="301000" />
+      <workItem from="1724141690309" duration="634000" />
+      <workItem from="1724258119399" duration="6414000" />
+    </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <option name="closed" value="true" />
+      <created>1722374189175</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1722374189175</updated>
+    </task>
+    <task id="LOCAL-00002" summary="created sql dump">
+      <option name="closed" value="true" />
+      <created>1722411106425</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1722411106425</updated>
+    </task>
+    <task id="LOCAL-00003" summary="transitioned backend using NodeJS and Express">
+      <option name="closed" value="true" />
+      <created>1722791288432</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1722791288432</updated>
+    </task>
+    <task id="LOCAL-00004" summary="transitioned backend using NodeJS and Express">
+      <option name="closed" value="true" />
+      <created>1722840874160</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1722840874160</updated>
+    </task>
+    <task id="LOCAL-00005" summary="created landing page with registration and login">
+      <option name="closed" value="true" />
+      <created>1722875967028</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1722875967028</updated>
+    </task>
+    <task id="LOCAL-00006" summary="created landing page with registration and login">
+      <option name="closed" value="true" />
+      <created>1722876209763</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1722876209763</updated>
+    </task>
+    <task id="LOCAL-00007" summary="revised the front-end and back-end logic.">
+      <option name="closed" value="true" />
+      <created>1724259806609</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1724259806609</updated>
+    </task>
+    <task id="LOCAL-00008" summary="revised the db schema">
+      <option name="closed" value="true" />
+      <created>1724261853109</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1724261853109</updated>
+    </task>
+    <task id="LOCAL-00009" summary="revised the README.md">
+      <option name="closed" value="true" />
+      <created>1724262113440</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1724262113440</updated>
+    </task>
+    <task id="LOCAL-00010" summary="revised the front-end divs">
+      <option name="closed" value="true" />
+      <created>1724262750725</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1724262750725</updated>
+    </task>
+    <task id="LOCAL-00011" summary="revised the front-end divs">
+      <option name="closed" value="true" />
+      <created>1724262785357</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1724262785357</updated>
+    </task>
+    <task id="LOCAL-00012" summary="revised the backend">
+      <option name="closed" value="true" />
+      <created>1724263714433</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1724263714433</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myShow1" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <option name="SHOW_DIRTY_RECURSIVELY" value="true" />
+    <MESSAGE value="initial commit" />
+    <MESSAGE value="created sql dump" />
+    <MESSAGE value="transitioned backend using NodeJS and Express" />
+    <MESSAGE value="created landing page with registration and login" />
+    <MESSAGE value="revised the front-end and back-end logic." />
+    <MESSAGE value="revised the db schema" />
+    <MESSAGE value="revised the README.md" />
+    <MESSAGE value="revised the front-end divs" />
+    <MESSAGE value="revised the backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="revised the backend" />
+  </component>
+</project>
