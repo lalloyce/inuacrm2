@@ -24,12 +24,13 @@
   },
   "homepage": "https://github.com/sefianecho/Login-Register-Nodejs#readme",
   "dependencies": {
-    "bcrypt": "^5.0.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
     "mysql": "^2.18.1",
     "pug": "^3.0.0",
-    "util.promisify": "^1.0.1"
+    "pug-cli": "^1.0.0-alpha6",
+    "util.promisify": "^1.1.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
