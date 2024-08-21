@@ -104,6 +104,7 @@
     ]
   }
 }]]></component>
+<<<<<<< HEAD
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src" />
@@ -111,6 +112,8 @@
       <recent name="$PROJECT_DIR$/src/config" />
     </key>
   </component>
+=======
+>>>>>>> origin/master
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -135,7 +138,11 @@
       <workItem from="1723271688904" duration="424000" />
       <workItem from="1724141284693" duration="301000" />
       <workItem from="1724141690309" duration="634000" />
+<<<<<<< HEAD
       <workItem from="1724258119399" duration="9218000" />
+=======
+      <workItem from="1724258119399" duration="6414000" />
+>>>>>>> origin/master
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
