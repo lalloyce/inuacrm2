@@ -2,9 +2,32 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const connection = require('../config/db');
-const { sendPasswordResetEmail } = require('../services/emailService');
+const transporter = require('./path-to-app.js').transporter;
 
 const router = express.Router();
+
+// setting up transporter correctly
+const transporter = require('./path-to-app.js').transporter;
+
+function sendPasswordResetEmail(email, token) {
+    const mailOptions = {
+        from: process.env.MAIL_FROM_ADDRESS,
+        to: email,
+        subject: 'Password Reset Request',
+        text: `Please click the following link to reset your password: ${process.env.APP_URL}/reset-password?token=${token}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Error occurred while sending email:', error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+// Usage example
+sendPasswordResetEmail(userEmail, resetToken);
 
 // Login route
 router.post('/login', (req, res) => {
