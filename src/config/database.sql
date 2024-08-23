@@ -1,6 +1,6 @@
 -- Create the database
-CREATE DATABASE IF NOT EXISTS `Inua-crm`;
-USE `Inua-crm`;
+CREATE DATABASE IF NOT EXISTS `Inua_crm`;
+USE `Inua_crm`;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS support_tickets;

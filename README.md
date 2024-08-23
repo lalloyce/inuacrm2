@@ -34,7 +34,7 @@ node app
 ```
 ### Database
 
-For this application, the database name is `Inua-crm`. It contains multiple tables as defined in the `database.sql` file.
+For this application, the database name is `Inua_crm`. It contains multiple tables as defined in the `database.sql` file.
 
 ### Setting up the database
 
@@ -44,8 +44,8 @@ Alternatively, you can use the following SQL queries to set up the database:
 
 ```sql
 -- Create the database
-CREATE DATABASE IF NOT EXISTS `Inua-crm`;
-USE `Inua-crm`;
+CREATE DATABASE IF NOT EXISTS `Inua_crm`;
+USE `Inua_crm`;
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS support_tickets;

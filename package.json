@@ -29,7 +29,6 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "mariadb": "^3.3.1",
-    "mysql": "^2.18.1",
     "pug": "^3.0.0",
     "pug-cli": "^1.0.0-alpha6",
     "sequelize": "^6.37.3",

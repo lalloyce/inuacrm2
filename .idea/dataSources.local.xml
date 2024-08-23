@@ -12,7 +12,7 @@
       <schema-mapping>
         <introspection-scope>
           <node kind="schema">
-            <name qname="Inua-crm" />
+            <name qname="Inua_crm" />
             <name qname="@" />
           </node>
         </introspection-scope>
