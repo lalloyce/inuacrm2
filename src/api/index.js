@@ -1,9 +1,11 @@
-// src/api/index.js
 const express = require('express');
-const authRoutes = require('./auth');
-
+const loginRouter = require('./login');
+const registerRouter = require('./register');
+const passwordResetRouter = require('./password-reset');
 const router = express.Router();
 
-router.use('/auth', authRoutes);
+router.use('/login', loginRouter);
+router.use('/register', registerRouter);
+router.use('/password-reset', passwordResetRouter);
 
 module.exports = router;
