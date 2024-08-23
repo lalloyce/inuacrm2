@@ -1,26 +1,40 @@
-// src/models/user.js
-const connection = require('../config/db');
+// src/models/User.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const User = {
-    findByEmail: (email, callback) => {
-        connection.query('SELECT * FROM Users WHERE Email = ?', [email], callback);
+const User = sequelize.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
     },
-    createResetToken: (userID, token, callback) => {
-        connection.query(
-            'INSERT INTO PasswordResetTokens (UserID, Token, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))',
-            [userID, token],
-            callback
-        );
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
-    findResetToken: (token, callback) => {
-        connection.query('SELECT * FROM PasswordResetTokens WHERE Token = ? AND ExpiresAt > NOW()', [token], callback);
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
-    updatePassword: (userID, hashedPassword, callback) => {
-        connection.query('UPDATE Users SET Password = ? WHERE UserID = ?', [hashedPassword, userID], callback);
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
-    deleteResetToken: (token, callback) => {
-        connection.query('DELETE FROM PasswordResetTokens WHERE Token = ?', [token], callback);
+    role: {
+        type: DataTypes.ENUM('admin', 'group_coordinator', 'sales_manager', 'customer_service', 'management'),
+        allowNull: false
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
-};
+}, {
+    tableName: 'users'
+});
 
 module.exports = User;
