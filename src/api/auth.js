@@ -2,13 +2,11 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const connection = require('../config/db');
-const transporter = require('./path-to-app.js').transporter;
+const transporter = require('/src/app').transporter;
 
 const router = express.Router();
 
-// setting up transporter correctly
-const transporter = require('./path-to-app.js').transporter;
-
+// setting up transporter correctly for passwordReset
 function sendPasswordResetEmail(email, token) {
     const mailOptions = {
         from: process.env.MAIL_FROM_ADDRESS,
@@ -33,7 +31,7 @@ sendPasswordResetEmail(userEmail, resetToken);
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
-    connection.query('SELECT * FROM Users WHERE Email = ?', [email], (err, results) => {
+    connection.query('SELECT * FROM users WHERE Email = ?', [email], (err, results) => {
         if (err) throw err;
 
         if (results.length > 0) {
@@ -59,7 +57,7 @@ router.post('/login', (req, res) => {
 router.post('/password-reset', (req, res) => {
     const { email } = req.body;
 
-    connection.query('SELECT * FROM Users WHERE Email = ?', [email], (err, results) => {
+    connection.query('SELECT * FROM users WHERE Email = ?', [email], (err, results) => {
         if (err) throw err;
 
         if (results.length > 0) {
@@ -67,7 +65,7 @@ router.post('/password-reset', (req, res) => {
             const resetToken = generateResetToken();
 
             connection.query(
-                'INSERT INTO PasswordResetTokens (UserID, Token, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))',
+                'INSERT INTO passwordResetTokens (UserID, Token, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))',
                 [user.UserID, resetToken],
                 (err) => {
                     if (err) throw err;
@@ -86,7 +84,7 @@ router.post('/password-reset', (req, res) => {
 router.post('/reset-password', (req, res) => {
     const { token, newPassword } = req.body;
 
-    connection.query('SELECT * FROM PasswordResetTokens WHERE Token = ? AND ExpiresAt > NOW()', [token], (err, results) => {
+    connection.query('SELECT * FROM passwordResetTokens WHERE Token = ? AND ExpiresAt > NOW()', [token], (err, results) => {
         if (err) throw err;
 
         if (results.length > 0) {
@@ -95,10 +93,10 @@ router.post('/reset-password', (req, res) => {
             bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
                 if (err) throw err;
 
-                connection.query('UPDATE Users SET Password = ? WHERE UserID = ?', [hashedPassword, UserID], (err) => {
+                connection.query('UPDATE users SET Password = ? WHERE UserID = ?', [hashedPassword, UserID], (err) => {
                     if (err) throw err;
 
-                    connection.query('DELETE FROM PasswordResetTokens WHERE Token = ?', [token], (err) => {
+                    connection.query('DELETE FROM passwordResetTokens WHERE Token = ?', [token], (err) => {
                         if (err) throw err;
 
                         res.json({ message: 'Password has been reset successfully.' });

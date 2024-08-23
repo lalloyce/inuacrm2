@@ -35,6 +35,7 @@
     "util.promisify": "^1.1.2"
   },
   "devDependencies": {
+    "mysql": "^2.18.1",
     "nodemon": "^2.0.6"
   }
 }
