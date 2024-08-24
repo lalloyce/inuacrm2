@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inua Solutions CRM</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="module" src="./js/auth.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <div class="left-side">
+        <h1>Inua Solutions</h1>
+        <h2>Access to Goods on Credit for Rural Households</h2>
+        <p>At Inua Solutions, we believe in empowering rural communities by providing access to essential goods through flexible credit options. Our innovative platform bridges the gap between rural households and quality products, fostering economic growth and improving living standards.</p>
+        <p>Join us in our mission to transform rural economies and create sustainable opportunities for families across the region.</p>
+    </div>
+
+    <div class="right-side">
+        <div class="tab-container">
+            <div class="tab login active" onclick="showTab('login')">Login</div>
+            <div class="tab register" onclick="showTab('register')">Register</div>
+        </div>
+        <div class="form-container">
+            <!-- Login Form -->
+            <form id="loginForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Email" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Password" required>
+
+                <button type="submit">Login</button>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+                <p id="loginError" class="error-message"></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" style="display:none;">
+                <label for="registerEmail">Email:</label>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+
+                <button type="submit">Register</button>
+                <p id="registerError" class="error-message"></p>
+            </form>
+
+            <!-- Password Reset Form -->
+            <form id="passwordResetForm" style="display:none;">
+                <label for="resetEmail">Enter your email:</label>
+                <input type="email" id="resetEmail" placeholder="Enter your email" required>
+
+                <button type="submit">Reset Password</button>
+                <p id="resetSuccess" class="success-message"></p>
+                <p id="resetError" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { login, register, resetPassword } from '/js/auth.js';
+
+    function showTab(tabName) {
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`.tab.${tabName}`).classList.add('active');
+        document.getElementById('loginForm').style.display = tabName === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = tabName === 'register' ? 'block' : 'none';
+        document.getElementById('passwordResetForm').style.display = 'none';
+    }
+
+    document.querySelector('.forgot-password').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('passwordResetForm').style.display = 'block';
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const result = await login(email, password);
+        if (result.success) {
+            window.location.href = 'dashboard.html';
+        } else {
+            document.getElementById('loginError').textContent = result.error || 'Login failed. Please try again.';
+        }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const result = await register(email, password);
+        if (result.success) {
+            alert('Registration successful. Please check your email to confirm your account.');
+            showTab('login');
+        } else {
+            document.getElementById('registerError').textContent = result.error || 'Registration failed. Please try again.';
+        }
+    });
+
+    document.getElementById('passwordResetForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+        const result = await resetPassword(email);
+        if (result.success) {
+            document.getElementById('resetSuccess').textContent = 'Password reset instructions have been sent to your email.';
+            document.getElementById('resetError').textContent = '';
+        } else {
+            document.getElementById('resetError').textContent = result.error || 'Password reset failed. Please try again.';
+            document.getElementById('resetSuccess').textContent = '';
+        }
+    });
+</script>
+</body>
+</html>

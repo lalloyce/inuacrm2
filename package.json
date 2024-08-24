@@ -1,0 +1,13 @@
+{
+  "name": "inua-solutions-crm",
+  "version": "1.0.0",
+  "description": "CRM for Inua Solutions",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "gotrue-js": "^1.13.2"
+  }
+}
