@@ -4,63 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Inua CRM</title>
+    <link rel="stylesheet" href="./css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <style>
-        .logo-container {
-            width: 120px;
-            height: 40px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .logo-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-    </style>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body class="bg-gray-100">
 <nav class="bg-blue-600 text-white p-4">
     <div class="container mx-auto flex justify-between items-center">
-        <!-- Logo -->
         <div class="logo-container">
             <img src="/public/img/logo v1.jpeg" alt="Inua CRM">
         </div>
-        <!-- Navigation Links -->
         <ul class="flex space-x-4 overflow-x-auto">
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Dashboard</a></li>
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Customer Management</a></li>
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Sales Management</a></li>
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Payment Tracking</a></li>
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Support Tickets</a></li>
-            <li><a href="#" class="hover:text-gray-300 whitespace-nowrap">Reports & Analytics</a></li>
-            <li id="userManagementLink" class="hidden"><a href="#" class="hover:text-gray-300 whitespace-nowrap">User Management</a></li>
+            <li><a href="#" class="nav-link">Dashboard</a></li>
+            <li><a href="#" class="nav-link">Customer Management</a></li>
+            <li><a href="#" class="nav-link">Sales Management</a></li>
+            <li><a href="#" class="nav-link">Payment Tracking</a></li>
+            <li><a href="#" class="nav-link">Support Tickets</a></li>
+            <li><a href="#" class="nav-link">Reports & Analytics</a></li>
+            <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
         </ul>
-        <!-- Icons: Notifications and Profile -->
         <div class="flex space-x-4 items-center">
-            <!-- Notifications Bell -->
             <div class="relative">
                 <button id="notificationBell" class="relative focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
                     </svg>
-                    <span id="notificationCount" class="absolute -top-1 -right-1 text-xs bg-red-600 text-white rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    <span id="notificationCount" class="notification-count">3</span>
                 </button>
-                <!-- Notifications Dropdown -->
-                <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-20">
+                <div id="notificationsDropdown" class="notifications-dropdown hidden">
                     <ul>
-                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 1</a></li>
-                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 2</a></li>
-                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Notification 3</a></li>
-                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 text-center">View all</a></li>
+                        <li><a href="#" class="notification-item">Notification 1</a></li>
+                        <li><a href="#" class="notification-item">Notification 2</a></li>
+                        <li><a href="#" class="notification-item">Notification 3</a></li>
+                        <li><a href="#" class="notification-item text-center">View all</a></li>
                     </ul>
                 </div>
             </div>
-
-            <!-- Profile Icon -->
             <div>
                 <a href="/profile.html" class="focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,11 +53,65 @@
 </nav>
 
 <main class="container mx-auto mt-8">
-    <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
-    <!-- Add your dashboard content here -->
+    <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
+    <div id="user-info"></div>
+    <div id="role-based-content"></div>
+    <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded">Log Out</button>
 </main>
 
 <script>
+    const netlifyIdentity = window.netlifyIdentity;
+
+    netlifyIdentity.on('init', user => {
+        if (!user) {
+            window.location.href = '/index.html';
+        } else {
+            displayUserInfo(user);
+            showRoleBasedContent(user.user_metadata.role || 'customer_service');
+        }
+    });
+
+    function displayUserInfo(user) {
+        const userInfo = document.getElementById('user-info');
+        userInfo.innerHTML = `
+                <p>Name: ${user.user_metadata.full_name}</p>
+                <p>Email: ${user.email}</p>
+                <p>Role: ${user.user_metadata.role || 'customer_service'}</p>
+            `;
+    }
+
+    function showRoleBasedContent(role) {
+        const contentDiv = document.getElementById('role-based-content');
+        const userManagementLink = document.getElementById('userManagementLink');
+
+        switch(role) {
+            case 'admin':
+                contentDiv.innerHTML = '<h3>Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
+                userManagementLink.classList.remove('hidden');
+                break;
+            case 'group_coordinator':
+                contentDiv.innerHTML = '<h3>Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
+                break;
+            case 'sales_manager':
+                contentDiv.innerHTML = '<h3>Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
+                break;
+            case 'customer_service':
+                contentDiv.innerHTML = '<h3>Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
+                break;
+            case 'management':
+                contentDiv.innerHTML = '<h3>Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
+                break;
+            default:
+                contentDiv.innerHTML = '<h3>Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
+        }
+    }
+
+    document.getElementById('logout').addEventListener('click', () => {
+        netlifyIdentity.logout();
+        localStorage.removeItem('jwt');
+        window.location.href = '/index.html';
+    });
+
     // Toggle notifications dropdown
     const notificationBell = document.getElementById('notificationBell');
     const notificationsDropdown = document.getElementById('notificationsDropdown');
@@ -91,17 +125,6 @@
             notificationsDropdown.classList.add('hidden');
         }
     });
-
-    // Show/hide user management link based on user role (example)
-    function checkUserRole() {
-        // Replace this with your actual user role check
-        const isAdmin = true; // Example: set to true if the user is an admin
-        const userManagementLink = document.getElementById('userManagementLink');
-        userManagementLink.style.display = isAdmin ? 'block' : 'none';
-    }
-
-    // Call the function when the page loads
-    window.addEventListener('load', checkUserRole);
 </script>
 </body>
 </html>

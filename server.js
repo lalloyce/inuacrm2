@@ -14,6 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Routes
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
 app.use('/api', routes);
 
 // Serve index.html for the root route
