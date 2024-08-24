@@ -73,4 +73,29 @@ router.get('/logout', (req, res, next) => {
     }
 });
 
+// Registration Confirmation
+router.get('/confirm', async (req, res) => {
+    const { token } = req.query;
+
+    try {
+        const user = await User.findOne({ where: { confirmationToken: token } });
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid or expired token.' });
+        }
+
+        // Confirm the user's account
+        user.isConfirmed = true;
+        user.confirmationToken = null;
+        await user.save();
+
+        // Redirect to dashboard
+        res.redirect('/dashboard.html');
+
+    } catch (error) {
+        console.error('Error during account confirmation:', error);
+        res.status(500).json({ error: 'An error occurred during account confirmation.' });
+    }
+});
+
+
 module.exports = router;

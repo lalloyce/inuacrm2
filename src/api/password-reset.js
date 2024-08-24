@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { User } = require('../models/user'); // Adjust the path according to your project structure
+const { sendPasswordResetConfirmationEmail } = require('../utils/email'); // Adjust the path to the email utility
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -18,6 +19,9 @@ router.post('/', async (req, res) => {
 
         // Update the user's password
         await user.update({ password: hashedPassword });
+
+        // Send password reset confirmation email
+        sendPasswordResetConfirmationEmail(email);
 
         // Successful password reset
         res.status(200).json({ success: true, message: 'Password has been reset successfully.' });

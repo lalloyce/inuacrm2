@@ -1,8 +1,9 @@
 const express = require('express');
 const apiRoutes = require('./api'); // Import the combined API routes
-const sequelize = require('./config/database'); // Import the Sequelize instance
+const sequelize = require('../config/database'); // Import the Sequelize instance (updated to reflect the path)
 const jwt = require('jsonwebtoken'); // Import JWT for authentication
 const nodemailer = require('nodemailer'); // Import Nodemailer for email
+const pagesRoutes = require('../routes/pages'); // Import the pages.js routes
 require('dotenv').config(); // Load environment variables
 
 const app = express();
@@ -16,10 +17,8 @@ app.use(express.static('public'));
 // Use the combined API routes under '/api'
 app.use('/api', apiRoutes);
 
-// Default route to serve the index.html file
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
-});
+// Use the pages routes under the root path '/'
+app.use('/', pagesRoutes);
 
 // JWT Authentication example
 const generateToken = (user) => {
