@@ -1,5 +1,5 @@
 -- Create the database
-CREATE DATABASE IF NOT EXISTS `Inua_crm`;  -- Use underscores instead of hyphens in database names
+CREATE DATABASE IF NOT EXISTS `inua_crm`;  -- Use underscores instead of hyphens in database names
 USE `Inua_crm`;
 
 -- Drop tables if they exist
