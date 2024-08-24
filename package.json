@@ -7,10 +7,11 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@netlify/plugin-lighthouse": "^6.0.0",
     "express": "^4.17.1",
     "gotrue-js": "^0.9.29",
-    "sequelize": "^6.32.1",
     "pg": "^8.11.1",
-    "pg-hstore": "^2.3.4"
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.32.1"
   }
 }
