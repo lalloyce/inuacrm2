@@ -88,3 +88,114 @@ button {
 button:hover {
     background-color: #FFA500; /* Orange */
 }
+
+/* Footer Styles */
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    background-color: #3182ce;
+    color: white;
+    position: absolute;
+    bottom: 0;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Existing styles remain the same */
+
+/* Navigation styles */
+nav {
+    background-color: #3182ce;
+    padding: 1rem 0;
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+nav .logo img {
+    max-height: 40px;
+}
+
+nav ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-right: 1rem;
+}
+
+nav ul li:last-child {
+    margin-right: 0;
+}
+
+nav .nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav .nav-link:hover,
+nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.user-actions > * {
+    margin-left: 1rem;
+}
+
+/* Dashboard specific styles */
+.dashboard {
+    padding-top: 60px; /* Adjust based on your navbar height */
+}
+
+main.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    nav .container {
+        flex-direction: column;
+    }
+
+    nav ul {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    nav ul li {
+        margin: 0.5rem;
+    }
+}

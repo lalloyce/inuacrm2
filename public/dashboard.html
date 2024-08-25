@@ -1,131 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Inua CRM</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-</head>
-<body class="dashboard bg-gray-100">
-<nav>
-    <div class="container">
-        <div class="logo-container">
-            <img src="/public/img/logo v1.jpeg" alt="Inua CRM">
-        </div>
-        <ul>
-            <li><a href="#" class="nav-link">Dashboard</a></li>
-            <li><a href="#" class="nav-link">Customer Management</a></li>
-            <li><a href="#" class="nav-link">Sales Management</a></li>
-            <li><a href="#" class="nav-link">Payment Tracking</a></li>
-            <li><a href="#" class="nav-link">Support Tickets</a></li>
-            <li><a href="#" class="nav-link">Reports & Analytics</a></li>
-            <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
-        </ul>
-        <div class="user-actions">
-            <div class="relative">
-                <button id="notificationBell" class="relative focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
-                    </svg>
-                    <span id="notificationCount" class="notification-count">3</span>
-                </button>
-                <div id="notificationsDropdown" class="notifications-dropdown hidden">
-                    <ul>
-                        <li><a href="#" class="notification-item">Notification 1</a></li>
-                        <li><a href="#" class="notification-item">Notification 2</a></li>
-                        <li><a href="#" class="notification-item">Notification 3</a></li>
-                        <li><a href="#" class="notification-item text-center">View all</a></li>
-                    </ul>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Inua CRM</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    </head>
+    <body class="dashboard bg-gray-100">
+        <nav>
+            <div class="container">
+                <div class="logo">
+                    <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+                </div>
+                <ul id="nav-links">
+                    <li><a href="#" class="nav-link active">Dashboard</a></li>
+                    <li><a href="#" class="nav-link">Customer Management</a></li>
+                    <li><a href="#" class="nav-link">Sales Management</a></li>
+                    <li><a href="#" class="nav-link">Payment Tracking</a></li>
+                    <li><a href="#" class="nav-link">Support Tickets</a></li>
+                    <li><a href="#" class="nav-link">Reports & Analytics</a></li>
+                    <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
+                </ul>
+                <div class="user-actions">
+                    <!-- Notification bell and user profile icon remain the same -->
                 </div>
             </div>
-            <div>
-                <a href="/profile.html" class="focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
+        </nav>
 
-<main class="container mx-auto mt-8 px-4">
-    <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
-    <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-    <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-    <button id="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Log Out</button>
-</main>
+        <main class="container mx-auto mt-8 px-4">
+            <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
+            <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+            <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+            <button id="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Log Out</button>
+        </main>
 
-<script>
-    const netlifyIdentity = window.netlifyIdentity;
+        <!-- Footer Section -->
+        <footer>
+            <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </footer>
 
-    netlifyIdentity.on('init', user => {
-        if (!user) {
-            window.location.href = '/index.html';
-        } else {
-            displayUserInfo(user);
-            showRoleBasedContent(user.user_metadata.role || 'customer_service');
-        }
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userRole = localStorage.getItem('userRole');
+            const userName = localStorage.getItem('userName');
+            const userEmail = localStorage.getItem('userEmail');
 
-    function displayUserInfo(user) {
-        const userInfo = document.getElementById('user-info');
-        userInfo.innerHTML = `
+            if (!userRole || !userName || !userEmail) {
+                window.location.href = '/index.html';
+            } else {
+                displayUserInfo(userName, userEmail, userRole);
+                showRoleBasedContent(userRole);
+                setupNavigation(userRole);
+            }
+        });
+
+        function displayUserInfo(name, email, role) {
+            const userInfo = document.getElementById('user-info');
+            userInfo.innerHTML = `
                 <h3 class="text-lg font-semibold mb-2">User Information</h3>
-                <p><strong>Name:</strong> ${user.user_metadata.full_name}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Role:</strong> ${user.user_metadata.role || 'customer_service'}</p>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Role:</strong> ${role}</p>
             `;
-    }
-
-    function showRoleBasedContent(role) {
-        const contentDiv = document.getElementById('role-based-content');
-        const userManagementLink = document.getElementById('userManagementLink');
-
-        switch(role) {
-            case 'admin':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
-                userManagementLink.classList.remove('hidden');
-                break;
-            case 'group_coordinator':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
-                break;
-            case 'sales_manager':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
-                break;
-            case 'customer_service':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
-                break;
-            case 'management':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
-                break;
-            default:
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
         }
-    }
 
-    document.getElementById('logout').addEventListener('click', () => {
-        netlifyIdentity.logout();
-        localStorage.removeItem('jwt');
-        window.location.href = '/index.html';
-    });
+        function showRoleBasedContent(role) {
+            const contentDiv = document.getElementById('role-based-content');
+            const userManagementLink = document.getElementById('userManagementLink');
 
-    // Toggle notifications dropdown
-    const notificationBell = document.getElementById('notificationBell');
-    const notificationsDropdown = document.getElementById('notificationsDropdown');
-    notificationBell.addEventListener('click', () => {
-        notificationsDropdown.classList.toggle('hidden');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (event) => {
-        if (!notificationBell.contains(event.target) && !notificationsDropdown.contains(event.target)) {
-            notificationsDropdown.classList.add('hidden');
+            switch(role) {
+                case 'admin':
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
+                    userManagementLink.classList.remove('hidden');
+                    break;
+                case 'group_coordinator':
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
+                    break;
+                case 'sales_manager':
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
+                    break;
+                case 'customer_service':
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
+                    break;
+                case 'management':
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
+                    break;
+                default:
+                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
+            }
         }
-    });
-</script>
-</body>
+
+        function setupNavigation(role) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    // Here you would typically load the corresponding content
+                    console.log(`Navigating to: ${link.textContent}`);
+                });
+            });
+
+            if (role === 'admin') {
+                document.getElementById('userManagementLink').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('jwt');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            window.location.href = '/index.html';
+        });
+
+        // Toggle notifications dropdown
+        const notificationBell = document.getElementById('notificationBell');
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        notificationBell.addEventListener('click', () => {
+            notificationsDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!notificationBell.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+                notificationsDropdown.classList.add('hidden');
+            }
+        });
+    </script>
+    </body>
 </html>

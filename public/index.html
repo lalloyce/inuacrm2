@@ -41,40 +41,34 @@
     </div>
 </div>
 
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
+
+
 <script>
-
-    // Fetch the transformed image URL
-    fetch('/transform-image')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('logo').src = data.url;
-        })
-        .catch(error => console.error('Error:', error));
-
-    // Initialize Netlify Identity
     const netlifyIdentity = window.netlifyIdentity;
+
     netlifyIdentity.on('init', user => {
         if (user) {
             redirectToDashboard(user);
         }
     });
 
-    // Login
     document.getElementById('login').addEventListener('click', () => {
         netlifyIdentity.open('login');
     });
 
-    // Signup
     document.getElementById('signup').addEventListener('click', () => {
         netlifyIdentity.open('signup');
     });
 
-    // Password Reset
     document.getElementById('password-reset').addEventListener('click', () => {
         netlifyIdentity.open('recovery');
     });
 
-    // Handle successful login
     netlifyIdentity.on('login', user => {
         saveUserToDatabase(user)
             .then(() => redirectToDashboard(user))
@@ -91,13 +85,17 @@
             body: JSON.stringify({
                 name: user.user_metadata.full_name,
                 email: user.email,
-                role: user.user_metadata.role || 'customer_service' // Default role
+                role: user.user_metadata.role || 'customer_service',
+                password: 'placeholder' // Note: Don't send actual passwords; handle this securely on the server
             })
         }).then(response => response.json());
     }
 
     function redirectToDashboard(user) {
         localStorage.setItem('jwt', user.token.access_token);
+        localStorage.setItem('userRole', user.user_metadata.role || 'customer_service');
+        localStorage.setItem('userName', user.user_metadata.full_name);
+        localStorage.setItem('userEmail', user.email);
         window.location.href = 'dashboard.html';
     }
 </script>
