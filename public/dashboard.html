@@ -1,140 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard - Inua CRM</title>
-        <link rel="stylesheet" href="./css/style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    </head>
-    <body class="dashboard bg-gray-100">
-        <nav>
-            <div class="container">
-                <div class="logo">
-                    <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
-                </div>
-                <ul id="nav-links">
-                    <li><a href="#" class="nav-link active">Dashboard</a></li>
-                    <li><a href="#" class="nav-link">Customer Management</a></li>
-                    <li><a href="#" class="nav-link">Sales Management</a></li>
-                    <li><a href="#" class="nav-link">Payment Tracking</a></li>
-                    <li><a href="#" class="nav-link">Support Tickets</a></li>
-                    <li><a href="#" class="nav-link">Reports & Analytics</a></li>
-                    <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
-                </ul>
-                <div class="user-actions">
-                    <!-- Notification bell and user profile icon remain the same -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Inua CRM</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+</head>
+<body class="dashboard bg-gray-100">
+<nav>
+    <div class="container">
+        <div class="logo">
+            <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+        </div>
+        <ul id="nav-links">
+            <li><a href="#" class="nav-link active">Dashboard</a></li>
+            <li><a href="#" class="nav-link">Customer Management</a></li>
+            <li><a href="#" class="nav-link">Sales Management</a></li>
+            <li><a href="#" class="nav-link">Payment Tracking</a></li>
+            <li><a href="#" class="nav-link">Support Tickets</a></li>
+            <li><a href="#" class="nav-link">Reports & Analytics</a></li>
+            <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
+        </ul>
+        <div class="user-actions">
+            <span id="welcome-message" class="text-white mr-4"></span>
+            <div class="relative">
+                <button id="notificationBell" class="relative focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                    </svg>
+                    <span id="notificationCount" class="notification-count">0</span>
+                </button>
+                <div id="notificationsDropdown" class="notifications-dropdown hidden">
+                    <ul id="notificationsList">
+                        <!-- Notifications will be dynamically added here -->
+                    </ul>
                 </div>
             </div>
-        </nav>
+            <div class="relative">
+                <button id="avatarButton" class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center focus:outline-none">
+                    <span id="avatarPlaceholder">👤</span>
+                    <img id="avatarImage" class="w-full h-full rounded-full hidden" alt="User Avatar">
+                </button>
+                <div id="avatarDropdown" class="avatar-dropdown hidden">
+                    <ul>
+                        <li><a href="profile.html">Edit Profile</a></li>
+                        <li><button id="logout">Log Out</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 
-        <main class="container mx-auto mt-8 px-4">
-            <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
-            <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-            <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-            <button id="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Log Out</button>
-        </main>
+<main class="container mx-auto mt-8 px-4">
+    <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
+    <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+    <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+</main>
 
-        <!-- Footer Section -->
-        <footer>
-            <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-        </footer>
+<!-- Role Selection Modal -->
+<div id="roleSelectionModal" class="modal hidden">
+    <div class="modal-content">
+        <h2>Select Your Role</h2>
+        <p>Please select your role in the organization:</p>
+        <select id="roleSelect">
+            <option value="customer_service">Customer Service</option>
+            <option value="sales_manager">Sales Manager</option>
+            <option value="group_coordinator">Group Coordinator</option>
+            <option value="management">Management</option>
+        </select>
+        <button id="saveRole">Save Role</button>
+    </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userRole = localStorage.getItem('userRole');
-            const userName = localStorage.getItem('userName');
-            const userEmail = localStorage.getItem('userEmail');
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
 
-            if (!userRole || !userName || !userEmail) {
-                window.location.href = '/index.html';
-            } else {
-                displayUserInfo(userName, userEmail, userRole);
-                showRoleBasedContent(userRole);
-                setupNavigation(userRole);
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const jwt = localStorage.getItem('jwt');
+        if (!jwt) {
+            window.location.href = '/index.html';
+            return;
+        }
+
+        const user = parseJwt(jwt);
+        displayUserInfo(user);
+        setupNavigation(user.role);
+        setupAvatarDropdown();
+        setupNotifications();
+
+        if (!user.role) {
+            showRoleSelectionModal();
+        }
+    });
+
+    function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(window.atob(base64));
+    }
+
+    function displayUserInfo(user) {
+        const userInfo = document.getElementById('user-info');
+        const welcomeMessage = document.getElementById('welcome-message');
+
+        userInfo.innerHTML = `
+        <h3 class="text-lg font-semibold mb-2">User Information</h3>
+        <p><strong>Name:</strong> ${user.name}</p>
+        <p><strong>Email:</strong> ${user.email}</p>
+        <p><strong>Role:</strong> ${user.role || 'Not set'}</p>
+    `;
+
+        welcomeMessage.textContent = `Welcome, ${user.name}`;
+
+        showRoleBasedContent(user.role);
+    }
+
+    function showRoleBasedContent(role) {
+        const contentDiv = document.getElementById('role-based-content');
+        const userManagementLink = document.getElementById('userManagementLink');
+
+        switch(role) {
+            case 'admin':
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
+                userManagementLink.classList.remove('hidden');
+                break;
+            case 'group_coordinator':
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
+                break;
+            case 'sales_manager':
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
+                break;
+            case 'customer_service':
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
+                break;
+            case 'management':
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
+                break;
+            default:
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
+        }
+    }
+
+    function setupNavigation(role) {
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                console.log(`Navigating to: ${link.textContent}`);
+            });
         });
 
-        function displayUserInfo(name, email, role) {
-            const userInfo = document.getElementById('user-info');
-            userInfo.innerHTML = `
-                <h3 class="text-lg font-semibold mb-2">User Information</h3>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Role:</strong> ${role}</p>
-            `;
+        if (role === 'admin') {
+            document.getElementById('userManagementLink').classList.remove('hidden');
         }
+    }
 
-        function showRoleBasedContent(role) {
-            const contentDiv = document.getElementById('role-based-content');
-            const userManagementLink = document.getElementById('userManagementLink');
+    function setupAvatarDropdown() {
+        const avatarButton = document.getElementById('avatarButton');
+        const avatarDropdown = document.getElementById('avatarDropdown');
 
-            switch(role) {
-                case 'admin':
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
-                    userManagementLink.classList.remove('hidden');
-                    break;
-                case 'group_coordinator':
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
-                    break;
-                case 'sales_manager':
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
-                    break;
-                case 'customer_service':
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
-                    break;
-                case 'management':
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
-                    break;
-                default:
-                    contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
+        avatarButton.addEventListener('click', () => {
+            avatarDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!avatarButton.contains(event.target) && !avatarDropdown.contains(event.target)) {
+                avatarDropdown.classList.add('hidden');
             }
-        }
-
-        function setupNavigation(role) {
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                    // Here you would typically load the corresponding content
-                    console.log(`Navigating to: ${link.textContent}`);
-                });
-            });
-
-            if (role === 'admin') {
-                document.getElementById('userManagementLink').classList.remove('hidden');
-            }
-        }
+        });
 
         document.getElementById('logout').addEventListener('click', () => {
             localStorage.removeItem('jwt');
-            localStorage.removeItem('userRole');
-            localStorage.removeItem('userName');
-            localStorage.removeItem('userEmail');
             window.location.href = '/index.html';
         });
+    }
 
-        // Toggle notifications dropdown
+    function setupNotifications() {
         const notificationBell = document.getElementById('notificationBell');
         const notificationsDropdown = document.getElementById('notificationsDropdown');
+        const notificationsList = document.getElementById('notificationsList');
+        const notificationCount = document.getElementById('notificationCount');
+
+        // Simulated notifications (replace with actual data fetching)
+        const notifications = [
+            { id: 1, message: "New customer inquiry" },
+            { id: 2, message: "Payment received" },
+            { id: 3, message: "Please select your role" }
+        ];
+
+        notificationCount.textContent = notifications.length;
+
+        notifications.forEach(notification => {
+            const li = document.createElement('li');
+            li.textContent = notification.message;
+            notificationsList.appendChild(li);
+        });
+
         notificationBell.addEventListener('click', () => {
             notificationsDropdown.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', (event) => {
             if (!notificationBell.contains(event.target) && !notificationsDropdown.contains(event.target)) {
                 notificationsDropdown.classList.add('hidden');
             }
         });
-    </script>
-    </body>
+    }
+
+    function showRoleSelectionModal() {
+        const modal = document.getElementById('roleSelectionModal');
+        const saveButton = document.getElementById('saveRole');
+
+        modal.classList.remove('hidden');
+
+        saveButton.addEventListener('click', () => {
+            const selectedRole = document.getElementById('roleSelect').value;
+            saveRoleToDatabase(selectedRole);
+            modal.classList.add('hidden');
+        });
+    }
+
+    function saveRoleToDatabase(role) {
+        const jwt = localStorage.getItem('jwt');
+
+        fetch('/api/update-role', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwt}`
+            },
+            body: JSON.stringify({ role: role })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update JWT with new role
+                    localStorage.setItem('jwt', data.newJwt);
+                    location.reload(); // Reload page to reflect new role
+                } else {
+                    console.error('Failed to update role');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+</body>
 </html>
