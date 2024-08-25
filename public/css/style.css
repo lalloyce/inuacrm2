@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
@@ -11,100 +11,80 @@ body {
 
 .container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100vh;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 1000px;
+    overflow: hidden;
 }
 
 .left-side {
-    width: 50%;
-    padding: 20px;
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-family: 'Moderustic', sans-serif;
+    font-weight: 700;
+    color: #333;
+}
+
+h2 {
+    font-family: 'DM+Serif', sans-serif;
+    font-weight: 700;
+    color: #545454;
+    margin-top: 20px;
+}
+
+.info-box {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.info-box.orange-border {
+    border: 2px solid rgba(255, 165, 0, 0.5);
+}
+
+.info-box.blue-border {
+    border: 2px solid rgba(70, 130, 180, 0.5);
 }
 
 .right-side {
-    width: 40%;
-    padding: 20px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Rest of your CSS remains the same */
-
-/* Dashboard specific styles */
-body.dashboard {
-    height: auto;
-    display: block;
-}
-
-.dashboard .container {
-    height: auto;
-    flex-direction: column;
-    max-width: none;
-    box-shadow: none;
-    padding: 0;
-}
-
-/* Navigation Bar Styles */
-nav {
-    background-color: #3182ce;
-    padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-nav .container {
+    width: 300px;
+    padding: 40px;
+    background-color: #f8f8f8;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding: 0 2rem;
 }
 
-/* Rest of your CSS remains the same */
-
-main {
-    padding: 2rem;
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    nav .container {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 1rem;
-    }
+.logo img {
+    max-width: 200px;
+    height: auto;
+}
 
-    nav ul {
-        flex-direction: column;
-        width: 100%;
-        margin-top: 1rem;
-    }
+button {
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    transition: background-color 0.3s ease;
+}
 
-    .nav-link {
-        display: block;
-        padding: 0.5rem 0;
-    }
-
-    .user-actions {
-        width: 100%;
-        justify-content: space-between;
-        margin-top: 1rem;
-    }
-
-    .notifications-dropdown {
-        width: 100%;
-        position: static;
-        margin-top: 1rem;
-    }
-
-    .dashboard .container {
-        padding: 1rem;
-    }
+button:hover {
+    background-color: #FFA500; /* Orange */
 }

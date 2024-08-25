@@ -7,11 +7,21 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "@netlify/plugin-lighthouse": "^6.0.0",
+    "@netlify/plugin-lighthouse": "^3.0.0",
+    "cloudinary": "^2.4.0",
     "express": "^4.17.1",
     "gotrue-js": "^0.9.29",
+    "netlify-plugin-cloudinary": "^1.17.0",
     "pg": "^8.11.1",
     "pg-hstore": "^2.3.4",
+    "cloudinary": "^1.37.0",
     "sequelize": "^6.32.1"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
