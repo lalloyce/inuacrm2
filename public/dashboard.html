@@ -69,6 +69,7 @@
     <div class="modal-content">
         <h2>Select Your Role</h2>
         <p>Please select your role in the organization:</p>
+        <label for="roleSelect">Role:</label>
         <select id="roleSelect">
             <option value="customer_service">Customer Service</option>
             <option value="sales_manager">Sales Manager</option>
@@ -85,177 +86,65 @@
     <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
 </footer>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const jwt = localStorage.getItem('jwt');
-        if (!jwt) {
-            window.location.href = '/index.html';
-            return;
-        }
-
-        const user = parseJwt(jwt);
-        displayUserInfo(user);
-        setupNavigation(user.role);
-        setupAvatarDropdown();
-        setupNotifications();
-
-        if (!user.role) {
-            showRoleSelectionModal();
-        }
-    });
-
-    function parseJwt(token) {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(window.atob(base64));
+document.addEventListener('DOMContentLoaded', () => {
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) {
+        window.location.href = '/index.html';
+        return;
     }
 
-    function displayUserInfo(user) {
-        const userInfo = document.getElementById('user-info');
-        const welcomeMessage = document.getElementById('welcome-message');
+    const user = parseJwt(jwt);
+    displayUserInfo(user);
+    setupNavigation(user.role);
+    setupAvatarDropdown();
+    setupNotifications();
 
-        userInfo.innerHTML = `
-        <h3 class="text-lg font-semibold mb-2">User Information</h3>
-        <p><strong>Name:</strong> ${user.name}</p>
-        <p><strong>Email:</strong> ${user.email}</p>
-        <p><strong>Role:</strong> ${user.role || 'Not set'}</p>
-    `;
+    checkUserRole(user.id);
+});
 
-        welcomeMessage.textContent = `Welcome, ${user.name}`;
-
-        showRoleBasedContent(user.role);
-    }
-
-    function showRoleBasedContent(role) {
-        const contentDiv = document.getElementById('role-based-content');
-        const userManagementLink = document.getElementById('userManagementLink');
-
-        switch(role) {
-            case 'admin':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
-                userManagementLink.classList.remove('hidden');
-                break;
-            case 'group_coordinator':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
-                break;
-            case 'sales_manager':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
-                break;
-            case 'customer_service':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
-                break;
-            case 'management':
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
-                break;
-            default:
-                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
-        }
-    }
-
-    function setupNavigation(role) {
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                console.log(`Navigating to: ${link.textContent}`);
-            });
-        });
-
-        if (role === 'admin') {
-            document.getElementById('userManagementLink').classList.remove('hidden');
-        }
-    }
-
-    function setupAvatarDropdown() {
-        const avatarButton = document.getElementById('avatarButton');
-        const avatarDropdown = document.getElementById('avatarDropdown');
-
-        avatarButton.addEventListener('click', () => {
-            avatarDropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!avatarButton.contains(event.target) && !avatarDropdown.contains(event.target)) {
-                avatarDropdown.classList.add('hidden');
+function checkUserRole(userId) {
+    fetch(`/api/user/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            if (!user.role) {
+                showRoleSelectionModal();
             }
-        });
-
-        document.getElementById('logout').addEventListener('click', () => {
-            localStorage.removeItem('jwt');
-            window.location.href = '/index.html';
-        });
-    }
-
-    function setupNotifications() {
-        const notificationBell = document.getElementById('notificationBell');
-        const notificationsDropdown = document.getElementById('notificationsDropdown');
-        const notificationsList = document.getElementById('notificationsList');
-        const notificationCount = document.getElementById('notificationCount');
-
-        // Simulated notifications (replace with actual data fetching)
-        const notifications = [
-            { id: 1, message: "New customer inquiry" },
-            { id: 2, message: "Payment received" },
-            { id: 3, message: "Please select your role" }
-        ];
-
-        notificationCount.textContent = notifications.length;
-
-        notifications.forEach(notification => {
-            const li = document.createElement('li');
-            li.textContent = notification.message;
-            notificationsList.appendChild(li);
-        });
-
-        notificationBell.addEventListener('click', () => {
-            notificationsDropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!notificationBell.contains(event.target) && !notificationsDropdown.contains(event.target)) {
-                notificationsDropdown.classList.add('hidden');
-            }
-        });
-    }
-
-    function showRoleSelectionModal() {
-        const modal = document.getElementById('roleSelectionModal');
-        const saveButton = document.getElementById('saveRole');
-
-        modal.classList.remove('hidden');
-
-        saveButton.addEventListener('click', () => {
-            const selectedRole = document.getElementById('roleSelect').value;
-            saveRoleToDatabase(selectedRole);
-            modal.classList.add('hidden');
-        });
-    }
-
-    function saveRoleToDatabase(role) {
-        const jwt = localStorage.getItem('jwt');
-
-        fetch('/api/update-role', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${jwt}`
-            },
-            body: JSON.stringify({ role: role })
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update JWT with new role
-                    localStorage.setItem('jwt', data.newJwt);
-                    location.reload(); // Reload page to reflect new role
-                } else {
-                    console.error('Failed to update role');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-</script>
-</body>
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
+}
+
+function showRoleSelectionModal() {
+    const modal = document.getElementById('roleSelectionModal');
+    const saveButton = document.getElementById('saveRole');
+
+    modal.classList.remove('hidden');
+
+    saveButton.addEventListener('click', () => {
+        const selectedRole = document.getElementById('roleSelect').value;
+        saveRoleToDatabase(selectedRole);
+        modal.classList.add('hidden');
+    });
+}
+
+function saveRoleToDatabase(role) {
+    const jwt = localStorage.getItem('jwt');
+
+    fetch('/api/update-role', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify({ role })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Role updated successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error updating role:', error);
+    });
+}</body>
 </html>
