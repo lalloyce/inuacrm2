@@ -8,73 +8,92 @@
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-    <div class="container">
+<div class="container">
 
-        <div class="left-side">
-            <h1>Inua Solutions</h1>
-            <h2>Access to Goods on Credit for Rural Households</h2>
-            <p>At Inua Solutions, we believe in empowering rural communities by providing access to essential goods through flexible credit options. Our innovative platform bridges the gap between rural households and quality products, fostering economic growth and improving living standards.</p>
-            <p>Join us in our mission to transform rural economies and create sustainable opportunities for families across the region.</p>
+    <!-- Logo Section -->
+    <div class="logo">
+        <img src="/public/img/logo v1.jpeg" alt="Inua Solutions Logo">
+    </div>
+
+    <div class="left-side">
+        <h1>Inua Solutions</h1>
+        <p>Empowering rural communities through access to essential goods on credit.</p>
+
+        <div class="info-box">
+            <strong>Flexible Credit Options</strong>
+            <p>Our platform offers rural households the ability to acquire quality products with flexible repayment plans tailored to their needs.</p>
         </div>
 
-        <div class="right-side">
-            <div id="netlify-modal"></div>
-            <button id="login">Log In</button>
-            <button id="signup">Sign Up</button>
-            <button id="password-reset">Reset Password</button>
+        <div class="info-box blue">
+            <strong>Transforming Rural Economies</strong>
+            <p>By bridging the gap between rural families and essential goods, we foster economic growth and improve living standards across communities.</p>
         </div>
     </div>
 
-    <script>
-        // Initialize Netlify Identity
-        const netlifyIdentity = window.netlifyIdentity;
-        netlifyIdentity.on('init', user => {
-            if (user) {
-                redirectToDashboard(user);
-            }
-        });
+    <div class="right-side">
+        <div id="netlify-modal"></div>
+        <button id="login">Log In</button>
+        <button id="signup">Sign Up</button>
+        <button id="password-reset">Reset Password</button>
+    </div>
+</div>
 
-        // Login
-        document.getElementById('login').addEventListener('click', () => {
-            netlifyIdentity.open('login');
-        });
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
 
-        // Signup
-        document.getElementById('signup').addEventListener('click', () => {
-            netlifyIdentity.open('signup');
-        });
-
-        // Password Reset
-        document.getElementById('password-reset').addEventListener('click', () => {
-            netlifyIdentity.open('recovery');
-        });
-
-        // Handle successful login
-        netlifyIdentity.on('login', user => {
-            saveUserToDatabase(user)
-                .then(() => redirectToDashboard(user))
-                .catch(error => console.error('Error saving user:', error));
-        });
-
-        function saveUserToDatabase(user) {
-            return fetch('/api/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token.access_token}`
-                },
-                body: JSON.stringify({
-                    name: user.user_metadata.full_name,
-                    email: user.email,
-                    role: user.user_metadata.role || 'customer_service' // Default role
-                })
-            }).then(response => response.json());
+<script>
+    // Initialize Netlify Identity
+    const netlifyIdentity = window.netlifyIdentity;
+    netlifyIdentity.on('init', user => {
+        if (user) {
+            redirectToDashboard(user);
         }
+    });
 
-        function redirectToDashboard(user) {
-            localStorage.setItem('jwt', user.token.access_token);
-            window.location.href = 'dashboard.html';
-        }
-    </script>
+    // Login
+    document.getElementById('login').addEventListener('click', () => {
+        netlifyIdentity.open('login');
+    });
+
+    // Signup
+    document.getElementById('signup').addEventListener('click', () => {
+        netlifyIdentity.open('signup');
+    });
+
+    // Password Reset
+    document.getElementById('password-reset').addEventListener('click', () => {
+        netlifyIdentity.open('recovery');
+    });
+
+    // Handle successful login
+    netlifyIdentity.on('login', user => {
+        saveUserToDatabase(user)
+            .then(() => redirectToDashboard(user))
+            .catch(error => console.error('Error saving user:', error));
+    });
+
+    function saveUserToDatabase(user) {
+        return fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token.access_token}`
+            },
+            body: JSON.stringify({
+                name: user.user_metadata.full_name,
+                email: user.email,
+                role: user.user_metadata.role || 'customer_service' // Default role
+            })
+        }).then(response => response.json());
+    }
+
+    function redirectToDashboard(user) {
+        localStorage.setItem('jwt', user.token.access_token);
+        window.location.href = 'dashboard.html';
+    }
+</script>
 </body>
 </html>

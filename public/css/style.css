@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -13,7 +14,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100vh;
+    height: auto;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -24,9 +25,20 @@ body {
     padding: 20px;
 }
 
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    max-width: 200px;
+    height: auto;
+}
+
 .left-side {
     width: 50%;
     padding: 20px;
+    text-align: left;
 }
 
 .right-side {
@@ -37,74 +49,68 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Rest of your CSS remains the same */
+/* Transparent Info Boxes */
+.info-box {
+    background-color: rgba(255, 165, 0, 0.2); /* Default to orange */
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+    border: 1px solid rgba(255, 165, 0, 0.5); /* Slight border for definition */
+}
 
-/* Dashboard specific styles */
-body.dashboard {
-    height: auto;
+/* Blue Info Box */
+.info-box.blue {
+    background-color: rgba(70, 130, 180, 0.2); /* Steel blue */
+    border: 1px solid rgba(70, 130, 180, 0.5);
+}
+
+.info-box strong {
+    font-weight: bold;
     display: block;
+    margin-bottom: 5px;
+    color: #545454; /* Grey header text */
 }
 
-.dashboard .container {
-    height: auto;
-    flex-direction: column;
-    max-width: none;
-    box-shadow: none;
-    padding: 0;
-}
-
-/* Navigation Bar Styles */
-nav {
+/* Footer Styles */
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
     background-color: #3182ce;
-    padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    position: absolute;
+    bottom: 0;
 }
 
-nav .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
+footer p {
+    margin: 5px 0;
 }
 
-/* Rest of your CSS remains the same */
+footer a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
 
-main {
-    padding: 2rem;
+footer a:hover {
+    text-decoration: underline;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    nav .container {
+    .container {
         flex-direction: column;
         align-items: flex-start;
-        padding: 1rem;
     }
 
-    nav ul {
-        flex-direction: column;
+    .left-side,
+    .right-side {
         width: 100%;
-        margin-top: 1rem;
+        text-align: center;
     }
 
-    .nav-link {
-        display: block;
-        padding: 0.5rem 0;
-    }
-
-    .user-actions {
-        width: 100%;
-        justify-content: space-between;
-        margin-top: 1rem;
-    }
-
-    .notifications-dropdown {
-        width: 100%;
-        position: static;
-        margin-top: 1rem;
-    }
-
-    .dashboard .container {
-        padding: 1rem;
+    .info-box {
+        text-align: center;
     }
 }
