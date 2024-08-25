@@ -9,13 +9,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
-<body class="bg-gray-100">
-<nav class="bg-blue-600 text-white p-4">
-    <div class="container mx-auto flex justify-between items-center">
+<body class="dashboard bg-gray-100">
+<nav>
+    <div class="container">
         <div class="logo-container">
             <img src="/public/img/logo v1.jpeg" alt="Inua CRM">
         </div>
-        <ul class="flex space-x-4 overflow-x-auto">
+        <ul>
             <li><a href="#" class="nav-link">Dashboard</a></li>
             <li><a href="#" class="nav-link">Customer Management</a></li>
             <li><a href="#" class="nav-link">Sales Management</a></li>
@@ -24,7 +24,7 @@
             <li><a href="#" class="nav-link">Reports & Analytics</a></li>
             <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
         </ul>
-        <div class="flex space-x-4 items-center">
+        <div class="user-actions">
             <div class="relative">
                 <button id="notificationBell" class="relative focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,11 +52,11 @@
     </div>
 </nav>
 
-<main class="container mx-auto mt-8">
+<main class="container mx-auto mt-8 px-4">
     <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
-    <div id="user-info"></div>
-    <div id="role-based-content"></div>
-    <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded">Log Out</button>
+    <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+    <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+    <button id="logout" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Log Out</button>
 </main>
 
 <script>
@@ -74,9 +74,10 @@
     function displayUserInfo(user) {
         const userInfo = document.getElementById('user-info');
         userInfo.innerHTML = `
-                <p>Name: ${user.user_metadata.full_name}</p>
-                <p>Email: ${user.email}</p>
-                <p>Role: ${user.user_metadata.role || 'customer_service'}</p>
+                <h3 class="text-lg font-semibold mb-2">User Information</h3>
+                <p><strong>Name:</strong> ${user.user_metadata.full_name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Role:</strong> ${user.user_metadata.role || 'customer_service'}</p>
             `;
     }
 
@@ -86,23 +87,23 @@
 
         switch(role) {
             case 'admin':
-                contentDiv.innerHTML = '<h3>Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Admin Dashboard</h3><p>Welcome to the admin dashboard. You have full access to all features.</p>';
                 userManagementLink.classList.remove('hidden');
                 break;
             case 'group_coordinator':
-                contentDiv.innerHTML = '<h3>Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Group Coordinator Dashboard</h3><p>Manage your customer groups and coordinate activities.</p>';
                 break;
             case 'sales_manager':
-                contentDiv.innerHTML = '<h3>Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Sales Manager Dashboard</h3><p>View sales reports and manage your team\'s performance.</p>';
                 break;
             case 'customer_service':
-                contentDiv.innerHTML = '<h3>Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Customer Service Dashboard</h3><p>Handle customer inquiries and support tickets.</p>';
                 break;
             case 'management':
-                contentDiv.innerHTML = '<h3>Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Management Dashboard</h3><p>Overview of company performance and key metrics.</p>';
                 break;
             default:
-                contentDiv.innerHTML = '<h3>Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
+                contentDiv.innerHTML = '<h3 class="text-lg font-semibold mb-2">Welcome to Inua CRM</h3><p>Your role-specific dashboard is not available.</p>';
         }
     }
 

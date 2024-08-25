@@ -14,7 +14,6 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 100vh;
-    padding: 20px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -22,7 +21,7 @@ body {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 20px;
 }
 
 .left-side {
@@ -38,150 +37,74 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.tab-container {
+/* Rest of your CSS remains the same */
+
+/* Dashboard specific styles */
+body.dashboard {
+    height: auto;
+    display: block;
+}
+
+.dashboard .container {
+    height: auto;
+    flex-direction: column;
+    max-width: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Navigation Bar Styles */
+nav {
+    background-color: #3182ce;
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav .container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.tab {
-    flex: 1;
-    padding: 10px 0;
-    text-align: center;
-    background-color: #f2f2f2;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tab.active {
-    background-color: #f26522;
-    color: white;
-}
-
-.form-container {
-    display: flex;
-    flex-direction: column;
-}
-
-input, select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button {
-    background-color: #3182ce;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    margin: 0.5rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #2c5282;
-}
-
-.forgot-password {
-    color: #f26522;
-    text-decoration: none;
-    font-size: 14px;
-    margin-top: 10px;
-    display: block;
-    text-align: right;
-}
-
-.forgot-password:hover {
-    color: #d55415;
-}
-
-h1 {
-    color: #333;
-    margin-bottom: 2rem;
-}
-
-#netlify-modal {
-    margin-bottom: 1rem;
-}
-
-.logo-container {
-    width: 120px;
-    height: 40px;
-    overflow: hidden;
-    display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 0 2rem;
 }
 
-.logo-container img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+/* Rest of your CSS remains the same */
+
+main {
+    padding: 2rem;
 }
 
-.nav-link {
-    color: white;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    transition: background-color 0.3s;
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    nav .container {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
 
-.nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 1rem;
+    }
 
-.notification-count {
-    position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-    font-size: 0.75rem;
-    background-color: #e53e3e;
-    color: white;
-    border-radius: 9999px;
-    height: 1rem;
-    width: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .nav-link {
+        display: block;
+        padding: 0.5rem 0;
+    }
 
-.notifications-dropdown {
-    position: absolute;
-    right: 0;
-    margin-top: 0.5rem;
-    width: 16rem;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    z-index: 20;
-}
+    .user-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
 
-.notification-item {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: #1a202c;
-    text-decoration: none;
-}
+    .notifications-dropdown {
+        width: 100%;
+        position: static;
+        margin-top: 1rem;
+    }
 
-.notification-item:hover {
-    background-color: #f7fafc;
-}
-
-#logout {
-    background-color: #e53e3e;
-}
-
-#logout:hover {
-    background-color: #c53030;
-}
-
-.hidden {
-    display: none;
+    .dashboard .container {
+        padding: 1rem;
+    }
 }
