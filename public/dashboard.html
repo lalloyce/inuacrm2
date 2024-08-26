@@ -1,150 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Inua CRM</title>
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-</head>
-<body class="dashboard bg-gray-100">
-<nav>
-    <div class="container">
-        <div class="logo">
-            <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
-        </div>
-        <ul id="nav-links">
-            <li><a href="#" class="nav-link active">Dashboard</a></li>
-            <li><a href="#" class="nav-link">Customer Management</a></li>
-            <li><a href="#" class="nav-link">Sales Management</a></li>
-            <li><a href="#" class="nav-link">Payment Tracking</a></li>
-            <li><a href="#" class="nav-link">Support Tickets</a></li>
-            <li><a href="#" class="nav-link">Reports & Analytics</a></li>
-            <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
-        </ul>
-        <div class="user-actions">
-            <span id="welcome-message" class="text-white mr-4"></span>
-            <div class="relative">
-                <button id="notificationBell" class="relative focus:outline-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
-                    </svg>
-                    <span id="notificationCount" class="notification-count">0</span>
-                </button>
-                <div id="notificationsDropdown" class="notifications-dropdown hidden">
-                    <ul id="notificationsList">
-                        <!-- Notifications will be dynamically added here -->
-                    </ul>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Inua CRM</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+    </head>
+    <body class="dashboard bg-gray-100">
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+            </div>
+            <ul id="nav-links">
+                <li><a href="#" class="nav-link active">Dashboard</a></li>
+                <li><a href="#" class="nav-link">Customer Management</a></li>
+                <li><a href="#" class="nav-link">Sales Management</a></li>
+                <li><a href="#" class="nav-link">Payment Tracking</a></li>
+                <li><a href="#" class="nav-link">Support Tickets</a></li>
+                <li><a href="#" class="nav-link">Reports & Analytics</a></li>
+                <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
+            </ul>
+            <div class="user-actions">
+                <span id="welcome-message" class="text-white mr-4"></span>
+                <div class="relative">
+                    <button id="notificationBell" class="relative focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                        </svg>
+                        <span id="notificationCount" class="notification-count">0</span>
+                    </button>
+                    <div id="notificationsDropdown" class="notifications-dropdown hidden">
+                        <ul id="notificationsList">
+                            <!-- Notifications will be dynamically added here -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="avatarButton" class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center focus:outline-none">
+                        <span id="avatarPlaceholder">👤</span>
+                        <img id="avatarImage" class="w-full h-full rounded-full hidden" alt="User Avatar">
+                    </button>
+                    <div id="avatarDropdown" class="avatar-dropdown hidden">
+                        <ul>
+                            <li><a href="profile.html">Edit Profile</a></li>
+                            <li><button id="logout">Log Out</button></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="relative">
-                <button id="avatarButton" class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center focus:outline-none">
-                    <span id="avatarPlaceholder">👤</span>
-                    <img id="avatarImage" class="w-full h-full rounded-full hidden" alt="User Avatar">
-                </button>
-                <div id="avatarDropdown" class="avatar-dropdown hidden">
-                    <ul>
-                        <li><a href="profile.html">Edit Profile</a></li>
-                        <li><button id="logout">Log Out</button></li>
-                    </ul>
-                </div>
-            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 px-4">
+        <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
+        <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+        <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+    </main>
+
+    <!-- Role Selection Modal -->
+    <div id="roleSelectionModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Select Your Role</h2>
+            <p>Please select your role in the organization:</p>
+            <label for="roleSelect">Role:</label>
+            <select id="roleSelect">
+                <option value="customer_service">Customer Service</option>
+                <option value="sales_manager">Sales Manager</option>
+                <option value="group_coordinator">Group Coordinator</option>
+                <option value="management">Management</option>
+            </select>
+            <button id="saveRole">Save Role</button>
         </div>
     </div>
-</nav>
 
-<main class="container mx-auto mt-8 px-4">
-    <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
-    <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-    <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
-</main>
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
 
-<!-- Role Selection Modal -->
-<div id="roleSelectionModal" class="modal hidden">
-    <div class="modal-content">
-        <h2>Select Your Role</h2>
-        <p>Please select your role in the organization:</p>
-        <label for="roleSelect">Role:</label>
-        <select id="roleSelect">
-            <option value="customer_service">Customer Service</option>
-            <option value="sales_manager">Sales Manager</option>
-            <option value="group_coordinator">Group Coordinator</option>
-            <option value="management">Management</option>
-        </select>
-        <button id="saveRole">Save Role</button>
-    </div>
-</div>
+    <script>
+        // Utility function to handle errors
+        function handleError(error) {
+            console.error('Error:', error);
+            const statusCode = error.status || 500;
+            const message = error.message || 'An unexpected error occurred';
 
-<!-- Footer Section -->
-<footer>
-    <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
-    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-</footer>
+            // Display error message to user
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            errorElement.textContent = `Error ${statusCode}: ${message}`;
+            document.body.prepend(errorElement);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-        window.location.href = '/index.html';
-        return;
-    }
+            // Remove the error message after 5 seconds
+            setTimeout(() => errorElement.remove(), 5000);
+        }
 
-    const user = parseJwt(jwt);
-    displayUserInfo(user);
-    setupNavigation(user.role);
-    setupAvatarDropdown();
-    setupNotifications();
+        // Utility function for making API calls
+        async function apiCall(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    return { error: new Error(errorData.error.message || 'API call failed') };
+                }
+                return await response.json();
+            } catch (error) {
+                handleError(error);
+                return { error };
+            }
+        }
 
-    checkUserRole(user.id);
-});
+        document.addEventListener('DOMContentLoaded', async () => {
+            const jwt = localStorage.getItem('jwt');
+            if (!jwt) {
+                window.location.href = '/index.html';
+                return;
+            }
 
-function checkUserRole(userId) {
-    fetch(`/api/user/${userId}`)
-        .then(response => response.json())
-        .then(user => {
-            if (!user.role) {
+            const user = parseJwt(jwt);
+            if (user.error) {
+                handleError(user.error);
+                return;
+            }
+
+            displayUserInfo(user);
+            setupNavigation(user.role);
+            setupAvatarDropdown();
+            setupNotifications();
+            await checkUserRole(user.id);
+        });
+
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(window.atob(base64));
+            } catch (error) {
+                return { error: new Error('Invalid JWT') };
+            }
+        }
+
+        function displayUserInfo(user) {
+            const userInfoElement = document.getElementById('user-info');
+            if (userInfoElement) {
+                userInfoElement.textContent = `Welcome, ${user.name || 'User'}!`;
+            } else {
+                console.warn('User info element not found');
+            }
+        }
+
+        function setupNavigation(role) {
+            console.log('Setting up navigation for role:', role);
+            // Implement navigation setup based on user role
+            const userManagementLink = document.getElementById('userManagementLink');
+            if (userManagementLink) {
+                userManagementLink.classList.toggle('hidden', role !== 'management');
+            }
+        }
+
+        function setupAvatarDropdown() {
+            const avatarButton = document.getElementById('avatarButton');
+            const avatarDropdown = document.getElementById('avatarDropdown');
+            const logoutButton = document.getElementById('logout');
+
+            if (avatarButton && avatarDropdown) {
+                avatarButton.addEventListener('click', () => {
+                    avatarDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (!avatarButton.contains(event.target) && !avatarDropdown.contains(event.target)) {
+                        avatarDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('jwt');
+                    window.location.href = '/index.html';
+                });
+            }
+        }
+
+        function setupNotifications() {
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationsDropdown = document.getElementById('notificationsDropdown');
+            const notificationsList = document.getElementById('notificationsList');
+            const notificationCount = document.getElementById('notificationCount');
+
+            if (notificationBell && notificationsDropdown && notificationsList && notificationCount) {
+                notificationBell.addEventListener('click', () => {
+                    notificationsDropdown.classList.toggle('hidden');
+                    // Reset notification count when opened
+                    notificationCount.textContent = '0';
+                });
+
+                // Example: Add a mock notification (replace with actual notification logic)
+                const mockNotification = document.createElement('li');
+                mockNotification.textContent = 'You have a new message';
+                notificationsList.appendChild(mockNotification);
+                notificationCount.textContent = '1';
+            }
+        }
+
+        async function checkUserRole(userId) {
+            const result = await apiCall(`/api/user/${userId}`);
+            if (result.error) {
+                console.error('Error checking user role:', result.error);
+            } else if (!result.role) {
                 showRoleSelectionModal();
             }
-        })
-        .catch(error => {
-            console.error('Error fetching user data:', error);
-        });
-}
+        }
 
-function showRoleSelectionModal() {
-    const modal = document.getElementById('roleSelectionModal');
-    const saveButton = document.getElementById('saveRole');
+        function showRoleSelectionModal() {
+            const modal = document.getElementById('roleSelectionModal');
+            const saveButton = document.getElementById('saveRole');
 
-    modal.classList.remove('hidden');
+            if (modal && saveButton) {
+                modal.classList.remove('hidden');
 
-    saveButton.addEventListener('click', () => {
-        const selectedRole = document.getElementById('roleSelect').value;
-        saveRoleToDatabase(selectedRole);
-        modal.classList.add('hidden');
-    });
-}
+                saveButton.addEventListener('click', async () => {
+                    const roleSelect = document.getElementById('roleSelect');
+                    if (roleSelect) {
+                        const selectedRole = roleSelect.value;
+                        await saveRoleToDatabase(selectedRole);
+                        modal.classList.add('hidden');
+                    }
+                });
+            } else {
+                console.warn('Role selection modal elements not found');
+            }
+        }
 
-function saveRoleToDatabase(role) {
-    const jwt = localStorage.getItem('jwt');
-
-    fetch('/api/update-role', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${jwt}`
-        },
-        body: JSON.stringify({ role })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Role updated successfully:', data);
-    })
-    .catch(error => {
-        console.error('Error updating role:', error);
-    });
-}</body>
+        async function saveRoleToDatabase(role) {
+            const jwt = localStorage.getItem('jwt');
+            const result = await apiCall('/api/update-role', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${jwt}`
+                },
+                body: JSON.stringify({ role })
+            });
+            if (result.error) {
+                console.error('Error updating role:', result.error);
+            } else {
+                console.log('Role updated successfully:', result);
+                // Optionally, update the UI or reload the page
+                location.reload();
+            }
+        }
+    </script>
+    </body>
 </html>

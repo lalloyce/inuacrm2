@@ -1,15 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile Manager</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Profile - Inua CRM</title>
+        <link rel="stylesheet" href="./css/style.css">
+    </head>
+    <body class="bg-gray-100">
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+            </div>
+            <ul id="nav-links">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="profile.html" class="nav-link active">Edit Profile</a></li>
+            </ul>
+        </div>
+    </nav>
 
+    <main class="container mx-auto mt-8 px-4">
+        <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+        <form id="profileForm" class="bg-white shadow rounded-lg p-4">
+            <div class="mb-4">
+                <label for="profilePicture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="mt-1 block w-full">
+                <img id="profileImagePreview" src="#" alt="Profile Image Preview" class="mt-4 hidden w-32 h-32 rounded-full object-cover">
+            </div>
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save Changes</button>
+        </form>
+    </main>
 
+    <script>
+        document.getElementById('profilePicture').addEventListener('change', function(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = document.getElementById('profileImagePreview');
+                img.src = reader.result;
+                img.classList.remove('hidden');
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
 
-</body>
+        document.getElementById('profileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const jwt = localStorage.getItem('jwt');
+
+            fetch('/api/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${jwt}`
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Profile updated successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error updating profile:', error);
+            });
+        });
+    </script>
+    </body>
 </html>

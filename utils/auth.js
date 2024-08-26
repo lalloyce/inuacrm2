@@ -1,7 +1,7 @@
 import GoTrue from 'gotrue-js';
 
 const auth = new GoTrue({
-    APIUrl: 'YOUR_GOTRUE_API_URL',
+    APIUrl: 'https://inuacrm.netlify.com/identity',
     audience: '',
     setCookie: false,
 });
