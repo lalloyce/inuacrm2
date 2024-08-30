@@ -10,94 +10,84 @@
     <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="left-side">
-        <h1>Inua Solutions</h1>
-        <p>Empowering rural communities through access to essential goods on credit.</p>
-
-        <p></p>
-        <p></p>
-        <div class="info-box orange-border">
-            <h2>Flexible Credit Options</h2>
-            <p>Our platform offers rural households the ability to acquire quality products with flexible repayment plans tailored to their needs.</p>
+    <div class="container">
+        <div class="left-side">
+            <div class="logo">
+                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+            </div>
+            <h1>Inua Solutions</h1>
+            <p>Empowering rural communities through access to essential goods on credit.</p>
+            <div class="info-box orange-border">
+                <h2>Flexible Credit Options</h2>
+                <p>Our platform offers rural households the ability to acquire quality products with flexible repayment plans tailored to their needs.</p>
+            </div>
+            <div class="info-box blue-border">
+                <h2>Transforming Rural Economies</h2>
+                <p>By bridging the gap between rural families and essential goods, we foster economic growth and improve living standards across communities.</p>
+            </div>
         </div>
-
-        <div class="info-box blue-border">
-            <h2>Transforming Rural Economies</h2>
-            <p>By bridging the gap between rural families and essential goods, we foster economic growth and improve living standards across communities.</p>
+        <div class="right-side">
+            <h3>Sign In</h3>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <a href="#" id="forgot-password" class="forgot-password">Forgot Password?</a>
+                <button type="submit" class="login-button">Log In</button>
+            </form>
+            <div class="or-divider">
+                <hr>
+                <span>OR</span>
+                <hr>
+            </div>
+            <p class="signup-text">Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
         </div>
     </div>
-    <div class="right-side">
-        <div class="logo">
-            <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+
+    <!-- Sign Up Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Sign Up</h3>
+            <form id="signup-form">
+                <div class="form-group">
+                    <input type="text" id="signup-name" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="signup-button">Sign Up</button>
+            </form>
         </div>
-        <div id="netlify-modal"></div>
-        <button id="login">Log In</button>
-        <button id="signup">Sign Up</button>
-        <button id="password-reset">Reset Password</button>
     </div>
-</div>
 
-<!-- Footer Section -->
-<footer>
-    <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
-    <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-</footer>
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Reset Password</h3>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <input type="email" id="forgot-password-email" placeholder="Email" required>
+                </div>
+                <button type="submit" class="reset-button">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
 
+    <footer>
+        <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
 
-<script>
-    const netlifyIdentity = window.netlifyIdentity;
-
-    netlifyIdentity.on('init', user => {
-        if (user) {
-            redirectToDashboard(user);
-        }
-    });
-
-    document.getElementById('login').addEventListener('click', () => {
-        netlifyIdentity.open('login');
-    });
-
-    document.getElementById('signup').addEventListener('click', () => {
-        netlifyIdentity.open('signup');
-    });
-
-    document.getElementById('password-reset').addEventListener('click', () => {
-        netlifyIdentity.open('recovery');
-    });
-
-    netlifyIdentity.on('login', user => {
-        saveUserToDatabase(user)
-            .then(() => redirectToDashboard(user))
-            .catch(error => console.error('Error saving user:', error));
-    });
-
-    function saveUserToDatabase(user) {
-        return fetch('/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token.access_token}`
-            },
-            body: JSON.stringify({
-                name: user.user_metadata.full_name,
-                email: user.email,
-                role: user.user_metadata.role || 'customer_service',
-                password: 'placeholder' // Note: Don't send actual passwords; handle this securely on the server
-            })
-        }).then(response => response.json());
-    }
-
-    function redirectToDashboard(user) {
-        localStorage.setItem('jwt', user.token.access_token);
-        localStorage.setItem('userRole', user.user_metadata.role || 'customer_service');
-        localStorage.setItem('userName', user.user_metadata.full_name);
-        localStorage.setItem('userEmail', user.email);
-        window.location.href = 'dashboard.html';
-    }
-</script>
+    <script src="./js/auth.js"></script>
 </body>
 </html>
