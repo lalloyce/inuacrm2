@@ -10,14 +10,15 @@
         <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     </head>
     <body class="dashboard bg-gray-100">
-    <nav>
-        <div class="container">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex items-center justify-between">
             <div class="logo">
-                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
+                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo" class="h-12">
             </div>
-            <ul id="nav-links">
+            <ul id="nav-links" class="flex space-x-4">
                 <li><a href="#" class="nav-link active">Dashboard</a></li>
                 <li><a href="#" class="nav-link">Customer Management</a></li>
                 <li><a href="#" class="nav-link">Sales Management</a></li>
@@ -26,33 +27,24 @@
                 <li><a href="#" class="nav-link">Reports & Analytics</a></li>
                 <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
             </ul>
-            <div class="user-actions">
-                <span id="welcome-message" class="text-white mr-4"></span>
+            <div class="flex items-center space-x-4">
                 <div class="relative">
                     <button id="notificationBell" class="relative focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
                         </svg>
-                        <span id="notificationCount" class="notification-count">0</span>
+                        <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
                     </button>
-                    <div id="notificationsDropdown" class="notifications-dropdown hidden">
-                        <ul id="notificationsList">
-                            <!-- Notifications will be dynamically added here -->
-                        </ul>
-                    </div>
                 </div>
                 <div class="relative">
                     <button id="avatarButton" class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center focus:outline-none">
-                        <span id="avatarPlaceholder">👤</span>
-                        <img id="avatarImage" class="w-full h-full rounded-full hidden" alt="User Avatar">
+                        <span id="avatarPlaceholder" class="text-gray-600">👤</span>
+                        <img id="avatarImage" class="w-full h-full rounded-full hidden object-cover" alt="User Avatar">
                     </button>
-                    <div id="avatarDropdown" class="avatar-dropdown hidden">
-                        <ul>
-                            <li><a href="profile.html">Edit Profile</a></li>
-                            <li><button id="logout">Log Out</button></li>
-                        </ul>
-                    </div>
                 </div>
+                <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none">
+                    Logout
+                </button>
             </div>
         </div>
     </nav>
@@ -63,19 +55,42 @@
         <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
     </main>
 
-    <!-- Role Selection Modal -->
-    <div id="roleSelectionModal" class="modal hidden">
-        <div class="modal-content">
-            <h2>Select Your Role</h2>
-            <p>Please select your role in the organization:</p>
-            <label for="roleSelect">Role:</label>
-            <select id="roleSelect">
-                <option value="customer_service">Customer Service</option>
-                <option value="sales_manager">Sales Manager</option>
-                <option value="group_coordinator">Group Coordinator</option>
-                <option value="management">Management</option>
-            </select>
-            <button id="saveRole">Save Role</button>
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Profile</h3>
+                <div class="mt-2 px-7 py-3">
+                    <form id="profileForm">
+                        <div class="mb-4">
+                            <label for="profileRole" class="block text-gray-700 text-sm font-bold mb-2">Role:</label>
+                            <select id="profileRole" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                <option value="customer_service">Customer Service</option>
+                                <option value="sales_manager">Sales Manager</option>
+                                <option value="group_coordinator">Group Coordinator</option>
+                                <option value="management">Management</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="profileAvatar" class="block text-gray-700 text-sm font-bold mb-2">Avatar:</label>
+                            <input type="file" id="profileAvatar" accept="image/*" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                        <div class="mb-4">
+                            <button type="button" id="resetPassword" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Reset Password
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Save Changes
+                            </button>
+                            <button type="button" id="closeProfileModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -86,36 +101,120 @@
     </footer>
 
     <script>
-        // Utility function to handle errors
-        function handleError(error) {
-            console.error('Error:', error);
-            const statusCode = error.status || 500;
-            const message = error.message || 'An unexpected error occurred';
-
-            // Display error message to user
-            const errorElement = document.createElement('div');
-            errorElement.className = 'error-message';
-            errorElement.textContent = `Error ${statusCode}: ${message}`;
-            document.body.prepend(errorElement);
-
-            // Remove the error message after 5 seconds
-            setTimeout(() => errorElement.remove(), 5000);
+        // Custom error classes
+        class ModalError extends Error {
+            constructor(message) {
+                super(message);
+                this.name = 'ModalError';
+            }
         }
 
-        // Utility function for making API calls
-        async function apiCall(url, options = {}) {
+        class APIError extends Error {
+            constructor(message) {
+                super(message);
+                this.name = 'APIError';
+            }
+        }
+
+        class AuthError extends Error {
+            constructor(message) {
+                super(message);
+                this.name = 'AuthError';
+            }
+        }
+
+        // Function to handle API calls and throw custom errors
+        async function apiCall(url, options) {
             try {
                 const response = await fetch(url, options);
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    return { error: new Error(errorData.error.message || 'API call failed') };
+                    if (response.status === 401) {
+                        throw new AuthError('Authentication failed');
+                    }
+                    throw new APIError('API request failed');
                 }
                 return await response.json();
             } catch (error) {
-                handleError(error);
-                return { error };
+                console.error('API call error:', error);
+                throw error;
             }
         }
+
+        // Function to display modals
+        function showModal(modalId) {
+            try {
+                const modalElement = document.getElementById(modalId);
+                if (!modalElement) {
+                    throw new ModalError(`Modal with id ${modalId} not found`);
+                }
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            } catch (error) {
+                console.error('Modal error:', error);
+                throw error;
+            }
+        }
+
+        // Function to check login status
+        async function checkLoginStatus() {
+            const jwt = localStorage.getItem('jwt');
+            if (!jwt) {
+                throw new AuthError('No JWT token found');
+            }
+
+            try {
+                const response = await apiCall('/api/verify-token', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwt}`
+                    }
+                });
+
+                if (!response.valid) {
+                    throw new AuthError('Token is invalid');
+                }
+            } catch (error) {
+                console.error('Login check failed:', error);
+                localStorage.removeItem('jwt');
+                window.location.href = '/index.html';
+            }
+        }
+
+        // Event listener for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await checkLoginStatus();
+                showModal('myModal');
+                // Other initialization code...
+            } catch (error) {
+                console.error('Initialization error:', error);
+                // Handle the error appropriately, e.g., show an error message to the user
+                alert(error.message);
+            }
+        });
+
+        // Add error handling to other functions like saveRoleToDatabase, etc.
+        async function saveRoleToDatabase(role) {
+            try {
+                const jwt = localStorage.getItem('jwt');
+                const result = await apiCall('/api/update-role', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${jwt}`
+                    },
+                    body: JSON.stringify({ role })
+                });
+                console.log('Role updated successfully:', result);
+                location.reload();
+            } catch (error) {
+                console.error('Error updating role:', error);
+                alert('Failed to update role. Please try again.');
+            }
+        }
+
+        // Import and use the handleError function from there when needed
+        import { handleError } from './middleware/errorHandler.js';
 
         document.addEventListener('DOMContentLoaded', async () => {
             const jwt = localStorage.getItem('jwt');
@@ -135,6 +234,9 @@
             setupAvatarDropdown();
             setupNotifications();
             await checkUserRole(user.id);
+
+            // Set up periodic check for user login status
+            setInterval(checkLoginStatus, 60000); // Check every minute
         });
 
         function parseJwt(token) {
@@ -167,19 +269,17 @@
 
         function setupAvatarDropdown() {
             const avatarButton = document.getElementById('avatarButton');
-            const avatarDropdown = document.getElementById('avatarDropdown');
+            const profileModal = document.getElementById('profileModal');
+            const closeProfileModal = document.getElementById('closeProfileModal');
             const logoutButton = document.getElementById('logout');
 
-            if (avatarButton && avatarDropdown) {
+            if (avatarButton && profileModal) {
                 avatarButton.addEventListener('click', () => {
-                    avatarDropdown.classList.toggle('hidden');
+                    profileModal.classList.remove('hidden');
                 });
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (event) => {
-                    if (!avatarButton.contains(event.target) && !avatarDropdown.contains(event.target)) {
-                        avatarDropdown.classList.add('hidden');
-                    }
+                closeProfileModal.addEventListener('click', () => {
+                    profileModal.classList.add('hidden');
                 });
             }
 
@@ -193,22 +293,16 @@
 
         function setupNotifications() {
             const notificationBell = document.getElementById('notificationBell');
-            const notificationsDropdown = document.getElementById('notificationsDropdown');
-            const notificationsList = document.getElementById('notificationsList');
             const notificationCount = document.getElementById('notificationCount');
 
-            if (notificationBell && notificationsDropdown && notificationsList && notificationCount) {
-                notificationBell.addEventListener('click', () => {
-                    notificationsDropdown.classList.toggle('hidden');
-                    // Reset notification count when opened
-                    notificationCount.textContent = '0';
-                });
+            if (notificationBell && notificationCount) {
+                // Initialize notifications
+                initializeNotifications();
 
-                // Example: Add a mock notification (replace with actual notification logic)
-                const mockNotification = document.createElement('li');
-                mockNotification.textContent = 'You have a new message';
-                notificationsList.appendChild(mockNotification);
-                notificationCount.textContent = '1';
+                notificationBell.addEventListener('click', () => {
+                    // Toggle notification panel
+                    toggleNotificationPanel();
+                });
             }
         }
 
@@ -259,6 +353,43 @@
                 location.reload();
             }
         }
+
+        // Function to check if the user is still logged in
+        async function checkLoginStatus() {
+            const jwt = localStorage.getItem('jwt');
+            if (!jwt) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/verify-token', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${jwt}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token verification failed');
+                }
+
+                const data = await response.json();
+                if (!data.valid) {
+                    throw new Error('Token is invalid');
+                }
+            } catch (error) {
+                console.error('Login check failed:', error);
+                localStorage.removeItem('jwt');
+                window.location.href = '/index.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const modalElement = document.getElementById('myModal');
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+        });
     </script>
     </body>
 </html>
