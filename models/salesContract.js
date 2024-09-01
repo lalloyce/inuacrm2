@@ -1,41 +1,14 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
 
-module.exports = (sequelize) => {
-    const SalesContract = sequelize.define('SalesContract', {
-        productName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        totalAmount: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: false,
-        },
-        installmentAmount: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: false,
-        },
-        installmentFrequency: {
-            type: DataTypes.ENUM('weekly', 'bi-weekly', 'monthly'),
-            allowNull: false,
-        },
-        startDate: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        endDate: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        status: {
-            type: DataTypes.ENUM('active', 'completed', 'defaulted'),
-            allowNull: false,
-        },
-    });
+const salesContractSchema = new mongoose.Schema({
+  customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+  contractDetails: { type: String, required: true },
+  amount: { type: Number, required: true },
+  status: { type: String, enum: ['pending', 'active', 'completed', 'cancelled'], default: 'pending' },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    SalesContract.associate = (models) => {
-        SalesContract.belongsTo(models.Customer);
-        SalesContract.hasMany(models.Payment);
-    };
-
-    return SalesContract;
-};
+module.exports = mongoose.model('SalesContract', salesContractSchema);

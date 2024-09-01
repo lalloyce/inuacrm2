@@ -1,20 +1,13 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
 
-module.exports = (sequelize) => {
-    const Payment = sequelize.define('Payment', {
-        amount: {
-            type: DataTypes.DECIMAL(10, 2),
-            allowNull: false,
-        },
-        paymentDate: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-    });
+const paymentSchema = new mongoose.Schema({
+  salesContract: { type: mongoose.Schema.Types.ObjectId, ref: 'SalesContract', required: true },
+  amount: { type: Number, required: true },
+  paymentDate: { type: Date, required: true },
+  paymentMethod: { type: String, required: true },
+  status: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+});
 
-    Payment.associate = (models) => {
-        Payment.belongsTo(models.SalesContract);
-    };
-
-    return Payment;
-};
+module.exports = mongoose.model('Payment', paymentSchema);

@@ -1,22 +1,14 @@
-const { DataTypes } = require('sequelize');
+const mongoose = require('mongoose');
 
-module.exports = (sequelize) => {
-    const SupportTicket = sequelize.define('SupportTicket', {
-        subject: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        description: DataTypes.TEXT,
-        status: {
-            type: DataTypes.ENUM('open', 'in_progress', 'resolved', 'closed'),
-            allowNull: false,
-        },
-    });
+const supportTicketSchema = new mongoose.Schema({
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+    subject: { type: String, required: true },
+    description: { type: String, required: true },
+    status: { type: String, enum: ['open', 'in-progress', 'closed'], default: 'open' },
+    priority: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
+    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
 
-    SupportTicket.associate = (models) => {
-        SupportTicket.belongsTo(models.Customer);
-        SupportTicket.belongsTo(models.User, { as: 'assignedUser', foreignKey: 'assignedTo' });
-    };
-
-    return SupportTicket;
-};
+module.exports = mongoose.model('SupportTicket', supportTicketSchema);

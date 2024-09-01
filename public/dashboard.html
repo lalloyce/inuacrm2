@@ -11,6 +11,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="./js/notificationComponent.js"></script>
     </head>
     <body class="dashboard bg-gray-100">
     <nav class="bg-white shadow-md">
@@ -53,6 +54,8 @@
         <h2 class="text-2xl font-bold mb-4">Welcome to Inua CRM Dashboard</h2>
         <div id="user-info" class="bg-white shadow rounded-lg p-4 mb-4"></div>
         <div id="role-based-content" class="bg-white shadow rounded-lg p-4 mb-4"></div>
+        <div id="notification-component"></div>
+        <div id="user-approval-modal"></div>
     </main>
 
     <!-- Profile Modal -->
@@ -185,10 +188,10 @@
             try {
                 await checkLoginStatus();
                 showModal('myModal');
-                // Other initialization code...
+                loadNotifications();
+                loadRoleBasedContent();
             } catch (error) {
                 console.error('Initialization error:', error);
-                // Handle the error appropriately, e.g., show an error message to the user
                 alert(error.message);
             }
         });
@@ -216,180 +219,55 @@
         // Import and use the handleError function from there when needed
         import { handleError } from './middleware/errorHandler.js';
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const jwt = localStorage.getItem('jwt');
-            if (!jwt) {
-                window.location.href = '/index.html';
-                return;
-            }
+        async function loadNotifications() {
+            const notificationComponent = document.getElementById('notification-component');
+            notificationComponent.innerHTML = await fetchNotifications();
+        }
 
-            const user = parseJwt(jwt);
-            if (user.error) {
-                handleError(user.error);
-                return;
-            }
+        async function loadRoleBasedContent() {
+            const roleBasedContent = document.getElementById('role-based-content');
+            const userRole = await fetchUserRole();
+            roleBasedContent.innerHTML = getRoleBasedHTML(userRole);
+        }
 
-            displayUserInfo(user);
-            setupNavigation(user.role);
-            setupAvatarDropdown();
-            setupNotifications();
-            await checkUserRole(user.id);
-
-            // Set up periodic check for user login status
-            setInterval(checkLoginStatus, 60000); // Check every minute
-        });
-
-        function parseJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                return JSON.parse(window.atob(base64));
-            } catch (error) {
-                return { error: new Error('Invalid JWT') };
+        function getRoleBasedHTML(role) {
+            switch(role) {
+                case 'admin':
+                    return '<h2>Admin Dashboard</h2><button onclick="showUserApprovalModal()">Approve Users</button>';
+                case 'sales_manager':
+                    return '<h2>Sales Manager Dashboard</h2>';
+                // Add more roles as needed
+                default:
+                    return '<h2>User Dashboard</h2>';
             }
         }
 
-        function displayUserInfo(user) {
-            const userInfoElement = document.getElementById('user-info');
-            if (userInfoElement) {
-                userInfoElement.textContent = `Welcome, ${user.name || 'User'}!`;
-            } else {
-                console.warn('User info element not found');
-            }
+        function showUserApprovalModal(userId) {
+            // Implement modal logic to show pending user approvals
+            // This should include form fields for changing role and approving/rejecting the user
         }
 
-        function setupNavigation(role) {
-            console.log('Setting up navigation for role:', role);
-            // Implement navigation setup based on user role
-            const userManagementLink = document.getElementById('userManagementLink');
-            if (userManagementLink) {
-                userManagementLink.classList.toggle('hidden', role !== 'management');
-            }
-        }
-
-        function setupAvatarDropdown() {
-            const avatarButton = document.getElementById('avatarButton');
-            const profileModal = document.getElementById('profileModal');
-            const closeProfileModal = document.getElementById('closeProfileModal');
-            const logoutButton = document.getElementById('logout');
-
-            if (avatarButton && profileModal) {
-                avatarButton.addEventListener('click', () => {
-                    profileModal.classList.remove('hidden');
-                });
-
-                closeProfileModal.addEventListener('click', () => {
-                    profileModal.classList.add('hidden');
-                });
-            }
-
-            if (logoutButton) {
-                logoutButton.addEventListener('click', () => {
-                    localStorage.removeItem('jwt');
-                    window.location.href = '/index.html';
-                });
-            }
-        }
-
-        function setupNotifications() {
-            const notificationBell = document.getElementById('notificationBell');
-            const notificationCount = document.getElementById('notificationCount');
-
-            if (notificationBell && notificationCount) {
-                // Initialize notifications
-                initializeNotifications();
-
-                notificationBell.addEventListener('click', () => {
-                    // Toggle notification panel
-                    toggleNotificationPanel();
-                });
-            }
-        }
-
-        async function checkUserRole(userId) {
-            const result = await apiCall(`/api/user/${userId}`);
-            if (result.error) {
-                console.error('Error checking user role:', result.error);
-            } else if (!result.role) {
-                showRoleSelectionModal();
-            }
-        }
-
-        function showRoleSelectionModal() {
-            const modal = document.getElementById('roleSelectionModal');
-            const saveButton = document.getElementById('saveRole');
-
-            if (modal && saveButton) {
-                modal.classList.remove('hidden');
-
-                saveButton.addEventListener('click', async () => {
-                    const roleSelect = document.getElementById('roleSelect');
-                    if (roleSelect) {
-                        const selectedRole = roleSelect.value;
-                        await saveRoleToDatabase(selectedRole);
-                        modal.classList.add('hidden');
-                    }
-                });
-            } else {
-                console.warn('Role selection modal elements not found');
-            }
-        }
-
-        async function saveRoleToDatabase(role) {
-            const jwt = localStorage.getItem('jwt');
-            const result = await apiCall('/api/update-role', {
+        function approveUser(userId, approved, role) {
+            // Send approval/rejection to the server
+            fetch('/api/approve-user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${jwt}`
                 },
-                body: JSON.stringify({ role })
+                body: JSON.stringify({ userId, approved, role }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response, e.g., show a success message
+                loadNotifications(); // Refresh notifications
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-            if (result.error) {
-                console.error('Error updating role:', result.error);
-            } else {
-                console.log('Role updated successfully:', result);
-                // Optionally, update the UI or reload the page
-                location.reload();
-            }
         }
 
-        // Function to check if the user is still logged in
-        async function checkLoginStatus() {
-            const jwt = localStorage.getItem('jwt');
-            if (!jwt) {
-                window.location.href = '/index.html';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/verify-token', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${jwt}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Token verification failed');
-                }
-
-                const data = await response.json();
-                if (!data.valid) {
-                    throw new Error('Token is invalid');
-                }
-            } catch (error) {
-                console.error('Login check failed:', error);
-                localStorage.removeItem('jwt');
-                window.location.href = '/index.html';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-          const modalElement = document.getElementById('myModal');
-          const modal = new bootstrap.Modal(modalElement);
-          modal.show();
-        });
+        // Load notifications when the dashboard is loaded
+        document.addEventListener('DOMContentLoaded', loadNotifications);
     </script>
     </body>
 </html>
