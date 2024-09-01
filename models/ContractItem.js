@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Payment = sequelize.define('Payment', {
+const ContractItem = sequelize.define('ContractItem', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,32 +11,31 @@ const Payment = sequelize.define('Payment', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  customer_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  payment_date: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  amount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  payment_type: {
-    type: DataTypes.ENUM('down_payment', 'installment'),
-    allowNull: false,
-  },
-  transaction_id: {
+  item_name: {
     type: DataTypes.STRING(100),
+    allowNull: false,
+  },
+  item_serial_number: {
+    type: DataTypes.STRING(50),
     unique: true,
     allowNull: false,
   },
+  down_payment: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
+  monthly_installment: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
+  total_payment_plan_price: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+  },
 }, {
-  tableName: 'payments',
+  tableName: 'contract_items',
   timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: false,
+  underscored: true,
 });
 
-module.exports = Payment;
+module.exports = ContractItem;

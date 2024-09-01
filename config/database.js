@@ -7,6 +7,12 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
             rejectUnauthorized: false,
         },
     },
+    define: {
+        underscored: true,
+        timestamps: true,
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+    },
 });
 
 module.exports = sequelize;

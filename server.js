@@ -18,23 +18,21 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Database connection
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-};
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
+  logging: false // set to console.log to see the raw SQL queries
+});
 
-let pool;
-
+// Test the connection
 (async () => {
-    try {
-        pool = await mysql.createPool(dbConfig);
-        console.log('Database connected successfully');
-    } catch (error) {
-        console.error('Database connection failed:', error);
-        process.exit(1);
-    }
+  try {
+    await sequelize.authenticate();
+    console.log('Database connected successfully');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    process.exit(1);
+  }
 })();
 
 // Session store

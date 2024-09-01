@@ -1,42 +1,37 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Payment = sequelize.define('Payment', {
+const CustomerBalance = sequelize.define('CustomerBalance', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  contract_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   customer_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  payment_date: {
-    type: DataTypes.DATE,
+  contract_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
-  amount: {
+  total_amount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  payment_type: {
-    type: DataTypes.ENUM('down_payment', 'installment'),
+  amount_paid: {
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  transaction_id: {
-    type: DataTypes.STRING(100),
-    unique: true,
+  remaining_balance: {
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
 }, {
-  tableName: 'payments',
+  tableName: 'customer_balances',
   timestamps: true,
-  createdAt: 'created_at',
-  updatedAt: false,
+  updatedAt: 'last_updated',
+  underscored: true,
 });
 
-module.exports = Payment;
+module.exports = CustomerBalance;
