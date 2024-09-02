@@ -1,7 +1,20 @@
+/**
+ * Error handling middleware for Express.js applications.
+ * Logs the error stack trace and sends a JSON response with the error message and status code.
+ * Handles specific errors for dashboard.html and index.html pages, as well as modal z-index issues.
+ *
+ * @param {Object} err - The error object.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ */
 export const errorHandler = (err, req, res, next) => {
+    // Log the error stack trace to the console
     console.error(err.stack);
 
+    // Set the status code to the error's status code or default to 500 (Internal Server Error)
     const statusCode = err.statusCode || 500;
+    // Set the error message to the error's message or default to 'Internal Server Error'
     let message = err.message || 'Internal Server Error';
 
     // Check if the error is from the dashboard.html or index.html file
@@ -42,6 +55,7 @@ export const errorHandler = (err, req, res, next) => {
         }
     }
 
+    // Send the error response as JSON
     res.status(statusCode).json({
         error: {
             message: message,

@@ -46,6 +46,7 @@ app.use(session({
 
 const sequelize = require('./config/database');
 const User = require('./models/User');
+const Notification = require('./models/Notification');
 
 const sendEmail = async (to, subject, text) => {
     let transporter = nodemailer.createTransport({
@@ -152,4 +153,21 @@ sequelize.authenticate().then(() => {
     });
 }).catch(err => {
     console.error('Unable to connect to the database:', err);
+});
+
+// Example implementation of /api/notifications endpoint
+app.get('/api/notifications', async (req, res) => {
+    try {
+        // Fetch notifications from the database
+        const notifications = await Notification.findAll();
+
+        if (notifications.length === 0) {
+            return res.json({ notifications: [], message: 'No notifications found' });
+        }
+
+        res.json({ notifications });
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ error: 'Internal server error', details: error.message });
+    }
 });
