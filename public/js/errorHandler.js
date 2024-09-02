@@ -8,7 +8,7 @@
  * @param {Object} res - The response object.
  * @param {Function} next - The next middleware function.
  */
-export const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => {
     // Log the error stack trace to the console
     console.error(err.stack);
 
@@ -63,3 +63,5 @@ export const errorHandler = (err, req, res, next) => {
         }
     });
 };
+
+module.exports = { errorHandler };

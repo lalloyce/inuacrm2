@@ -13,16 +13,25 @@ const errorHandler = require('./public/js/errorHandler').errorHandler;
 const bodyParser = require('body-parser');
 const authMiddleware = require('./middleware/auth');
 const url = require('url');
+const jwt = require('jsonwebtoken');
 
+// Load environment variables from .env file
 dotenv.config();
 
+// Initialize Express app
 const app = express();
+
+// Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse DATABASE_URL from .env
 const dbUrl = new URL(process.env.DATABASE_URL);
+
+// Configure session store using MySQL
 const sessionStore = new MySQLStore({
     host: dbUrl.hostname,
     port: dbUrl.port,
@@ -31,6 +40,7 @@ const sessionStore = new MySQLStore({
     database: dbUrl.pathname.substr(1) // Remove the leading slash
 });
 
+// Configure session middleware
 app.use(session({
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
@@ -44,10 +54,12 @@ app.use(session({
     }
 }));
 
+// Import Sequelize instance and models
 const sequelize = require('./config/database');
 const User = require('./models/User');
 const Notification = require('./models/Notification');
 
+// Function to send email using nodemailer
 const sendEmail = async (to, subject, text) => {
     let transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
@@ -73,14 +85,22 @@ const sendEmail = async (to, subject, text) => {
     }
 };
 
-// Routes
+// Route to handle user login
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ where: { email } });
         if (user && bcrypt.compareSync(password, user.password)) {
-            req.session.userId = user.id;
-            res.json({ message: 'Login successful' });
+            // Generate JWT token
+            const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            console.log('Generated JWT Token:', token);
+
+            // Update last login time and increment login count
+            user.last_login = new Date();
+            user.login_count += 1;
+            await user.save();
+
+            res.json({ message: 'Login successful', token });
         } else {
             res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -90,6 +110,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Route to handle user signup
 app.post('/api/signup', async (req, res) => {
     try {
         const { email, password, full_name, role } = req.body;
@@ -102,6 +123,7 @@ app.post('/api/signup', async (req, res) => {
     }
 });
 
+// Route to handle forgot password
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
@@ -155,7 +177,7 @@ sequelize.authenticate().then(() => {
     console.error('Unable to connect to the database:', err);
 });
 
-// Example implementation of /api/notifications endpoint
+// Route to fetch notifications
 app.get('/api/notifications', async (req, res) => {
     try {
         // Fetch notifications from the database
