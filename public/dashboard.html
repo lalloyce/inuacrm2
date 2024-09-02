@@ -18,8 +18,97 @@
         <!-- Import custom JavaScript modules -->
         <script src="./js/notificationComponent.js"></script>
         <script type="module">
-            const { errorHandler } = require('./js/errorHandler.js');
-            // Your other JavaScript code here
+            // Custom error classes
+            class ModalError extends Error {
+                constructor(message) {
+                    super(message);
+                    this.name = 'ModalError';
+                }
+            }
+
+            class APIError extends Error {
+                constructor(message) {
+                    super(message);
+                    this.name = 'APIError';
+                }
+            }
+
+            class AuthError extends Error {
+                constructor(message) {
+                    super(message);
+                    this.name = 'AuthError';
+                }
+            }
+
+            // Function to handle API calls and throw custom errors
+            async function apiCall(url, options) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            throw new AuthError('Authentication failed');
+                        }
+                        throw new APIError('API request failed');
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('API call error:', error);
+                    throw error;
+                }
+            }
+
+            // Function to display modals
+            function showModal(modalId) {
+                try {
+                    const modalElement = document.getElementById(modalId);
+                    if (!modalElement) {
+                        throw new ModalError(`Modal with id ${modalId} not found`);
+                    }
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                } catch (error) {
+                    console.error('Modal error:', error);
+                    throw error;
+                }
+            }
+
+            // Function to check login status
+            async function checkLoginStatus() {
+                const jwt = localStorage.getItem('jwt');
+                if (!jwt) {
+                    window.location.href = '/index.html';
+                    throw new AuthError('No JWT token found');
+                }
+
+                try {
+                    const response = await apiCall('/api/verify-token', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${jwt}`
+                        }
+                    });
+
+                    if (!response.valid) {
+                        throw new AuthError('Token is invalid');
+                    }
+                } catch (error) {
+                    console.error('Login check failed:', error);
+                    localStorage.removeItem('jwt');
+                    window.location.href = '/index.html';
+                }
+            }
+
+            // Initialization code
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    await checkLoginStatus();
+                    // Add your initialization code here
+                    console.log('Initialization successful');
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    alert('Initialization failed: ' + error.message);
+                }
+            });
         </script>
     </head>
     <body class="dashboard bg-gray-100">
