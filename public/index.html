@@ -10,68 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-    <script>
-        // Custom error classes
-        class LoginError extends Error {
-            constructor(message) {
-                super(message);
-                this.name = 'LoginError';
-            }
-        }
-
-        class SignupError extends Error {
-            constructor(message) {
-                super(message);
-                this.name = 'SignupError';
-            }
-        }
-
-        class ForgotPasswordError extends Error {
-            constructor(message) {
-                super(message);
-                this.name = 'ForgotPasswordError';
-            }
-        }
-
-        // Function to handle form submissions
-        function handleSubmit(formId, endpoint) {
-            const form = document.getElementById(formId);
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(form);
-                try {
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        switch(formId) {
-                            case 'login-form':
-                                throw new LoginError(errorData.message);
-                            case 'signup-form':
-                                throw new SignupError(errorData.message);
-                            case 'forgot-password-form':
-                                throw new ForgotPasswordError(errorData.message);
-                        }
-                    }
-                    // Handle successful response
-                    console.log('Success:', await response.json());
-                } catch (error) {
-                    // This will be caught by our errorHandler middleware
-                    console.error('Error:', error);
-                    alert(error.message);
-                }
-            });
-        }
-
-        // Initialize form handlers when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            handleSubmit('login-form', '/api/login');
-            handleSubmit('signup-form', '/api/signup');
-            handleSubmit('forgot-password-form', '/api/forgot-password');
-        });
-    </script>
+    <script src="./js/auth.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -159,7 +98,5 @@
         <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
         <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
-
-    <script src="./js/auth.js"></script>
 </body>
 </html>

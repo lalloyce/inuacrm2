@@ -6,42 +6,31 @@ const MySQLStore = require('express-mysql-session')(session);
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const FormData = require('form-data');
-const Mailgun = require('mailgun.js');
 const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
 const errorHandler = require('./middleware/errorHandler');
+const bodyParser = require('body-parser');
+const authMiddleware = require('./middleware/auth');
+const url = require('url');
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Database connection
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql',
-  logging: false // set to console.log to see the raw SQL queries
+// Parse DATABASE_URL from .env
+const dbUrl = new URL(process.env.DATABASE_URL);
+const sessionStore = new MySQLStore({
+    host: dbUrl.hostname,
+    port: dbUrl.port,
+    user: dbUrl.username,
+    password: decodeURIComponent(dbUrl.password),
+    database: dbUrl.pathname.substr(1) // Remove the leading slash
 });
 
-// Test the connection
-(async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('Database connected successfully');
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    process.exit(1);
-  }
-})();
-
-// Session store
-const sessionStore = new MySQLStore(dbConfig);
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 app.use(session({
     key: 'session_cookie_name',
     secret: 'session_cookie_secret',
@@ -51,131 +40,112 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }));
 
-// Mailgun configuration
-const mailgun = new Mailgun(FormData);
-const mg = mailgun.client({
-    username: 'api',
-    key: process.env.MAILGUN_API_KEY
-});
+const sequelize = require('./config/database');
+const User = require('./models/User');
 
-// Email sending function
-async function sendEmail(to, subject, text) {
-    const data = {
-        from: process.env.EMAIL_FROM,
-        to: to,
-        subject: subject,
-        text: text,
-        html: `<h1>${text}</h1>`
-    };
+const sendEmail = async (to, subject, text) => {
+    let transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: true, // true for 465, false for other ports
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD
+        }
+    });
 
     try {
-        const result = await mg.messages.create(process.env.MAILGUN_DOMAIN, data);
-        console.log('Email sent successfully:', result);
+        let info = await transporter.sendMail({
+            from: `"Inua CRM" <${process.env.SMTP_USER}>`, // sender address
+            to: to, // list of receivers
+            subject: subject, // Subject line
+            text: text, // plain text body
+        });
+
+        console.log('Email sent:', info);
     } catch (error) {
-        console.error('Failed to send email:', error);
-        throw error;
+        console.error('Error sending email:', error);
     }
-}
-
-// File upload configuration
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/avatars');
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ storage: storage });
+};
 
 // Routes
-app.post('/api/register', async (req, res, next) => {
-    try {
-        const { email, password, full_name, role } = req.body;
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-
-        const [result] = await pool.query(
-            'INSERT INTO users (email, password, full_name, role, verification_token) VALUES (?, ?, ?, ?, ?)',
-            [email, hashedPassword, full_name, role, verificationToken]
-        );
-
-        const verificationLink = `${process.env.BASE_URL}/verify?token=${verificationToken}`;
-        await sendEmail(email, 'Verify your email', `Please click this link to verify your email: ${verificationLink}`);
-
-        res.status(201).json({ message: 'User registered. Please check your email to verify your account.' });
-    } catch (error) {
-        next(error); // Pass the error to the error handler
-    }
-});
-
-app.post('/api/login', async (req, res, next) => {
+app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-
-        if (rows.length === 0) {
-            return res.status(401).json({ error: 'Invalid credentials' });
+        const user = await User.findOne({ where: { email } });
+        if (user && bcrypt.compareSync(password, user.password)) {
+            req.session.userId = user.id;
+            res.json({ message: 'Login successful' });
+        } else {
+            res.status(401).json({ error: 'Invalid email or password' });
         }
-
-        const user = rows[0];
-
-        if (!user.is_verified) {
-            return res.status(401).json({ error: 'Please verify your email before logging in' });
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        req.session.userId = user.id;
-        req.session.userRole = user.role;
-
-        res.json({ message: 'Login successful', role: user.role });
     } catch (error) {
-        next(error); // Pass the error to the error handler
+        console.error('Login Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-app.post('/api/forgot-password', async (req, res, next) => {
+app.post('/api/signup', async (req, res) => {
+    try {
+        const { email, password, full_name, role } = req.body;
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        const user = await User.create({ email, password: hashedPassword, full_name, role });
+        res.status(201).json({ message: 'User registered successfully', user });
+    } catch (error) {
+        console.error('Validation Error:', error);
+        res.status(400).json({ error: error.message });
+    }
+});
+
+app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
-
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        const resetTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
-
-        const [result] = await pool.query(
-            'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?',
-            [resetToken, resetTokenExpires, email]
-        );
-
-        if (result.affectedRows === 0) {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.reset_token = resetToken;
+        user.reset_token_expires = Date.now() + 3600000; // 1 hour
+        await user.save();
 
-        const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
-        await sendEmail(email, 'Reset your password', `Please click this link to reset your password: ${resetLink}`);
+        // Send email with reset token
+        await sendEmail(user.email, 'Password Reset', `Your password reset token is: ${resetToken}`);
 
         res.json({ message: 'Password reset email sent' });
     } catch (error) {
-        next(error); // Pass the error to the error handler
+        res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+// Route to test database connection
+app.get('/api/test-db', async (req, res) => {
+    try {
+        await sequelize.authenticate();
+        res.json({ message: 'Database connection has been established successfully.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to connect to the database:', details: error.message });
+    }
+});
+
+// Default route to serve the index.html file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Protected route example
+app.get('/api/protected-route', authMiddleware, (req, res) => {
+    res.json({ message: 'This is a protected route' });
 });
 
 // Error handling middleware
 app.use(errorHandler);
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });

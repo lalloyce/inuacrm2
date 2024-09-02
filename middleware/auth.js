@@ -1,19 +1,19 @@
 const { User } = require('../models');
-const { isAuthenticated, getCurrentUser } = require('../utils/auth');
 
 const authMiddleware = async (req, res, next) => {
     try {
-        if (!isAuthenticated()) {
+        // Check if the session has a user ID
+        if (!req.session.userId) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const goTrueUser = getCurrentUser();
-        const user = await User.findOne({ where: { email: goTrueUser.email } });
-
+        // Find the user based on the session user ID
+        const user = await User.findOne({ where: { id: req.session.userId } });
         if (!user) {
             return res.status(401).json({ message: 'User not found in database' });
         }
 
+        // Attach the user to the request object
         req.user = user;
         next();
     } catch (error) {

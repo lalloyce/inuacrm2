@@ -13,7 +13,9 @@ CREATE TABLE users (
     reset_token_expires DATETIME,
     avatar VARCHAR(255),
     last_login DATETIME,
-    login_count INT DEFAULT 0
+    login_count INT DEFAULT 0,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE sessions (
