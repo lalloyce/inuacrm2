@@ -14,6 +14,8 @@ const bodyParser = require('body-parser');
 const authMiddleware = require('./middleware/auth');
 const url = require('url');
 const jwt = require('jsonwebtoken');
+const { Sequelize } = require('sequelize');
+const moment = require('moment-timezone');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -55,7 +57,15 @@ app.use(session({
 }));
 
 // Import Sequelize instance and models
-const sequelize = require('./config/database');
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'mysql',
+    timezone: '+03:00', // Set the timezone to UTC+3
+    logging: false,
+    define: {
+        timestamps: true,
+        underscored: true,
+    },
+});
 const User = require('./models/User');
 const Notification = require('./models/Notification');
 
@@ -91,21 +101,13 @@ app.post('/api/login', async (req, res) => {
         const { email, password } = req.body;
         const user = await User.findOne({ where: { email } });
         if (user && bcrypt.compareSync(password, user.password)) {
-            // Generate JWT token
             const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            console.log('Generated JWT Token:', token);
-
-            // Update last login time and increment login count
-            user.last_login = new Date();
-            user.login_count += 1;
-            await user.save();
-
             res.json({ message: 'Login successful', token });
         } else {
             res.status(401).json({ error: 'Invalid email or password' });
         }
     } catch (error) {
-        console.error('Login Error:', error);
+        console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -133,7 +135,7 @@ app.post('/api/forgot-password', async (req, res) => {
         }
         const resetToken = crypto.randomBytes(32).toString('hex');
         user.reset_token = resetToken;
-        user.reset_token_expires = Date.now() + 3600000; // 1 hour
+        user.reset_token_expires = moment().add(1, 'hour').tz('Africa/Nairobi').format(); // 1 hour
         await user.save();
 
         // Send email with reset token
@@ -180,16 +182,131 @@ sequelize.authenticate().then(() => {
 // Route to fetch notifications
 app.get('/api/notifications', async (req, res) => {
     try {
-        // Fetch notifications from the database
         const notifications = await Notification.findAll();
-
-        if (notifications.length === 0) {
-            return res.json({ notifications: [], message: 'No notifications found' });
-        }
-
-        res.json({ notifications });
+        res.json(notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+// Route to verify JWT token
+app.get('/api/verify-token', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ valid: false, error: 'No token provided' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ valid: false, error: 'Failed to authenticate token' });
+        }
+        res.json({ valid: true });
+    });
+});
+
+// Route to fetch all users
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.findAll();
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to fetch all groups
+app.get('/api/groups', async (req, res) => {
+    try {
+        const groups = await Group.findAll();
+        res.json(groups);
+    } catch (error) {
+        console.error('Error fetching groups:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to get user role
+app.get('/api/user-role', authMiddleware, (req, res) => {
+    res.json({ role: req.user.role });
+});
+
+// Route to get users by role
+app.get('/api/users-by-role', authMiddleware, async (req, res) => {
+    try {
+        const users = await User.findAll({
+            attributes: ['role', [sequelize.fn('COUNT', sequelize.col('role')), 'count']],
+            group: ['role']
+        });
+        res.json({
+            roles: users.map(user => user.role),
+            counts: users.map(user => user.get('count'))
+        });
+    } catch (error) {
+        console.error('Error fetching users by role:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to get groups count
+app.get('/api/groups-count', authMiddleware, async (req, res) => {
+    try {
+        const count = await Group.count();
+        res.json({ count });
+    } catch (error) {
+        console.error('Error fetching groups count:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to get tickets by status
+app.get('/api/tickets-by-status', authMiddleware, async (req, res) => {
+    try {
+        const tickets = await Ticket.findAll({
+            attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
+            group: ['status']
+        });
+        res.json({
+            statuses: tickets.map(ticket => ticket.status),
+            counts: tickets.map(ticket => ticket.get('count'))
+        });
+    } catch (error) {
+        console.error('Error fetching tickets by status:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to get deals by status
+app.get('/api/deals-by-status', authMiddleware, async (req, res) => {
+    try {
+        const deals = await Deal.findAll({
+            attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
+            group: ['status']
+        });
+        res.json({
+            statuses: deals.map(deal => deal.status),
+            counts: deals.map(deal => deal.get('count'))
+        });
+    } catch (error) {
+        console.error('Error fetching deals by status:', error);
+    }
+});
+
+// Route to fetch audit logs
+app.get('/api/audit-logs', authMiddleware, async (req, res) => {
+    try {
+        const auditLogs = await AuditLog.findAll();
+        res.json(auditLogs);
+    } catch (error) {
+        console.error('Error fetching audit logs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Apply the audit middleware to all routes
+const auditMiddleware = require('./middleware/audit');
+app.use(auditMiddleware);
+
+// Existing routes and middleware
+// ...
