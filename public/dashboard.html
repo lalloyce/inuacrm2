@@ -18,7 +18,7 @@
         <!-- Import custom JavaScript modules -->
         <script src="./js/notificationComponent.js"></script>
         <script type="module">
-            import { errorHandler } from './js/errorHandler.js';
+            const { errorHandler } = require('./js/errorHandler.js');
             // Your other JavaScript code here
         </script>
     </head>
@@ -243,9 +243,6 @@
                 alert('Failed to update role. Please try again.');
             }
         }
-
-        // Import and use the handleError function from there when needed
-        import { errorHandler } from './js/errorHandler.js';
 
         // Function to fetch notifications
         async function fetchNotifications() {
