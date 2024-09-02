@@ -19,22 +19,114 @@ function showCreateCustomerForm() {
     content.innerHTML = `
         <h2>Create New Customer</h2>
         <form id="createCustomerForm">
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" class="form-control" required>
+            <div class="form-page" id="page1">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="middleName">Middle Name</label>
+                    <input type="text" id="middleName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="nationalIdNumber">National ID Number</label>
+                    <input type="text" id="nationalIdNumber" class="form-control" required>
+                </div>
+                <button type="button" onclick="showPage(2)">Next</button>
             </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" required>
+            <div class="form-page" id="page2" style="display:none;">
+                <div class="form-group">
+                    <label for="mpesaMobileNumber">Mpesa Mobile Number</label>
+                    <input type="text" id="mpesaMobileNumber" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="alternativeMobileNumber">Alternative Mobile Number</label>
+                    <input type="text" id="alternativeMobileNumber" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" class="form-control" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" class="form-control" required>
+                </div>
+                <button type="button" onclick="showPage(1)">Previous</button>
+                <button type="button" onclick="showPage(3)">Next</button>
             </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" required>
+            <div class="form-page" id="page3" style="display:none;">
+                <div class="form-group">
+                    <label for="village">Village</label>
+                    <input type="text" id="village" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="subLocation">Sub Location</label>
+                    <input type="text" id="subLocation" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="ward">Ward</label>
+                    <input type="text" id="ward" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="subCounty">Sub County</label>
+                    <input type="text" id="subCounty" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="countySearch">Search County</label>
+                    <input type="text" id="countySearch" class="form-control" onkeyup="filterCounties()">
+                </div>
+                <div class="form-group">
+                    <label for="county">County</label>
+                    <select id="county" class="form-control" required>
+                        <!-- Counties will be populated here -->
+                    </select>
+                </div>
+                <button type="button" onclick="showPage(2)">Previous</button>
+                <button type="submit" class="btn btn-primary">Create</button>
             </div>
-            <button type="submit" class="btn btn-primary">Create</button>
         </form>
     `;
+    populateCounties();
     document.getElementById('createCustomerForm').addEventListener('submit', createCustomer);
+}
+
+function showPage(pageNumber) {
+    document.querySelectorAll('.form-page').forEach(page => page.style.display = 'none');
+    document.getElementById(`page${pageNumber}`).style.display = 'block';
+}
+
+function populateCounties() {
+    const counties = ["Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita/Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo/Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira", "Nairobi City"];
+    const countySelect = document.getElementById('county');
+    counties.forEach(county => {
+        const option = document.createElement('option');
+        option.value = county;
+        option.textContent = county;
+        countySelect.appendChild(option);
+    });
+}
+
+function filterCounties() {
+    const input = document.getElementById('countySearch');
+    const filter = input.value.toUpperCase();
+    const select = document.getElementById('county');
+    const options = select.getElementsByTagName('option');
+    for (let i = 0; i < options.length; i++) {
+        const txtValue = options[i].textContent || options[i].innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            options[i].style.display = "";
+        } else {
+            options[i].style.display = "none";
+        }
+    }
 }
 
 function showCreateGroupForm() {
@@ -83,17 +175,69 @@ async function loadGroups() {
 
 async function createCustomer(event) {
     event.preventDefault();
-    const fullName = document.getElementById('fullName').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
+    const firstName = document.getElementById('firstName').value;
+    const middleName = document.getElementById('middleName').value;
+    const lastName = document.getElementById('lastName').value;
+    const nationalIdNumber = document.getElementById('nationalIdNumber').value;
+    const mpesaMobileNumber = document.getElementById('mpesaMobileNumber').value;
+    const alternativeMobileNumber = document.getElementById('alternativeMobileNumber').value;
+    const gender = document.getElementById('gender').value;
+    const dateOfBirth = document.getElementById('dateOfBirth').value;
+    const village = document.getElementById('village').value;
+    const subLocation = document.getElementById('subLocation').value;
+    const ward = document.getElementById('ward').value;
+    const subCounty = document.getElementById('subCounty').value;
+    const county = document.getElementById('county').value;
 
-    await apiCall('/api/customers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: fullName, email, phone })
-    });
+    // Validate phone numbers
+    const phoneRegex = /^0\d{9}$/;
+    if (!phoneRegex.test(mpesaMobileNumber) || !phoneRegex.test(alternativeMobileNumber)) {
+        alert('Phone numbers must be 10 digits and start with 0');
+        return;
+    }
 
-    showCustomerList();
+    if (mpesaMobileNumber === alternativeMobileNumber) {
+        alert('Mpesa mobile number and alternative mobile number cannot be the same');
+        return;
+    }
+
+    // Validate national ID number
+    const idRegex = /^\d{8}$/;
+    if (!idRegex.test(nationalIdNumber)) {
+        alert('National ID number must be 8 digits');
+        return;
+    }
+
+    try {
+        const response = await apiCall('/api/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                first_name: firstName,
+                middle_name: middleName,
+                last_name: lastName,
+                national_id_number: nationalIdNumber,
+                mpesa_mobile_number: mpesaMobileNumber,
+                alternative_mobile_number: alternativeMobileNumber,
+                gender,
+                date_of_birth: dateOfBirth,
+                village,
+                sub_location: subLocation,
+                ward,
+                sub_county: subCounty,
+                county
+            })
+        });
+
+        if (response.error) {
+            alert(response.error);
+        } else {
+            showCustomerList();
+        }
+    } catch (error) {
+        console.error('Error creating customer:', error);
+        alert('An error occurred while creating the customer');
+    }
 }
 
 async function createGroup(event) {
