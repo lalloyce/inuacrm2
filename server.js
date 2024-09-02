@@ -1,3 +1,4 @@
+// Import required modules
 const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
@@ -11,7 +12,7 @@ const path = require('path');
 const multer = require('multer');
 const errorHandler = require('./public/js/errorHandler').errorHandler;
 const bodyParser = require('body-parser');
-const authMiddleware = require('./middleware/auth');
+const { authMiddleware, roleMiddleware } = require('./middleware/auth');
 const url = require('url');
 const jwt = require('jsonwebtoken');
 const { Sequelize } = require('sequelize');
@@ -59,7 +60,7 @@ app.use(session({
 // Import Sequelize instance and models
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'mysql',
-    timezone: '+03:00', // Set the timezone to UTC+3
+    timezone: 'Africa/Nairobi', // Set the timezone to UTC+3
     logging: false,
     define: {
         timestamps: true,
@@ -68,6 +69,9 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 const User = require('./models/User');
 const Notification = require('./models/Notification');
+const Customer = require('./models/Customer');
+const Group = require('./models/Group');
+const AuditLog = require('./models/AuditLog');
 
 // Function to send email using nodemailer
 const sendEmail = async (to, subject, text) => {
@@ -217,10 +221,16 @@ app.get('/api/users', async (req, res) => {
 });
 
 // Route to fetch all groups
-app.get('/api/groups', async (req, res) => {
+app.get('/api/groups', authMiddleware, async (req, res) => {
     try {
-        const groups = await Group.findAll();
-        res.json(groups);
+        const groups = await Group.findAll({
+            include: [{ model: User, as: 'leader' }]
+        });
+        res.json(groups.map(group => ({
+            id: group.id,
+            name: group.name,
+            leader_name: group.leader.full_name
+        })));
     } catch (error) {
         console.error('Error fetching groups:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -290,6 +300,7 @@ app.get('/api/deals-by-status', authMiddleware, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching deals by status:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -308,5 +319,59 @@ app.get('/api/audit-logs', authMiddleware, async (req, res) => {
 const auditMiddleware = require('./middleware/audit');
 app.use(auditMiddleware);
 
-// Existing routes and middleware
-// ...
+// Route to get all customers
+app.get('/api/customers', authMiddleware, async (req, res) => {
+    try {
+        const customers = await Customer.findAll();
+        res.json(customers);
+    } catch (error) {
+        console.error('Error fetching customers:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to create a new customer
+app.post('/api/customers', authMiddleware, async (req, res) => {
+    try {
+        const { full_name, email, phone } = req.body;
+        const customer = await Customer.create({ full_name, email, phone });
+        res.status(201).json(customer);
+    } catch (error) {
+        console.error('Error creating customer:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to create a new group
+app.post('/api/groups', authMiddleware, async (req, res) => {
+    try {
+        const { name, leaderId } = req.body;
+        const group = await Group.create({ name, leaderId });
+
+        // Send notification
+        await Notification.create({
+            message: `New group "${name}" created and needs approval.`,
+            userId: leaderId, // Assuming leaderId is the group coordinator's boss
+        });
+
+        // Send email
+        const leader = await User.findByPk(leaderId);
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: leader.email,
+            subject: 'New Group Created',
+            text: `A new group "${name}" has been created and needs your approval.`,
+        };
+        await transporter.sendMail(mailOptions);
+
+        res.status(201).json(group);
+    } catch (error) {
+        console.error('Error creating group:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Example of using roleMiddleware
+app.get('/api/admin-route', authMiddleware, roleMiddleware(['admin']), (req, res) => {
+    res.json({ message: 'This is an admin route' });
+});

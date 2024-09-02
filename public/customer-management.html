@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management - Inua CRM</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="./js/customer-management.js" defer></script>
+</head>
+<body class="customer-management bg-gray-100">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+            <div class="logo">
+                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo" class="h-12">
+            </div>
+            <ul id="nav-links" class="flex space-x-4">
+                <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                <li><a href="customer-management.html" class="nav-link active">Customer Management</a></li>
+                <li><a href="#" class="nav-link">Sales Management</a></li>
+                <li><a href="#" class="nav-link">Payment Tracking</a></li>
+                <li><a href="#" class="nav-link">Support Tickets</a></li>
+                <li><a href="#" class="nav-link">Reports & Analytics</a></li>
+                <li id="userManagementLink" class="hidden"><a href="#" class="nav-link">User Management</a></li>
+            </ul>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationBell" class="relative focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11c0-2.21-1.343-4.21-3.268-5.015A4.997 4.997 0 0012 2a4.997 4.997 0 00-2.732 3.985C6.343 6.79 5 8.79 5 11v3.159c0 .538-.214 1.052-.595 1.437L3 17h5m6 0a3 3 0 01-6 0m6 0H9" />
+                        </svg>
+                        <span id="notificationCount" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+                <div class="relative">
+                    <button id="avatarButton" class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center focus:outline-none">
+                        <span id="avatarPlaceholder" class="text-gray-600"></span>
+                        <img id="avatarImage" class="w-full h-full rounded-full hidden object-cover" alt="User Avatar">
+                    </button>
+                </div>
+                <button id="logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 focus:outline-none">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-8 px-4 flex">
+        <!-- Vertical Navigation Bar -->
+        <nav class="bg-white shadow-md p-4 w-1/4">
+            <ul class="space-y-4">
+                <li>
+                    <a href="#" class="nav-link" onclick="showCreateCustomerForm()">Create Customer</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" onclick="showCreateGroupForm()">Create Group</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" onclick="showCustomerList()">Customer List</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" onclick="showGroupList()">Group List</a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link" onclick="showCreateTicketForm()">Create Ticket</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="bg-white shadow rounded-lg p-4 w-3/4 ml-4" id="customer-management-content">
+            <!-- Content will be dynamically loaded here -->
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+</body>
+</html>
