@@ -146,6 +146,10 @@ app.get('/api/protected-route', authMiddleware, (req, res) => {
 app.use(errorHandler);
 
 // Start the server
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 3000}`);
+sequelize.authenticate().then(() => {
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Server is running on port ${process.env.PORT || 3000}`);
+    });
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
 });
