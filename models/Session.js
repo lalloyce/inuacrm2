@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const Session = sequelize.define('Session', {
-  id: {
+  session_id: {
     type: DataTypes.STRING(255),
     primaryKey: true,
   },
@@ -13,6 +13,10 @@ const Session = sequelize.define('Session', {
   expires: {
     type: DataTypes.DATE,
     allowNull: false,
+  },
+  data: {
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
 }, {
   tableName: 'sessions',

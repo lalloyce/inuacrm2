@@ -22,6 +22,7 @@ CREATE TABLE sessions (
     id VARCHAR(255) PRIMARY KEY,
     user_id INT NOT NULL,
     expires DATETIME NOT NULL,
+    data TEXT COLLATE utf8mb4_bin,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
