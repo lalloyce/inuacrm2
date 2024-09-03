@@ -53,9 +53,6 @@ function showCreateCustomerForm() {
                     <label for="nationalIdNumber">National ID Number</label>
                     <input type="text" id="nationalIdNumber" name="nationalIdNumber" class="form-control" required />
                 </div>
-                <button type="button" onclick="showPage(2)">Next</button>
-            </div>
-            <div class="form-page" id="page2" style="display:none;">
                 <div class="form-group">
                     <label for="mpesaMobileNumber">Mpesa Mobile Number</label>
                     <input type="text" id="mpesaMobileNumber" name="mpesaMobileNumber" class="form-control" required />
@@ -76,10 +73,9 @@ function showCreateCustomerForm() {
                     <label for="dateOfBirth">Date of Birth</label>
                     <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required />
                 </div>
-                <button type="button" onclick="showPage(1)">Previous</button>
-                <button type="button" onclick="showPage(3)">Next</button>
+                <button type="button" onclick="showPage(2)">Next</button>
             </div>
-            <div class="form-page" id="page3" style="display:none;">
+            <div class="form-page" id="page2" style="display:none;">
                 <div class="form-group">
                     <label for="village">Village</label>
                     <input type="text" id="village" name="village" class="form-control" />
@@ -101,13 +97,30 @@ function showCreateCustomerForm() {
                     <input type="text" id="county" name="county" class="form-control" required onkeyup="searchCounty(this.value)" />
                     <datalist id="countyList"></datalist>
                 </div>
-                <button type="button" onclick="showPage(2)">Previous</button>
+                <button type="button" onclick="showPage(1)">Previous</button>
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
         </form>
     `;
     populateCounties();
     document.getElementById('createCustomerForm').addEventListener('submit', createCustomer);
+    
+    // Add event listeners to check for duplicate phone numbers
+    document.getElementById('mpesaMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
+    document.getElementById('alternativeMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
+}
+
+/**
+ * Checks if the Mpesa mobile number and alternative number are the same
+ */
+function checkDuplicatePhoneNumbers() {
+    const mpesaNumber = document.getElementById('mpesaMobileNumber').value;
+    const alternativeNumber = document.getElementById('alternativeMobileNumber').value;
+    
+    if (mpesaNumber && alternativeNumber && mpesaNumber === alternativeNumber) {
+        alert('The Mpesa mobile number and alternative number cannot be the same.');
+        document.getElementById('alternativeMobileNumber').value = '';
+    }
 }
 
 /**
