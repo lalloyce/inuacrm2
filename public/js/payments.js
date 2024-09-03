@@ -33,7 +33,12 @@ async function handleRepayment() {
 }
 
 async function fetchCustomerDetails(customerId) {
-    const response = await fetch(`/api/customers/${customerId}`);
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/customers/${customerId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
     if (!response.ok) {
         throw new Error('Failed to fetch customer details');
     }
@@ -55,10 +60,12 @@ function displayCustomerDetails(customer) {
 }
 
 async function processRepayment(customerId, amount, transactionNumber) {
+    const token = localStorage.getItem('token');
     const response = await fetch('/api/repayments', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             customerId,
