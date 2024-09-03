@@ -1,0 +1,90 @@
+├── .DS_Store
+├── .env
+├── .gitignore
+├── .idea
+│   ├── .gitignore
+│   ├── inuacrm2.iml
+│   ├── jsLibraryMappings.xml
+│   ├── modules.xml
+│   ├── vcs.xml
+│   └── workspace.xml
+├── .sequelizerc
+├── README.md
+├── config
+│   ├── config.json
+│   └── database.js
+├── controllers
+├── database.sql
+├── inuacrm.code-workspace
+├── middleware
+│   ├── audit.js
+│   ├── auth.js
+│   └── errorHandler.js
+├── migrations
+│   └── 20240903115224-add-created-by-to-customers-and-groups.js
+├── models
+│   ├── AuditLog.js
+│   ├── ContractItem.js
+│   ├── Customer.js
+│   ├── CustomerBalance.js
+│   ├── Deal.js
+│   ├── Group.js
+│   ├── GroupEvent.js
+│   ├── GroupEventAttendee.js
+│   ├── GroupEventGroup.js
+│   ├── GroupLeader.js
+│   ├── GroupSalesContract.js
+│   ├── Notification.js
+│   ├── Payment.js
+│   ├── SalesContract.js
+│   ├── Session.js
+│   ├── SupportTicket.js
+│   ├── Ticket.js
+│   ├── User.js
+│   ├── associations.js
+│   ├── customerGroup.js
+│   ├── index.js
+│   └── passwordResetToken.js
+├── package-lock.json
+├── package.json
+├── project_structure.txt
+├── public
+│   ├── .DS_Store
+│   ├── css
+│   │   └── style.css
+│   ├── customer-management.html
+│   ├── dashboard.html
+│   ├── img
+│   │   ├── login-img.jpg
+│   │   ├── logo v1.jpeg
+│   │   ├── logo v2.jpeg
+│   │   ├── logo_v2-removebg-preview.png
+│   │   └── register-img.png
+│   ├── index.html
+│   ├── js
+│   │   ├── auth.js
+│   │   ├── customer-management.js
+│   │   ├── dashboard.js
+│   │   └── notificationComponent.js
+│   ├── payment-tracking.html
+│   ├── profile.html
+│   ├── reports-analytics.html
+│   ├── sales-management.html
+│   ├── support-tickets.html
+│   └── user-management.html
+├── routes
+│   ├── auth.js
+│   ├── customers.js
+│   ├── notifications.js
+│   ├── payments.js
+│   ├── sales.js
+│   ├── support.js
+│   └── userRoutes.js
+├── scripts
+│   └── generateStructure.js
+├── server.js
+├── services
+├── tests
+├── utils
+│   └── notificationManager.js
+└── views

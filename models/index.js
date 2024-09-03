@@ -1,5 +1,23 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+
+// Initialize Sequelize
+const dotenv = require('dotenv');
+const { Sequelize } = require('sequelize');
+
+// Load environment variables
+dotenv.config();
+
+// Parse database URL
+const dbUrl = new URL(process.env.DATABASE_URL);
+
+// Initialize Sequelize with MySQL dialect
+const sequelize = new Sequelize(dbUrl.pathname.slice(1), dbUrl.username, decodeURIComponent(dbUrl.password), {
+    host: dbUrl.hostname,
+    port: dbUrl.port,
+    dialect: 'mysql',
+    logging: false, // Disable logging; set to console.log for debugging
+});
+
+const { DataTypes } = require('sequelize');
 
 const User = sequelize.define('User', {
     username: {

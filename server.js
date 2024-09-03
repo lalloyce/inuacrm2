@@ -12,11 +12,12 @@ const path = require('path');
 const multer = require('multer');
 const errorHandler = require('./middleware/errorHandler');
 const bodyParser = require('body-parser');
-const { authMiddleware, roleMiddleware } = require('./middleware/auth');
+const { authMiddleware, roleMiddleware } = require('./middleware/authMiddleware');
 const url = require('url');
 const jwt = require('jsonwebtoken');
 const { Sequelize } = require('sequelize');
 const moment = require('moment-timezone');
+const cors = require('cors');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -334,11 +335,45 @@ app.get('/api/customers', authMiddleware, async (req, res) => {
 // Route to create a new customer
 app.post('/api/customers', authMiddleware, async (req, res) => {
     try {
-        const { full_name, email, phone } = req.body;
-        const customer = await Customer.create({ full_name, email, phone });
+        const {
+            first_name,
+            middle_name,
+            last_name,
+            national_id_number,
+            mpesa_mobile_number,
+            alternative_mobile_number,
+            gender,
+            date_of_birth,
+            village,
+            sub_location,
+            ward,
+            sub_county,
+            county
+        } = req.body;
+
+        const customer = await Customer.create({
+            first_name,
+            middle_name,
+            last_name,
+            national_id_number,
+            mpesa_mobile_number,
+            alternative_mobile_number,
+            gender,
+            date_of_birth,
+            village,
+            sub_location,
+            ward,
+            sub_county,
+            county,
+            created_by: req.user.id
+        });
+
         res.status(201).json(customer);
     } catch (error) {
         console.error('Error creating customer:', error);
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: error.errors.map(e => e.message).join(', ') });
+        }
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -347,7 +382,11 @@ app.post('/api/customers', authMiddleware, async (req, res) => {
 app.post('/api/groups', authMiddleware, async (req, res) => {
     try {
         const { name, leaderId } = req.body;
-        const group = await Group.create({ name, leaderId });
+        const group = await Group.create({ 
+            name, 
+            leaderId,
+            created_by: req.user.id
+        });
 
         // Send notification
         await Notification.create({
@@ -376,3 +415,23 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
 app.get('/api/admin-route', authMiddleware, roleMiddleware(['admin']), (req, res) => {
     res.json({ message: 'This is an admin route' });
 });
+
+// Route to search counties
+app.get('/api/counties', async (req, res) => {
+    const { search } = req.query;
+    const allCounties = [
+        'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado',
+        'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
+        'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi',
+        'Nakuru', 'Nandi', 'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
+        'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
+    ];
+    const filteredCounties = allCounties.filter(county => 
+        county.toLowerCase().startsWith(search.toLowerCase())
+    );
+    res.json(filteredCounties);
+});
+
+app.use(cors());
+
+app.use(authMiddleware);

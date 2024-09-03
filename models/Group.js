@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('../config/database');
 
 const Group = sequelize.define('Group', {
   id: {
@@ -23,6 +23,14 @@ const Group = sequelize.define('Group', {
       max: 10,
     },
   },
+  created_by: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id'
+    }
+  }
 }, {
   tableName: 'groups',
   timestamps: true,

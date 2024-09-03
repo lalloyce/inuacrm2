@@ -81,13 +81,12 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="countySearch">Search County</label>
-                    <input type="text" id="countySearch" class="form-control" onkeyup="filterCounties()">
+                    <input type="text" id="countySearch" class="form-control" onkeyup="searchCounty(this.value)">
                 </div>
                 <div class="form-group">
                     <label for="county">County</label>
-                    <select id="county" class="form-control" required>
-                        <!-- Counties will be populated here -->
-                    </select>
+                    <input type="text" id="county" name="county" required list="countyList" onkeyup="searchCounty(this.value)">
+                    <datalist id="countyList"></datalist>
                 </div>
                 <button type="button" onclick="showPage(2)">Previous</button>
                 <button type="submit" class="btn btn-primary">Create</button>
@@ -114,18 +113,22 @@ function populateCounties() {
     });
 }
 
-function filterCounties() {
-    const input = document.getElementById('countySearch');
-    const filter = input.value.toUpperCase();
-    const select = document.getElementById('county');
-    const options = select.getElementsByTagName('option');
-    for (let i = 0; i < options.length; i++) {
-        const txtValue = options[i].textContent || options[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            options[i].style.display = "";
-        } else {
-            options[i].style.display = "none";
-        }
+async function searchCounty(input) {
+    if (input.length < 2) return;
+
+    try {
+        const response = await fetch(`/api/counties?search=${input}`);
+        const counties = await response.json();
+        
+        const countyList = document.getElementById('countyList');
+        countyList.innerHTML = '';
+        counties.forEach(county => {
+            const option = document.createElement('option');
+            option.value = county;
+            countyList.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error searching counties:', error);
     }
 }
 
@@ -150,15 +153,20 @@ function showCreateGroupForm() {
 
 async function loadCustomers() {
     const customerList = document.getElementById('customer-management-content');
-    const customers = await apiCall('/api/customers', { method: 'GET' });
-    customerList.innerHTML += customers.map(customer => `
-        <div class="customer-item">
-            <h3>${customer.full_name}</h3>
-            <p>Email: ${customer.email}</p>
-            <p>Phone: ${customer.phone}</p>
-            <button class="btn btn-info" onclick="viewCustomerProfile(${customer.id})">View Profile</button>
-        </div>
-    `).join('');
+    try {
+        const customers = await apiCall('/api/customers', { method: 'GET' });
+        customerList.innerHTML += customers.map(customer => `
+            <div class="customer-item">
+                <h3>${customer.full_name}</h3>
+                <p>Email: ${customer.email}</p>
+                <p>Phone: ${customer.phone}</p>
+                <button class="btn btn-info" onclick="viewCustomerProfile(${customer.id})">View Profile</button>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading customers:', error);
+        customerList.innerHTML += `<p class="error-message">Failed to load customers. Please try again later.</p>`;
+    }
 }
 
 async function loadGroups() {
@@ -175,68 +183,37 @@ async function loadGroups() {
 
 async function createCustomer(event) {
     event.preventDefault();
-    const firstName = document.getElementById('firstName').value;
-    const middleName = document.getElementById('middleName').value;
-    const lastName = document.getElementById('lastName').value;
-    const nationalIdNumber = document.getElementById('nationalIdNumber').value;
-    const mpesaMobileNumber = document.getElementById('mpesaMobileNumber').value;
-    const alternativeMobileNumber = document.getElementById('alternativeMobileNumber').value;
-    const gender = document.getElementById('gender').value;
-    const dateOfBirth = document.getElementById('dateOfBirth').value;
-    const village = document.getElementById('village').value;
-    const subLocation = document.getElementById('subLocation').value;
-    const ward = document.getElementById('ward').value;
-    const subCounty = document.getElementById('subCounty').value;
-    const county = document.getElementById('county').value;
-
-    // Validate phone numbers
-    const phoneRegex = /^0\d{9}$/;
-    if (!phoneRegex.test(mpesaMobileNumber) || !phoneRegex.test(alternativeMobileNumber)) {
-        alert('Phone numbers must be 10 digits and start with 0');
-        return;
-    }
-
-    if (mpesaMobileNumber === alternativeMobileNumber) {
-        alert('Mpesa mobile number and alternative mobile number cannot be the same');
-        return;
-    }
-
-    // Validate national ID number
-    const idRegex = /^\d{8}$/;
-    if (!idRegex.test(nationalIdNumber)) {
-        alert('National ID number must be 8 digits');
-        return;
-    }
+    const formData = new FormData(event.target);
+    const customerData = Object.fromEntries(formData.entries());
 
     try {
-        const response = await apiCall('/api/customers', {
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        if (!token) {
+            throw new Error('No authentication token found. Please log in.');
+        }
+
+        const response = await fetch('/api/customers', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                first_name: firstName,
-                middle_name: middleName,
-                last_name: lastName,
-                national_id_number: nationalIdNumber,
-                mpesa_mobile_number: mpesaMobileNumber,
-                alternative_mobile_number: alternativeMobileNumber,
-                gender,
-                date_of_birth: dateOfBirth,
-                village,
-                sub_location: subLocation,
-                ward,
-                sub_county: subCounty,
-                county
-            })
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Include the token in the Authorization header
+            },
+            body: JSON.stringify(customerData),
         });
 
-        if (response.error) {
-            alert(response.error);
-        } else {
-            showCustomerList();
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to create customer');
         }
+
+        const result = await response.json();
+        console.log('Customer created:', result);
+        // Clear form and show success message
+        event.target.reset();
+        alert('Customer created successfully!');
     } catch (error) {
         console.error('Error creating customer:', error);
-        alert('An error occurred while creating the customer');
+        alert(`Error creating customer: ${error.message}`);
     }
 }
 
@@ -411,11 +388,17 @@ async function resolveTicket(ticketId) {
 }
 
 async function apiCall(url, options) {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error || 'Unknown error'}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API call failed:', error);
+        throw error;
     }
-    return await response.json();
 }
 
 function showEditCustomerForm(customerId) {

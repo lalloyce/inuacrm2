@@ -1,5 +1,10 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { Sequelize, DataTypes } = require('sequelize');
+
+// Initialize the Sequelize instance (if not done in a separate file)
+const dotenv = require('dotenv');
+const { sequelize } = require('../config/database');
+
+dotenv.config();
 
 const Notification = sequelize.define('Notification', {
     message: {
