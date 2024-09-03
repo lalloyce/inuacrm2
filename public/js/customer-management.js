@@ -43,7 +43,7 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="middleName">Middle Name</label>
-                    <input type="text" id="middleName" name="middleName" class="form-control" required />
+                    <input type="text" id="middleName" name="middleName" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="lastName">Last Name</label>
@@ -53,13 +53,16 @@ function showCreateCustomerForm() {
                     <label for="nationalIdNumber">National ID Number</label>
                     <input type="text" id="nationalIdNumber" name="nationalIdNumber" class="form-control" required />
                 </div>
+                <button type="button" onclick="showPage(2)">Next</button>
+            </div>
+            <div class="form-page" id="page2" style="display:none;">
                 <div class="form-group">
                     <label for="mpesaMobileNumber">Mpesa Mobile Number</label>
                     <input type="text" id="mpesaMobileNumber" name="mpesaMobileNumber" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="alternativeMobileNumber">Alternative Mobile Number</label>
-                    <input type="text" id="alternativeMobileNumber" name="alternativeMobileNumber" class="form-control" required />
+                    <input type="text" id="alternativeMobileNumber" name="alternativeMobileNumber" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
@@ -71,43 +74,67 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required onchange="validateAge(this)" />
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required />
                 </div>
-                <button type="button" onclick="showPage(2)">Next</button>
+                <button type="button" onclick="showPage(1)">Previous</button>
+                <button type="button" onclick="showPage(3)">Next</button>
             </div>
-            <div class="form-page" id="page2" style="display:none;">
+            <div class="form-page" id="page3" style="display:none;">
                 <div class="form-group">
                     <label for="village">Village</label>
-                    <input type="text" id="village" name="village" class="form-control" required />
+                    <input type="text" id="village" name="village" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="subLocation">Sub Location</label>
-                    <input type="text" id="subLocation" name="subLocation" class="form-control" required />
+                    <input type="text" id="subLocation" name="subLocation" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="ward">Ward</label>
-                    <input type="text" id="ward" name="ward" class="form-control" required />
+                    <input type="text" id="ward" name="ward" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="subCounty">Sub County</label>
-                    <input type="text" id="subCounty" name="subCounty" class="form-control" required />
+                    <label for="constituency">Constituency</label>
+                    <input type="text" id="constituency" name="constituency" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="county">County</label>
-                    <input type="text" id="county" name="county" class="form-control" required onkeyup="searchCounty(this.value)" />
-                    <datalist id="countyList"></datalist>
+                    <input type="text" id="county" name="county" class="form-control" />
                 </div>
-                <button type="button" onclick="showPage(1)">Previous</button>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <div class="form-group">
+                    <label for="postalAddress">Postal Address</label>
+                    <input type="text" id="postalAddress" name="postalAddress" class="form-control" />
+                </div>
+                <button type="button" onclick="showPage(2)">Previous</button>
+                <button type="submit">Create Customer</button>
             </div>
         </form>
     `;
-    populateCounties();
-    document.getElementById('createCustomerForm').addEventListener('submit', createCustomer);
-    
-    // Add event listeners to check for duplicate phone numbers
-    document.getElementById('mpesaMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
-    document.getElementById('alternativeMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
+
+    document.getElementById('createCustomerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const customerData = Object.fromEntries(formData.entries());
+        
+        try {
+            const response = await apiCall('/api/customers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(customerData),
+            });
+            
+            if (response.success) {
+                showAlert('Customer created successfully', 'success');
+                showCustomerList();
+            } else {
+                showAlert('Failed to create customer', 'error');
+            }
+        } catch (error) {
+            console.error('Error creating customer:', error);
+            showAlert('An error occurred while creating the customer', 'error');
+        }
+    });
 }
 
 /**
@@ -477,18 +504,25 @@ async function resolveTicket(ticketId) {
     viewTicket(ticketId);
 }
 
-async function apiCall(url, options) {
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error || 'Unknown error'}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('API call failed:', error);
-        throw error;
+async function apiCall(url, options = {}) {
+    const token = localStorage.getItem('jwt');
+    if (!token) {
+        // Redirect to login page if no token is found
+        window.location.href = '/login.html';
+        return;
     }
+    
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers
+    };
+    
+    const response = await fetch(url, { ...options, headers });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
 }
 
 function showEditCustomerForm(customerId) {
