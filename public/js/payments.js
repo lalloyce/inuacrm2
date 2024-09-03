@@ -1,7 +1,14 @@
+/**
+ * Initializes the repayment process by adding an event listener to the 'findCustomer' button.
+ */
 function initializeRepaymentProcess() {
     document.getElementById('findCustomer').addEventListener('click', handleRepayment);
 }
 
+/**
+ * Handles the repayment process when a customer is found.
+ * Fetches customer details, displays them, and sets up the repayment form submission.
+ */
 async function handleRepayment() {
     const customerId = document.getElementById('customerId').value;
     
@@ -32,6 +39,12 @@ async function handleRepayment() {
     }
 }
 
+/**
+ * Fetches customer details from the server.
+ * @param {string} customerId - The ID of the customer.
+ * @returns {Promise<Object>} The customer details.
+ * @throws {Error} If the fetch operation fails.
+ */
 async function fetchCustomerDetails(customerId) {
     const token = localStorage.getItem('token');
     const response = await fetch(`/api/customers/${customerId}`, {
@@ -45,6 +58,10 @@ async function fetchCustomerDetails(customerId) {
     return await response.json();
 }
 
+/**
+ * Displays the customer details on the page.
+ * @param {Object} customer - The customer object containing details to display.
+ */
 function displayCustomerDetails(customer) {
     const detailsContainer = document.getElementById('customerDetails');
     detailsContainer.innerHTML = `
@@ -59,6 +76,14 @@ function displayCustomerDetails(customer) {
     `;
 }
 
+/**
+ * Processes a repayment by sending a request to the server.
+ * @param {string} customerId - The ID of the customer making the repayment.
+ * @param {number} amount - The amount being repaid.
+ * @param {string} transactionNumber - The transaction number for the repayment.
+ * @returns {Promise<Object>} The result of the repayment process.
+ * @throws {Error} If the repayment process fails.
+ */
 async function processRepayment(customerId, amount, transactionNumber) {
     const token = localStorage.getItem('token');
     const response = await fetch('/api/repayments', {
@@ -87,6 +112,10 @@ async function processRepayment(customerId, amount, transactionNumber) {
     return result;
 }
 
+/**
+ * Generates a PDF receipt for the repayment.
+ * @param {Object} receiptData - The data to be included in the receipt.
+ */
 function generateReceipt(receiptData) {
     // Create a new jsPDF instance
     const doc = new jspdf.jsPDF();
@@ -96,9 +125,8 @@ function generateReceipt(receiptData) {
     const secondaryColor = '#6c757d';
 
     // Add company logo
-    // Assuming you have a base64 encoded logo
-    // const logoData = 'YOUR_BASE64_ENCODED_LOGO';
-    // doc.addImage(logoData, 'PNG', 10, 10, 50, 20);
+    const logoUrl = './img/logo_v2-removebg-preview.png';
+    doc.addImage(logoUrl, 'PNG', 10, 10, 50, 20);
 
     // Add title
     doc.setFontSize(24);
