@@ -1,19 +1,36 @@
+/**
+ * Customer Management Module
+ * This module handles customer-related operations including listing, creating, and managing customer profiles.
+ */
+
+/**
+ * Initializes the customer list when the DOM is fully loaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
     showCustomerList();
 });
 
+/**
+ * Displays the list of customers
+ */
 async function showCustomerList() {
     const content = document.getElementById('customer-management-content');
     content.innerHTML = '<h2>Customer List</h2>';
     await loadCustomers();
 }
 
+/**
+ * Displays the list of groups
+ */
 async function showGroupList() {
     const content = document.getElementById('customer-management-content');
     content.innerHTML = '<h2>Group List</h2>';
     await loadGroups();
 }
 
+/**
+ * Displays the form for creating a new customer
+ */
 function showCreateCustomerForm() {
     const content = document.getElementById('customer-management-content');
     content.innerHTML = `
@@ -22,34 +39,34 @@ function showCreateCustomerForm() {
             <div class="form-page" id="page1">
                 <div class="form-group">
                     <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" class="form-control" required>
+                    <input type="text" id="firstName" name="firstName" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="middleName">Middle Name</label>
-                    <input type="text" id="middleName" class="form-control">
+                    <input type="text" id="middleName" name="middleName" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" class="form-control" required>
+                    <input type="text" id="lastName" name="lastName" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="nationalIdNumber">National ID Number</label>
-                    <input type="text" id="nationalIdNumber" class="form-control" required>
+                    <input type="text" id="nationalIdNumber" name="nationalIdNumber" class="form-control" required />
                 </div>
                 <button type="button" onclick="showPage(2)">Next</button>
             </div>
             <div class="form-page" id="page2" style="display:none;">
                 <div class="form-group">
                     <label for="mpesaMobileNumber">Mpesa Mobile Number</label>
-                    <input type="text" id="mpesaMobileNumber" class="form-control" required>
+                    <input type="text" id="mpesaMobileNumber" name="mpesaMobileNumber" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="alternativeMobileNumber">Alternative Mobile Number</label>
-                    <input type="text" id="alternativeMobileNumber" class="form-control">
+                    <input type="text" id="alternativeMobileNumber" name="alternativeMobileNumber" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
-                    <select id="gender" class="form-control" required>
+                    <select id="gender" name="gender" class="form-control" required>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
@@ -57,7 +74,7 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" class="form-control" required>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required />
                 </div>
                 <button type="button" onclick="showPage(1)">Previous</button>
                 <button type="button" onclick="showPage(3)">Next</button>
@@ -65,27 +82,27 @@ function showCreateCustomerForm() {
             <div class="form-page" id="page3" style="display:none;">
                 <div class="form-group">
                     <label for="village">Village</label>
-                    <input type="text" id="village" class="form-control">
+                    <input type="text" id="village" name="village" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="subLocation">Sub Location</label>
-                    <input type="text" id="subLocation" class="form-control">
+                    <input type="text" id="subLocation" name="subLocation" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="ward">Ward</label>
-                    <input type="text" id="ward" class="form-control">
+                    <input type="text" id="ward" name="ward" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="subCounty">Sub County</label>
-                    <input type="text" id="subCounty" class="form-control">
+                    <input type="text" id="subCounty" name="subCounty" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="countySearch">Search County</label>
-                    <input type="text" id="countySearch" class="form-control" onkeyup="searchCounty(this.value)">
+                    <input type="text" id="countySearch" class="form-control" onkeyup="searchCounty(this.value)" />
                 </div>
                 <div class="form-group">
                     <label for="county">County</label>
-                    <input type="text" id="county" name="county" required list="countyList" onkeyup="searchCounty(this.value)">
+                    <input type="text" id="county" name="county" required list="countyList" onkeyup="searchCounty(this.value)" />
                     <datalist id="countyList"></datalist>
                 </div>
                 <button type="button" onclick="showPage(2)">Previous</button>
@@ -97,22 +114,32 @@ function showCreateCustomerForm() {
     document.getElementById('createCustomerForm').addEventListener('submit', createCustomer);
 }
 
+/**
+ * Shows a specific page of the multi-page form
+ * @param {number} pageNumber - The page number to display
+ */
 function showPage(pageNumber) {
     document.querySelectorAll('.form-page').forEach(page => page.style.display = 'none');
     document.getElementById(`page${pageNumber}`).style.display = 'block';
 }
 
+/**
+ * Populates the county list for the customer form
+ */
 function populateCounties() {
     const counties = ["Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita/Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo/Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira", "Nairobi City"];
-    const countySelect = document.getElementById('county');
+    const countyList = document.getElementById('countyList');
     counties.forEach(county => {
         const option = document.createElement('option');
         option.value = county;
-        option.textContent = county;
-        countySelect.appendChild(option);
+        countyList.appendChild(option);
     });
 }
 
+/**
+ * Searches for counties based on user input
+ * @param {string} input - The search input
+ */
 async function searchCounty(input) {
     if (input.length < 2) return;
 
@@ -132,6 +159,9 @@ async function searchCounty(input) {
     }
 }
 
+/**
+ * Displays the form for creating a new group
+ */
 function showCreateGroupForm() {
     const content = document.getElementById('customer-management-content');
     content.innerHTML = `
@@ -139,11 +169,11 @@ function showCreateGroupForm() {
         <form id="createGroupForm">
             <div class="form-group">
                 <label for="groupName">Group Name</label>
-                <input type="text" id="groupName" class="form-control" required>
+                <input type="text" id="groupName" class="form-control" required />
             </div>
             <div class="form-group">
                 <label for="leaderId">Leader ID</label>
-                <input type="text" id="leaderId" class="form-control" required>
+                <input type="text" id="leaderId" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </form>
@@ -151,6 +181,9 @@ function showCreateGroupForm() {
     document.getElementById('createGroupForm').addEventListener('submit', createGroup);
 }
 
+/**
+ * Loads and displays the list of customers
+ */
 async function loadCustomers() {
     const customerList = document.getElementById('customer-management-content');
     try {
@@ -169,6 +202,9 @@ async function loadCustomers() {
     }
 }
 
+/**
+ * Loads and displays the list of groups
+ */
 async function loadGroups() {
     const groupList = document.getElementById('customer-management-content');
     const groups = await apiCall('/api/groups', { method: 'GET' });
@@ -181,13 +217,17 @@ async function loadGroups() {
     `).join('');
 }
 
+/**
+ * Creates a new customer
+ * @param {Event} event - The form submission event
+ */
 async function createCustomer(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const customerData = Object.fromEntries(formData.entries());
 
     try {
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('No authentication token found. Please log in.');
         }
@@ -196,7 +236,7 @@ async function createCustomer(event) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Include the token in the Authorization header
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(customerData),
         });
@@ -208,15 +248,19 @@ async function createCustomer(event) {
 
         const result = await response.json();
         console.log('Customer created:', result);
-        // Clear form and show success message
         event.target.reset();
         alert('Customer created successfully!');
+        showCustomerList(); // Redirect to customer list after successful creation
     } catch (error) {
         console.error('Error creating customer:', error);
         alert(`Error creating customer: ${error.message}`);
     }
 }
 
+/**
+ * Creates a new group
+ * @param {Event} event - The form submission event
+ */
 async function createGroup(event) {
     event.preventDefault();
     const groupName = document.getElementById('groupName').value;
@@ -231,6 +275,10 @@ async function createGroup(event) {
     showGroupList();
 }
 
+/**
+ * Displays the profile of a specific customer
+ * @param {number} customerId - The ID of the customer
+ */
 async function viewCustomerProfile(customerId) {
     const content = document.getElementById('customer-management-content');
     const customer = await apiCall(`/api/customers/${customerId}`, { method: 'GET' });
@@ -261,6 +309,11 @@ async function viewCustomerProfile(customerId) {
     `;
 }
 
+/**
+ * Calculates the duration of a customer's membership
+ * @param {string} createdAt - The date the customer was created
+ * @returns {string} The membership duration in years
+ */
 function calculateMembershipDuration(createdAt) {
     const createdDate = new Date(createdAt);
     const today = new Date();
@@ -268,6 +321,10 @@ function calculateMembershipDuration(createdAt) {
     return `${duration} year(s)`;
 }
 
+/**
+ * Displays the balances for a specific customer
+ * @param {number} customerId - The ID of the customer
+ */
 async function viewCustomerBalances(customerId) {
     const content = document.getElementById('customer-management-content');
     const balances = await apiCall(`/api/customers/${customerId}/balances`, { method: 'GET' });
@@ -352,7 +409,7 @@ function showCreateTicketForm(customerId) {
         <form id="createTicketForm">
             <div class="form-group">
                 <label for="issue">Issue</label>
-                <input type="text" id="issue" class="form-control" required>
+                <input type="text" id="issue" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </form>
@@ -408,15 +465,15 @@ function showEditCustomerForm(customerId) {
         <form id="editCustomerForm">
             <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" class="form-control" required>
+                <input type="text" id="fullName" class="form-control" required />
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" required>
+                <input type="email" id="email" class="form-control" required />
             </div>
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="text" id="phone" class="form-control" required>
+                <input type="text" id="phone" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
         </form>

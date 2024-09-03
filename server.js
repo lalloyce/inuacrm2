@@ -1,3 +1,9 @@
+/**
+ * Server configuration and main application logic for Inua CRM.
+ * This file sets up the Express server, configures middleware, defines routes,
+ * and initializes the database connection.
+ */
+
 // Import required modules
 const express = require('express');
 const mysql = require('mysql2/promise');
@@ -74,7 +80,12 @@ const Customer = require('./models/Customer');
 const Group = require('./models/Group');
 const AuditLog = require('./models/AuditLog');
 
-// Function to send email using nodemailer
+/**
+ * Function to send email using nodemailer
+ * @param {string} to - Recipient email address
+ * @param {string} subject - Email subject
+ * @param {string} text - Email body text
+ */
 const sendEmail = async (to, subject, text) => {
     let transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
@@ -138,7 +149,7 @@ app.post('/api/forgot-password', async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetToken = crypto.randomBytes(64).toString('hex');
         user.reset_token = resetToken;
         user.reset_token_expires = moment().add(1, 'hour').tz('Africa/Nairobi').format(); // 1 hour
         await user.save();
@@ -389,10 +400,15 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
         });
 
         // Send notification
-        await Notification.create({
-            message: `New group "${name}" created and needs approval.`,
-            userId: leaderId, // Assuming leaderId is the group coordinator's boss
-        });
+        const salesManager = await User.findOne({ where: { role: 'sales_manager' } });
+        if (salesManager) {
+            await Notification.create({
+                message: `New group: "${name}" created and needs approval.`,
+                userId: salesManager.id, // Sending notification to the sales manager
+            });
+        } else {
+            console.log('No sales manager found to send notification');
+        }
 
         // Send email
         const leader = await User.findByPk(leaderId);
