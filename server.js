@@ -10,7 +10,7 @@ const FormData = require('form-data');
 const dotenv = require('dotenv');
 const path = require('path');
 const multer = require('multer');
-const errorHandler = require('./public/js/errorHandler').errorHandler;
+const errorHandler = require('./middleware/errorHandler');
 const bodyParser = require('body-parser');
 const { authMiddleware, roleMiddleware } = require('./middleware/auth');
 const url = require('url');
@@ -60,7 +60,7 @@ app.use(session({
 // Import Sequelize instance and models
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'mysql',
-    timezone: 'Africa/Nairobi', // Set the timezone to UTC+3
+    timezone: '+03:00', // East Africa Time (EAT) is UTC+3
     logging: false,
     define: {
         timestamps: true,
@@ -172,6 +172,7 @@ app.get('/api/protected-route', authMiddleware, (req, res) => {
 });
 
 // Error handling middleware
+console.log('Error handler type:', typeof errorHandler);
 app.use(errorHandler);
 
 // Start the server

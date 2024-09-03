@@ -268,12 +268,3 @@ canvas {
 .customer-management nav ul li a:hover {
     background-color: #f0f0f0;
 }
-
-.customer-management #customer-management-content {
-    width: 75%;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    margin-left: 20px;
-}

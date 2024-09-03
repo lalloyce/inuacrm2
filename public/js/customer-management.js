@@ -259,10 +259,22 @@ async function viewCustomerProfile(customerId) {
     const customer = await apiCall(`/api/customers/${customerId}`, { method: 'GET' });
     content.innerHTML = `
         <h2>Customer Profile</h2>
-        <p><strong>Full Name:</strong> ${customer.full_name}</p>
-        <p><strong>Email:</strong> ${customer.email}</p>
-        <p><strong>Phone:</strong> ${customer.phone}</p>
-        <p><strong>Address:</strong> ${customer.village}, ${customer.sub_location}, ${customer.ward}, ${customer.county}</p>
+        <p><strong>Full Name:</strong> ${customer.first_name} ${customer.middle_name || ''} ${customer.last_name}</p>
+        <p><strong>Date of Birth:</strong> ${customer.date_of_birth}</p>
+        <p><strong>ID Number:</strong> ${customer.national_id_number}</p>
+        <p><strong>Mpesa Mobile Number:</strong> ${customer.mpesa_mobile_number}</p>
+        <p><strong>Alternative Phone Number:</strong> ${customer.alternative_mobile_number || 'N/A'}</p>
+        <p><strong>Village:</strong> ${customer.village || 'N/A'}</p>
+        <p><strong>Sub-location:</strong> ${customer.sub_location || 'N/A'}</p>
+        <p><strong>Ward:</strong> ${customer.ward || 'N/A'}</p>
+        <p><strong>County:</strong> ${customer.county}</p>
+        <p><strong>Group:</strong> ${customer.group ? `<a href="#" onclick="showGroupProfile(${customer.group.id})">${customer.group.name}</a>` : 'Unassigned'}</p>
+        <p><strong>Member Since:</strong> ${calculateMembershipDuration(customer.created_at)}</p>
+        <p><strong>Total Loans Issued:</strong> ${customer.total_loans_issued}</p>
+        <p><strong>Downpayment Made:</strong> ${customer.downpayment_made}</p>
+        <p><strong>Outstanding Loans:</strong> ${customer.outstanding_loans}</p>
+        <p><strong>Number of Repayments Made:</strong> ${customer.number_of_repayments}</p>
+        <p><strong>Issues Raised:</strong> ${customer.issues.length > 0 ? customer.issues.map(issue => `ID: ${issue.id}, Status: ${issue.status}`).join('<br>') : 'None'}</p>
         <button class="btn btn-primary" onclick="showEditCustomerForm(${customer.id})">Edit</button>
         <button class="btn btn-secondary" onclick="viewCustomerBalances(${customer.id})">View Balances</button>
         <button class="btn btn-secondary" onclick="viewCustomerPayments(${customer.id})">View Payments</button>
@@ -270,6 +282,13 @@ async function viewCustomerProfile(customerId) {
         <button class="btn btn-secondary" onclick="viewCustomerEvents(${customer.id})">View Events</button>
         <button class="btn btn-secondary" onclick="viewCustomerTickets(${customer.id})">View Tickets</button>
     `;
+}
+
+function calculateMembershipDuration(createdAt) {
+    const createdDate = new Date(createdAt);
+    const today = new Date();
+    const duration = today.getFullYear() - createdDate.getFullYear();
+    return `${duration} year(s)`;
 }
 
 async function viewCustomerBalances(customerId) {
