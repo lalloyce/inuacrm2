@@ -35,8 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Login successful:', result);
                     // Store the JWT token in localStorage
                     localStorage.setItem('jwt', result.token);
-                    // Redirect the user to the dashboard page
-                    window.location.href = '/dashboard.html';
+                    
+                    // After successful login
+                    const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                    if (redirectUrl) {
+                        localStorage.removeItem('redirectAfterLogin'); // Clear the stored URL
+                        window.location.href = redirectUrl;
+                    } else {
+                        // Default redirect if no stored URL
+                        window.location.href = '/dashboard.html';
+                    }
                 } else {
                     // Log an error message and show an alert if the login failed
                     console.error('Login failed:', result);

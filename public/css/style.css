@@ -246,3 +246,57 @@ footer a:hover {
 .dropdown-item:hover {
     background-color: rgba(74, 144, 226, 0.1);
 }
+
+/* Vertical Navigation Bar */
+nav.vertical-nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+nav.vertical-nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav.vertical-nav li {
+    margin-bottom: 10px;
+}
+
+nav.vertical-nav a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+    padding: 5px 10px;
+}
+
+nav.vertical-nav a:hover {
+    background-color: #e9ecef;
+}
+
+/* Horizontal Navbar */
+nav.horizontal-nav {
+    background-color: #343a40;
+    padding: 10px 0;
+    color: white;
+}
+
+nav.horizontal-nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav.horizontal-nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+nav.horizontal-nav a:hover {
+    text-decoration: underline;
+}

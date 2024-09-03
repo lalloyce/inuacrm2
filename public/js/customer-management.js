@@ -97,12 +97,8 @@ function showCreateCustomerForm() {
                     <input type="text" id="subCounty" name="subCounty" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="countySearch">Search County</label>
-                    <input type="text" id="countySearch" class="form-control" onkeyup="searchCounty(this.value)" />
-                </div>
-                <div class="form-group">
                     <label for="county">County</label>
-                    <input type="text" id="county" name="county" required list="countyList" onkeyup="searchCounty(this.value)" />
+                    <input type="text" id="county" name="county" class="form-control" required onkeyup="searchCounty(this.value)" />
                     <datalist id="countyList"></datalist>
                 </div>
                 <button type="button" onclick="showPage(2)">Previous</button>
@@ -229,7 +225,11 @@ async function createCustomer(event) {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
-            throw new Error('No authentication token found. Please log in.');
+            // Save the current page URL to localStorage
+            localStorage.setItem('redirectAfterLogin', window.location.href);
+            // Redirect to login page
+            window.location.href = '/login.html';
+            return;
         }
 
         const response = await fetch('/api/customers', {

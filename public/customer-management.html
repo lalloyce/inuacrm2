@@ -9,7 +9,7 @@
     <script src="./js/customer-management.js" defer></script>
 </head>
 <body class="customer-management bg-gray-100">
-    <nav class="bg-white shadow-md">
+    <nav class="vertical-nav">
         <div class="container mx-auto px-4 py-2 flex items-center justify-between">
             <div class="logo">
                 <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo" class="h-12">
@@ -47,29 +47,31 @@
 
     <div class="container mx-auto mt-8 px-4 flex">
         <!-- Vertical Navigation Bar -->
-        <nav class="bg-white shadow-md p-4 w-1/4">
-            <ul class="space-y-4">
-                <li>
-                    <span class="font-bold">Customers:</span>
-                    <ul>
-                        <li><a href="#" class="nav-link" onclick="showCreateCustomerForm()">Create Customer</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCreateRepaymentForm()">Create Repayment</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCreateIssueForm()">Create Issue</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCustomerProfile()">View Profile</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <span class="font-bold">Groups:</span>
-                    <ul>
-                        <li><a href="#" class="nav-link" onclick="showCreateGroupForm()">Create Group</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCreateGroupLeaderForm()">Create Group Leader</a></li>
-                        <li><a href="#" class="nav-link" onclick="showAssignGLForm()">Assign GL</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCreateEventForm()">Create Event</a></li>
-                        <li><a href="#" class="nav-link" onclick="showGroupProfile()">View Profile</a></li>
-                        <li><a href="#" class="nav-link" onclick="showCreateSaleForm()">Create Sale</a></li>
-                    </ul>
-                </li>
-            </ul>
+        <nav class="horizontal-nav">
+            <div class="container">
+                <ul class="space-y-4">
+                    <li>
+                        <span class="font-bold">Customers:</span>
+                        <ul>
+                            <li><a href="#" class="nav-link" onclick="showCreateCustomerForm()">Create Customer</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCreateRepaymentForm()">Create Repayment</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCreateIssueForm()">Create Issue</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCustomerProfile()">View Profile</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span class="font-bold">Groups:</span>
+                        <ul>
+                            <li><a href="#" class="nav-link" onclick="showCreateGroupForm()">Create Group</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCreateGroupLeaderForm()">Create Group Leader</a></li>
+                            <li><a href="#" class="nav-link" onclick="showAssignGLForm()">Assign GL</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCreateEventForm()">Create Event</a></li>
+                            <li><a href="#" class="nav-link" onclick="showGroupProfile()">View Profile</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCreateSaleForm()">Create Sale</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
         <!-- Main Content Area -->
@@ -82,5 +84,13 @@
         <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
         <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
+
+    <script>
+        // Ensure the showCreateCustomerForm function is called when the nav item is clicked
+        document.querySelector('a[onclick="showCreateCustomerForm()"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            showCreateCustomerForm();
+        });
+    </script>
 </body>
 </html>
