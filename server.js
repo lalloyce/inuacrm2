@@ -80,6 +80,7 @@ const Customer = require('./models/Customer');
 const Group = require('./models/Group');
 const AuditLog = require('./models/AuditLog');
 const Payment = require('./models/Payment');
+const Ticket = require('./models/Ticket');
 
 /**
  * Function to send email using nodemailer
@@ -504,4 +505,62 @@ app.post('/api/repayments', authMiddleware, async (req, res) => {
         console.error('Error processing repayment:', error);
         res.status(500).json({ success: false, error: error.message });
     }
+});
+
+// Route to create a new ticket
+app.post('/api/tickets', authenticateToken, async (req, res) => {
+  try {
+    const { title, description, priority, customerId } = req.body;
+    const ticket = await Ticket.create({
+      title,
+      description,
+      priority,
+      createdBy: req.user.id,
+      customerId
+    });
+    res.status(201).json(ticket);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Get all tickets
+app.get('/api/tickets', authenticateToken, async (req, res) => {
+  try {
+    const tickets = await Ticket.findAll();
+    res.json(tickets);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get a specific ticket
+app.get('/api/tickets/:id', authenticateToken, async (req, res) => {
+  try {
+    const ticket = await Ticket.findByPk(req.params.id);
+    if (ticket) {
+      res.json(ticket);
+    } else {
+      res.status(404).json({ error: 'Ticket not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a ticket
+app.put('/api/tickets/:id', authenticateToken, async (req, res) => {
+  try {
+    const [updated] = await Ticket.update(req.body, {
+      where: { id: req.params.id }
+    });
+    if (updated) {
+      const updatedTicket = await Ticket.findByPk(req.params.id);
+      res.json(updatedTicket);
+    } else {
+      res.status(404).json({ error: 'Ticket not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
