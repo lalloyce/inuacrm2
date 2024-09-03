@@ -91,24 +91,42 @@ function generateReceipt(receiptData) {
     // Create a new jsPDF instance
     const doc = new jspdf.jsPDF();
 
-    // Set font
-    doc.setFont("helvetica", "normal");
+    // Set colors
+    const primaryColor = '#007bff';
+    const secondaryColor = '#6c757d';
+
+    // Add company logo
+    // Assuming you have a base64 encoded logo
+    // const logoData = 'YOUR_BASE64_ENCODED_LOGO';
+    // doc.addImage(logoData, 'PNG', 10, 10, 50, 20);
 
     // Add title
-    doc.setFontSize(20);
-    doc.text("Payment Receipt", 105, 20, null, null, "center");
+    doc.setFontSize(24);
+    doc.setTextColor(primaryColor);
+    doc.text("Payment Receipt", 105, 30, null, null, "center");
+
+    // Add horizontal line
+    doc.setDrawColor(secondaryColor);
+    doc.line(20, 35, 190, 35);
 
     // Add receipt details
     doc.setFontSize(12);
-    doc.text(`Customer Name: ${receiptData.customerName}`, 20, 40);
-    doc.text(`Repayment Amount: $${receiptData.repaymentAmount}`, 20, 50);
-    doc.text(`Transaction Number: ${receiptData.transactionNumber}`, 20, 60);
-    doc.text(`New Outstanding Balance: $${receiptData.newOutstandingBalance}`, 20, 70);
-    doc.text(`Date: ${new Date(receiptData.date).toLocaleString()}`, 20, 80);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Customer Name: ${receiptData.customerName}`, 20, 50);
+    doc.text(`Repayment Amount: $${receiptData.repaymentAmount}`, 20, 60);
+    doc.text(`Transaction Number: ${receiptData.transactionNumber}`, 20, 70);
+    doc.text(`New Outstanding Balance: $${receiptData.newOutstandingBalance}`, 20, 80);
+    doc.text(`Date: ${new Date(receiptData.date).toLocaleString()}`, 20, 90);
 
     // Add a thank you message
     doc.setFontSize(14);
-    doc.text("Thank you for your payment!", 105, 100, null, null, "center");
+    doc.setTextColor(primaryColor);
+    doc.text("Thank you for your payment!", 105, 110, null, null, "center");
+
+    // Add footer
+    doc.setFontSize(10);
+    doc.setTextColor(secondaryColor);
+    doc.text("For any queries, please contact our customer support.", 105, 280, null, null, "center");
 
     // Save the PDF
     doc.save(`receipt_${receiptData.transactionNumber}.pdf`);
