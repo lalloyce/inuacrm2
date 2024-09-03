@@ -366,7 +366,6 @@ async function viewCustomerProfile(customerId) {
         <button class="btn btn-secondary" onclick="viewCustomerGroups(${customer.id})">View Groups</button>
         <button class="btn btn-secondary" onclick="viewCustomerEvents(${customer.id})">View Events</button>
         <button class="btn btn-secondary" onclick="viewCustomerTickets(${customer.id})">View Tickets</button>
-        <button class="btn btn-secondary" onclick="createTicket(${customer.id})">Create Ticket</button>
     `;
 }
 
@@ -560,42 +559,4 @@ function showEditCustomerForm(customerId) {
 
         viewCustomerProfile(customerId);
     });
-}
-
-async function createTicket(customerId) {
-  const title = prompt('Enter ticket title:');
-  const description = prompt('Enter ticket description:');
-  const priority = prompt('Enter ticket priority (low, medium, high, urgent):');
-
-  if (!title || !description || !priority) {
-    alert('All fields are required');
-    return;
-  }
-
-  try {
-    const response = await fetch('/api/tickets', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify({
-        title,
-        description,
-        priority,
-        customerId
-      })
-    });
-
-    if (response.ok) {
-      const ticket = await response.json();
-      alert(`Ticket created successfully. Ticket ID: ${ticket.id}`);
-    } else {
-      const error = await response.json();
-      alert(`Failed to create ticket: ${error.error}`);
-    }
-  } catch (error) {
-    console.error('Error creating ticket:', error);
-    alert('An error occurred while creating the ticket');
-  }
 }

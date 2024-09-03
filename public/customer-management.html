@@ -9,6 +9,7 @@
     <script src="./js/customer-management.js" defer></script>
     <script src="./js/payments.js" defer></script>
     <script src="./js/tickets.js" defer></script>
+    <script src="./js/customer-profile.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="customer-management bg-gray-100">
@@ -89,6 +90,9 @@
     </footer>
 
     <script>
+        // Import the showCustomerProfile function
+        import { showCustomerProfile } from './js/customer-profile.js';
+
         // Ensure the showCreateCustomerForm function is called when the nav item is clicked
         document.querySelector('a[onclick="showCreateCustomerForm()"]').addEventListener('click', function(e) {
             e.preventDefault();
