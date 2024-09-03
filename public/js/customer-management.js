@@ -43,7 +43,7 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="middleName">Middle Name</label>
-                    <input type="text" id="middleName" name="middleName" class="form-control" />
+                    <input type="text" id="middleName" name="middleName" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="lastName">Last Name</label>
@@ -59,7 +59,7 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="alternativeMobileNumber">Alternative Mobile Number</label>
-                    <input type="text" id="alternativeMobileNumber" name="alternativeMobileNumber" class="form-control" />
+                    <input type="text" id="alternativeMobileNumber" name="alternativeMobileNumber" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="gender">Gender</label>
@@ -71,26 +71,26 @@ function showCreateCustomerForm() {
                 </div>
                 <div class="form-group">
                     <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required />
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" required onchange="validateAge(this)" />
                 </div>
                 <button type="button" onclick="showPage(2)">Next</button>
             </div>
             <div class="form-page" id="page2" style="display:none;">
                 <div class="form-group">
                     <label for="village">Village</label>
-                    <input type="text" id="village" name="village" class="form-control" />
+                    <input type="text" id="village" name="village" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="subLocation">Sub Location</label>
-                    <input type="text" id="subLocation" name="subLocation" class="form-control" />
+                    <input type="text" id="subLocation" name="subLocation" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="ward">Ward</label>
-                    <input type="text" id="ward" name="ward" class="form-control" />
+                    <input type="text" id="ward" name="ward" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="subCounty">Sub County</label>
-                    <input type="text" id="subCounty" name="subCounty" class="form-control" />
+                    <input type="text" id="subCounty" name="subCounty" class="form-control" required />
                 </div>
                 <div class="form-group">
                     <label for="county">County</label>
@@ -108,6 +108,26 @@ function showCreateCustomerForm() {
     // Add event listeners to check for duplicate phone numbers
     document.getElementById('mpesaMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
     document.getElementById('alternativeMobileNumber').addEventListener('change', checkDuplicatePhoneNumbers);
+}
+
+/**
+ * Validates the age of the customer
+ * @param {HTMLInputElement} input - The date of birth input element
+ */
+function validateAge(input) {
+    const dob = new Date(input.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    
+    if (age < 18) {
+        alert('Customer must be at least 18 years old.');
+        input.value = '';
+    }
 }
 
 /**
