@@ -79,6 +79,7 @@ const Notification = require('./models/Notification');
 const Customer = require('./models/Customer');
 const Group = require('./models/Group');
 const AuditLog = require('./models/AuditLog');
+const Payment = require('./models/Payment');
 
 /**
  * Function to send email using nodemailer
@@ -451,3 +452,56 @@ app.get('/api/counties', async (req, res) => {
 app.use(cors());
 
 app.use(authMiddleware);
+
+// Route to process a repayment
+app.post('/api/repayments', authMiddleware, async (req, res) => {
+    const { customerId, amount, transactionNumber } = req.body;
+
+    try {
+        // Start a database transaction
+        const result = await sequelize.transaction(async (t) => {
+            // 1. Fetch customer details
+            const customer = await Customer.findByPk(customerId, { transaction: t });
+            if (!customer) {
+                throw new Error('Customer not found');
+            }
+
+            // 2. Calculate new outstanding balance
+            const newOutstandingBalance = parseFloat(customer.outstandingLoan) - parseFloat(amount);
+            if (newOutstandingBalance < 0) {
+                throw new Error('Repayment amount exceeds outstanding loan');
+            }
+
+            // 3. Update customer's outstanding balance
+            await customer.update({ outstandingLoan: newOutstandingBalance }, { transaction: t });
+
+            // 4. Create a new repayment record
+            const payment = await Payment.create({
+                customerId,
+                amount,
+                transactionNumber,
+                createdBy: req.user.id
+            }, { transaction: t });
+
+            return { customer, payment };
+        });
+
+        // 5. Generate receipt data
+        const receiptData = {
+            customerName: result.customer.fullName,
+            repaymentAmount: amount,
+            transactionNumber: transactionNumber,
+            newOutstandingBalance: result.customer.outstandingLoan,
+            date: new Date().toISOString()
+        };
+
+        res.status(201).json({ 
+            success: true, 
+            message: 'Repayment processed successfully', 
+            receipt: receiptData 
+        });
+    } catch (error) {
+        console.error('Error processing repayment:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
