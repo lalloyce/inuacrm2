@@ -1,7 +1,8 @@
-CREATE DATABASE inua_crm;
-USE inua_crm;
+CREATE DATABASE IF NOT EXISTS inuacrm;
+USE inuacrm;
 
-CREATE TABLE users (
+-- Create users table if it doesn't exist
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -18,15 +19,17 @@ CREATE TABLE users (
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE sessions (
-    id VARCHAR(255) PRIMARY KEY,
+-- Create sessions table if it doesn't exist
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id VARCHAR(255) PRIMARY KEY,
     user_id INT NOT NULL,
     expires DATETIME NOT NULL,
     data TEXT COLLATE utf8mb4_bin,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE group_leaders (
+-- Create group_leaders table if it doesn't exist
+CREATE TABLE IF NOT EXISTS group_leaders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50),
@@ -35,24 +38,56 @@ CREATE TABLE group_leaders (
     village VARCHAR(100),
     sub_location VARCHAR(100),
     ward VARCHAR(100),
-    county ENUM('Mombasa', 'Kwale', 'Kilifi', 'Tana River', 'Lamu', 'Taita/Taveta', 'Garissa', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Meru', 'Tharaka-Nithi', 'Embu', 'Kitui', 'Machakos', 'Makueni', 'Nyandarua', 'Nyeri', 'Kirinyaga', 'Murang\'a', 'Kiambu', 'Turkana', 'West Pokot', 'Samburu', 'Trans Nzoia', 'Uasin Gishu', 'Elgeyo/Marakwet', 'Nandi', 'Baringo', 'Laikipia', 'Nakuru', 'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma', 'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira', 'Nairobi City') NOT NULL,
+    county ENUM('Mombasa', 'Kwale', 'Kilifi', 'Tana River', 'Lamu', 'Taita/Taveta', 'Garissa', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Meru', 'Tharaka-Nithi', 'Embu', 'Kitui', 'Machakos', 'Makueni', 'Nyandarua', 'Nyeri', 'Kirinyaga', 'Murang''a', 'Kiambu', 'Turkana', 'West Pokot', 'Samburu', 'Trans Nzoia', 'Uasin Gishu', 'Elgeyo/Marakwet', 'Nandi', 'Baringo', 'Laikipia', 'Nakuru', 'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma', 'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira', 'Nairobi City') NOT NULL,
     group_name VARCHAR(100) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE groups (
+-- Create groups table if it doesn't exist
+CREATE TABLE IF NOT EXISTS `groups` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     group_leader_id INT NOT NULL,
     group_coordinator_id INT NOT NULL,
     member_count INT NOT NULL CHECK (member_count BETWEEN 5 AND 10),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    created_by INT NOT NULL,
     FOREIGN KEY (group_leader_id) REFERENCES group_leaders(id),
-    FOREIGN KEY (group_coordinator_id) REFERENCES users(id)
+    FOREIGN KEY (group_coordinator_id) REFERENCES users(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
-CREATE TABLE group_sales_contracts (
+-- Check if the index exists and create it if it doesn't
+SET @exist := (SELECT COUNT(1) 
+               FROM INFORMATION_SCHEMA.STATISTICS 
+               WHERE TABLE_SCHEMA = DATABASE() 
+               AND TABLE_NAME = 'groups' 
+               AND INDEX_NAME = 'idx_group_leader_id');
+
+SET @sqlstmt := IF(@exist > 0, 'SELECT ''Index already exists.''', 
+                    'CREATE INDEX idx_group_leader_id ON `groups`(group_leader_id)');
+
+PREPARE stmt FROM @sqlstmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Repeat for other indexes
+SET @exist := (SELECT COUNT(1) 
+               FROM INFORMATION_SCHEMA.STATISTICS 
+               WHERE TABLE_SCHEMA = DATABASE() 
+               AND TABLE_NAME = 'groups' 
+               AND INDEX_NAME = 'idx_group_coordinator_id');
+
+SET @sqlstmt := IF(@exist > 0, 'SELECT ''Index already exists.''', 
+                    'CREATE INDEX idx_group_coordinator_id ON `groups`(group_coordinator_id)');
+
+PREPARE stmt FROM @sqlstmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Create group_sales_contracts table if it doesn't exist
+CREATE TABLE IF NOT EXISTS group_sales_contracts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     group_id INT NOT NULL,
     contract_date DATE NOT NULL,
@@ -65,10 +100,11 @@ CREATE TABLE group_sales_contracts (
     status ENUM('active', 'completed', 'defaulted') NOT NULL DEFAULT 'active',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (group_id) REFERENCES groups(id)
+    FOREIGN KEY (group_id) REFERENCES `groups`(id)
 );
 
-CREATE TABLE customers (
+-- Create customers table if it doesn't exist
+CREATE TABLE IF NOT EXISTS customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50),
@@ -82,90 +118,18 @@ CREATE TABLE customers (
     sub_location VARCHAR(100),
     ward VARCHAR(100),
     sub_county VARCHAR(100),
-    county ENUM('Mombasa', 'Kwale', 'Kilifi', 'Tana River', 'Lamu', 'Taita/Taveta', 'Garissa', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Meru', 'Tharaka-Nithi', 'Embu', 'Kitui', 'Machakos', 'Makueni', 'Nyandarua', 'Nyeri', 'Kirinyaga', 'Murang\'a', 'Kiambu', 'Turkana', 'West Pokot', 'Samburu', 'Trans Nzoia', 'Uasin Gishu', 'Elgeyo/Marakwet', 'Nandi', 'Baringo', 'Laikipia', 'Nakuru', 'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma', 'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira', 'Nairobi City') NOT NULL,
+    county ENUM('Mombasa', 'Kwale', 'Kilifi', 'Tana River', 'Lamu', 'Taita/Taveta', 'Garissa', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Meru', 'Tharaka-Nithi', 'Embu', 'Kitui', 'Machakos', 'Makueni', 'Nyandarua', 'Nyeri', 'Kirinyaga', 'Murang''a', 'Kiambu', 'Turkana', 'West Pokot', 'Samburu', 'Trans Nzoia', 'Uasin Gishu', 'Elgeyo/Marakwet', 'Nandi', 'Baringo', 'Laikipia', 'Nakuru', 'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma', 'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira', 'Nairobi City') NOT NULL,
     group_sales_contract_id INT,
     is_group_leader BOOLEAN DEFAULT FALSE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (group_sales_contract_id) REFERENCES group_sales_contracts(id)
-);
-
-CREATE TABLE tickets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    assigned_to INT,
-    status ENUM('open', 'in_progress', 'closed') DEFAULT 'open',
-    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
-    subject VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(id),
-    FOREIGN KEY (assigned_to) REFERENCES users(id)
-);
-
-CREATE TABLE deals (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    assigned_to INT,
-    amount DECIMAL(10, 2),
-    status ENUM('prospect', 'qualified', 'proposal', 'negotiation', 'closed_won', 'closed_lost'),
-    expected_close_date DATE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customers(id),
-    FOREIGN KEY (assigned_to) REFERENCES users(id)
-);
-
-CREATE TABLE group_events (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_type ENUM('arrears_meeting', 'formation_meeting', 'training_meeting') NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    event_date DATE NOT NULL,
-    start_time TIME,
-    end_time TIME,
-    sub_location VARCHAR(100) NOT NULL,
-    ward VARCHAR(100) NOT NULL,
-    county ENUM('Mombasa', 'Kwale', 'Kilifi', 'Tana River', 'Lamu', 'Taita/Taveta', 'Garissa', 'Wajir', 'Mandera', 'Marsabit', 'Isiolo', 'Meru', 'Tharaka-Nithi', 'Embu', 'Kitui', 'Machakos', 'Makueni', 'Nyandarua', 'Nyeri', 'Kirinyaga', 'Murang\'a', 'Kiambu', 'Turkana', 'West Pokot', 'Samburu', 'Trans Nzoia', 'Uasin Gishu', 'Elgeyo/Marakwet', 'Nandi', 'Baringo', 'Laikipia', 'Nakuru', 'Narok', 'Kajiado', 'Kericho', 'Bomet', 'Kakamega', 'Vihiga', 'Bungoma', 'Busia', 'Siaya', 'Kisumu', 'Homa Bay', 'Migori', 'Kisii', 'Nyamira', 'Nairobi City') NOT NULL,
-    status ENUM('planned', 'in_progress', 'completed', 'cancelled') DEFAULT 'planned',
     created_by INT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_sales_contract_id) REFERENCES group_sales_contracts(id),
     FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
-CREATE TABLE group_event_attendees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
-    customer_id INT NOT NULL,
-    attended BOOLEAN NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (event_id) REFERENCES group_events(id),
-    FOREIGN KEY (customer_id) REFERENCES customers(id)
-);
-
-CREATE TABLE group_event_groups (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
-    group_id INT NOT NULL,
-    FOREIGN KEY (event_id) REFERENCES group_events(id),
-    FOREIGN KEY (group_id) REFERENCES groups(id)
-);
-
-CREATE TABLE payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    contract_id INT NOT NULL,
-    customer_id INT NOT NULL,
-    payment_date DATETIME NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    payment_type ENUM('down_payment', 'installment') NOT NULL,
-    transaction_id VARCHAR(100) UNIQUE NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id),
-    FOREIGN KEY (customer_id) REFERENCES customers(id)
-);
-
-CREATE TABLE customer_balances (
+-- Create customer_balances table if it doesn't exist
+CREATE TABLE IF NOT EXISTS customer_balances (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     contract_id INT NOT NULL,
@@ -178,36 +142,78 @@ CREATE TABLE customer_balances (
     UNIQUE KEY (customer_id, contract_id)
 );
 
-CREATE TABLE contract_items (
+-- Create products table if it doesn't exist
+CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     contract_id INT NOT NULL,
-    item_name VARCHAR(100) NOT NULL,
-    item_serial_number VARCHAR(50) UNIQUE NOT NULL,
-    down_payment DECIMAL(10, 2) NOT NULL,
-    monthly_installment DECIMAL(10, 2) NOT NULL,
-    total_payment_plan_price DECIMAL(10, 2) NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
+    product_sku VARCHAR(50) NOT NULL,
+    buying_price DECIMAL(10,2) NOT NULL,
+    selling_price DECIMAL(10,2) NOT NULL,
+    estimated_profit DECIMAL(10,2) GENERATED ALWAYS AS (selling_price - buying_price) STORED,
+    loan_term INT NOT NULL COMMENT 'in months',
+    downpayment DECIMAL(10,2) NOT NULL,
+    monthly_repayment_amount DECIMAL(10,2) GENERATED ALWAYS AS ((selling_price - downpayment) / loan_term) STORED,
+    monthly_target INT NOT NULL COMMENT 'units per month',
+    estimated_revenue_downpayment DECIMAL(10,2) GENERATED ALWAYS AS (monthly_target * downpayment) STORED,
+    estimated_revenue_repayments DECIMAL(10,2) GENERATED ALWAYS AS (((selling_price - downpayment) / loan_term) * monthly_target) STORED,
+    created_by INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id)
+    UNIQUE KEY (product_sku),
+    FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
-CREATE TABLE notifications (
+-- Create product_sales table if it doesn't exist
+CREATE TABLE IF NOT EXISTS product_sales (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contract_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity_sold INT NOT NULL,
+    sale_date DATE NOT NULL,
+    total_amount DECIMAL(10,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-- Create notifications table if it doesn't exist
+CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     message VARCHAR(255) NOT NULL,
     userId INT NOT NULL,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updatedAt DATETIME ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users(id)
 );
 
-CREATE TABLE AuditLogs (
+-- Create AuditLogs table if it doesn't exist
+CREATE TABLE IF NOT EXISTS AuditLogs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    userId INT NULL,
+    userId INT,
     action VARCHAR(255) NOT NULL,
     endpoint VARCHAR(255) NOT NULL,
     method VARCHAR(10) NOT NULL,
     statusCode INT NOT NULL,
-    message VARCHAR(255) NULL,
+    message VARCHAR(255),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updatedAt TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
+
+-- Create tickets table if it doesn't exist
+CREATE TABLE IF NOT EXISTS tickets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    assigned_to INT,
+    status ENUM('open', 'in_progress', 'closed') DEFAULT 'open',
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    subject VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    FOREIGN KEY (assigned_to) REFERENCES users(id)
 );
