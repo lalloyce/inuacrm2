@@ -68,9 +68,53 @@ async function fetchCustomerContracts(customerId) {
             throw new Error('No authentication token found');
         }
 
-        // Implementation of fetchCustomerContracts function
-        // Include the token in the headers when making the API call
-        // ...
+        const response = await fetch(`/api/contracts?customerId=${customerId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch customer contracts: ${response.status} ${response.statusText}`);
+        }
+
+        const contracts = await response.json();
+
+        const contractsContainer = document.getElementById('customer-contracts');
+        if (contracts.length === 0) {
+            contractsContainer.innerHTML = '<p>No contracts found for this customer.</p>';
+        } else {
+            const contractsList = contracts.map(contract => `
+                <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Contract ID:</label>
+                        <p>${contract.id}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
+                        <p>${new Date(contract.start_date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
+                        <p>${new Date(contract.end_date).toLocaleDateString()}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <p>${contract.status}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Contract Type:</label>
+                        <p>${contract.contract_type}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Amount:</label>
+                        <p>$${contract.amount.toFixed(2)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            contractsContainer.innerHTML = contractsList;
+        }
     } catch (error) {
         console.error('Error fetching customer contracts:', error);
         alert('An error occurred while fetching customer contracts.');
