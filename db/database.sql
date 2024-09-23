@@ -162,15 +162,27 @@ CREATE TABLE IF NOT EXISTS products (
     loan_term INT NOT NULL COMMENT 'in months',
     downpayment DECIMAL(10,2) NOT NULL,
     monthly_repayment_amount DECIMAL(10,2) GENERATED ALWAYS AS ((selling_price - downpayment) / loan_term) STORED,
-    monthly_target INT NOT NULL COMMENT 'units per month',
-    estimated_revenue_downpayment DECIMAL(10,2) GENERATED ALWAYS AS (monthly_target * downpayment) STORED,
-    estimated_revenue_repayments DECIMAL(10,2) GENERATED ALWAYS AS (((selling_price - downpayment) / loan_term) * monthly_target) STORED,
     created_by INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY (product_sku),
     FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id),
     FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- Create sales_targets table if it doesn't exist
+CREATE TABLE IF NOT EXISTS sales_targets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    group_coordinator_id INT NOT NULL,
+    monthly_target INT NOT NULL COMMENT 'units per month',
+    estimated_revenue_downpayment DECIMAL(10,2) NOT NULL,
+    estimated_revenue_repayments DECIMAL(10,2) NOT NULL,
+    remaining_products_to_sell INT GENERATED ALWAYS AS (total_items_sold - monthly_target) STORED,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (group_coordinator_id) REFERENCES users(id)
 );
 
 -- Create product_sales table if it doesn't exist
@@ -229,3 +241,5 @@ CREATE TABLE IF NOT EXISTS tickets (
 -- Create indexes for user management
 CREATE INDEX idx_email ON users(email);
 CREATE INDEX idx_token ON password_reset_tokens(token);
+CREATE INDEX idx_user_id ON password_reset_tokens(user_id);
+CREATE INDEX idx_session_user_id ON sessions(user_id);
