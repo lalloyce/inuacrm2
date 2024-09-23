@@ -1,5 +1,13 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('./index');
+const dotenv = require('dotenv');
+dotenv.config(); // Load environment variables
+
+const { Sequelize, DataTypes } = require('sequelize');
+
+// Define your model using Sequelize
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'mysql',
+    logging: false,
+});
 
 // Define the User model
 const User = sequelize.define('User', {
