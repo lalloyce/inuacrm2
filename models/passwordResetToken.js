@@ -1,20 +1,35 @@
-const { DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+const User = require('./User');
 
-module.exports = (sequelize) => {
-    const PasswordResetToken = sequelize.define('PasswordResetToken', {
-        token: {
-            type: DataTypes.STRING,
-            allowNull: false,
+class PasswordResetToken extends Model {}
+
+PasswordResetToken.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
         },
-        expiresAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-    });
+    },
+    token: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+    },
+    expires_at: {
+        type: DataTypes.TIMESTAMP,
+        allowNull: false,
+    },
+}, {
+    sequelize,
+    modelName: 'PasswordResetToken',
+    timestamps: true,
+});
 
-    PasswordResetToken.associate = (models) => {
-        PasswordResetToken.belongsTo(models.User);
-    };
-
-    return PasswordResetToken;
-};
+module.exports = PasswordResetToken;

@@ -1,22 +1,30 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+const User = require('./User');
 
-// Initialize the Sequelize instance (if not done in a separate file)
-const dotenv = require('dotenv');
-const { sequelize } = require('../config/database');
+class Notification extends Model {}
 
-dotenv.config();
-
-const Notification = sequelize.define('Notification', {
+Notification.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     message: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
     },
-    // Add other fields as necessary
 }, {
+    sequelize,
+    modelName: 'Notification',
     timestamps: true,
 });
 

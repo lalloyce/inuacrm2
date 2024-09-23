@@ -1,40 +1,44 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+const GroupLeader = require('./GroupLeader');
+const User = require('./User');
 
-const Group = sequelize.define('Group', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  group_leader_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  group_coordinator_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  member_count: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      min: 5,
-      max: 10,
+class Group extends Model {}
+
+Group.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
     },
-  },
-  created_by: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'users',
-      key: 'id'
-    }
-  }
+    group_leader_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: GroupLeader,
+            key: 'id',
+        },
+    },
+    group_coordinator_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
+    },
+    member_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        validate: {
+            min: 5,
+            max: 10,
+        },
+    },
 }, {
-  tableName: 'groups',
-  timestamps: true,
-  underscored: true,
+    sequelize,
+    modelName: 'Group',
+    timestamps: true,
 });
 
 module.exports = Group;

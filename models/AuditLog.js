@@ -1,36 +1,43 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const { sequelize } = require('../config/database');
+const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+const User = require('./User');
 
-const AuditLog = sequelize.define('AuditLog', {
+class AuditLog extends Model {}
+
+AuditLog.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        references: {
+            model: User,
+            key: 'id',
+        },
     },
     action: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     endpoint: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     method: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(10),
         allowNull: false,
     },
     statusCode: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    message: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
+    message: DataTypes.STRING(255),
 }, {
+    sequelize,
+    modelName: 'AuditLog',
     timestamps: true,
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    timezone: 'Africa/Nairobi', // Ensure the model uses the correct timezone
 });
 
 module.exports = AuditLog;
