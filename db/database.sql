@@ -10,13 +10,21 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('customer_service', 'sales_manager', 'group_coordinator', 'other_manager', 'admin') NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE,
     verification_token VARCHAR(255),
-    reset_token VARCHAR(255),
-    reset_token_expires DATETIME,
     avatar VARCHAR(255),
     last_login DATETIME,
     login_count INT DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create password_reset_tokens table
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Create sessions table if it doesn't exist
@@ -154,15 +162,27 @@ CREATE TABLE IF NOT EXISTS products (
     loan_term INT NOT NULL COMMENT 'in months',
     downpayment DECIMAL(10,2) NOT NULL,
     monthly_repayment_amount DECIMAL(10,2) GENERATED ALWAYS AS ((selling_price - downpayment) / loan_term) STORED,
-    monthly_target INT NOT NULL COMMENT 'units per month',
-    estimated_revenue_downpayment DECIMAL(10,2) GENERATED ALWAYS AS (monthly_target * downpayment) STORED,
-    estimated_revenue_repayments DECIMAL(10,2) GENERATED ALWAYS AS (((selling_price - downpayment) / loan_term) * monthly_target) STORED,
     created_by INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY (product_sku),
     FOREIGN KEY (contract_id) REFERENCES group_sales_contracts(id),
     FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- Create sales_targets table if it doesn't exist
+CREATE TABLE IF NOT EXISTS sales_targets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    group_coordinator_id INT NOT NULL,
+    monthly_target INT NOT NULL COMMENT 'units per month',
+    estimated_revenue_downpayment DECIMAL(10,2) NOT NULL,
+    estimated_revenue_repayments DECIMAL(10,2) NOT NULL,
+    remaining_products_to_sell INT GENERATED ALWAYS AS (total_items_sold - monthly_target) STORED,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (group_coordinator_id) REFERENCES users(id)
 );
 
 -- Create product_sales table if it doesn't exist
@@ -217,3 +237,9 @@ CREATE TABLE IF NOT EXISTS tickets (
     FOREIGN KEY (customer_id) REFERENCES customers(id),
     FOREIGN KEY (assigned_to) REFERENCES users(id)
 );
+
+-- Create indexes for user management
+CREATE INDEX idx_email ON users(email);
+CREATE INDEX idx_token ON password_reset_tokens(token);
+CREATE INDEX idx_user_id ON password_reset_tokens(user_id);
+CREATE INDEX idx_session_user_id ON sessions(user_id);
