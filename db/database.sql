@@ -10,13 +10,21 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('customer_service', 'sales_manager', 'group_coordinator', 'other_manager', 'admin') NOT NULL,
     is_verified BOOLEAN DEFAULT FALSE,
     verification_token VARCHAR(255),
-    reset_token VARCHAR(255),
-    reset_token_expires DATETIME,
     avatar VARCHAR(255),
     last_login DATETIME,
     login_count INT DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create password_reset_tokens table
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Create sessions table if it doesn't exist
@@ -217,3 +225,7 @@ CREATE TABLE IF NOT EXISTS tickets (
     FOREIGN KEY (customer_id) REFERENCES customers(id),
     FOREIGN KEY (assigned_to) REFERENCES users(id)
 );
+
+-- Create indexes for user management
+CREATE INDEX idx_email ON users(email);
+CREATE INDEX idx_token ON password_reset_tokens(token);
