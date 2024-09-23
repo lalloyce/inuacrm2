@@ -3,127 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inua CRM - Login</title>
-    <!-- Link to the main stylesheet -->
-    <link rel="stylesheet" href="./css/style.css">
-    <!-- Preconnect to Google Fonts for performance optimization -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Import Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
+    <title>Modern Login System</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Moderustic:wght@300..800&display=swap" rel="stylesheet">
-    <!-- Link to the authentication script -->
-    <script src="./js/auth.js" defer></script>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Left side of the login page containing information about Inua Solutions -->
-        <div class="left-side">
-            <div class="logo">
-                <!-- Inua Solutions Logo -->
-                <img id="logo" src="./img/logo_v2-removebg-preview.png" alt="Inua Solutions Logo">
-            </div>
-            <h1>Inua Solutions</h1>
-            <p>Empowering rural communities through access to essential goods on credit.</p>
-            <!-- Information box about flexible credit options -->
-            <div class="info-box">
-                <h2>Flexible Credit Options</h2>
-                <p>Our platform offers rural households the ability to acquire quality products with flexible repayment plans tailored to their needs.</p>
-            </div>
-            <!-- Information box about transforming rural economies -->
-            <div class="info-box">
-                <h2>Transforming Rural Economies</h2>
-                <p>By bridging the gap between rural families and essential goods, we foster economic growth and improve living standards across communities.</p>
-            </div>
-        </div>
-        <!-- Right side of the login page containing the login form -->
-        <div class="right-side">
-            <div class="card">
-                <h2>Sign In</h2>
-                <form id="login-form">
-                    <div class="form-group">
-                        <!-- Email input field for login -->
-                        <input type="email" id="login-email" placeholder="Email" required>
-                    </div>
-                    <div class="form-group">
-                        <!-- Password input field for login -->
-                        <input type="password" id="login-password" placeholder="Password" required>
-                    </div>
-                    <!-- Link to reset password -->
-                    <a href="#" id="forgot-password" class="forgot-password">Forgot Password?</a>
-                    <!-- Login button -->
-                    <button type="submit" class="login-button">Log In</button>
-                </form>
-                <!-- Divider with "OR" text for alternative actions -->
-                <div class="or-divider">
-                    <hr>
-                    <span>OR</span>
-                    <hr>
-                </div>
-                <!-- Link to sign up page -->
-                <p class="signup-text">Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
-            </div>
-        </div>
-    </div>
+<div class="container">
+    <h1>Welcome</h1>
+    <button id="loginBtn" class="btn">Login</button>
+    <button id="registerBtn" class="btn">Register</button>
+    <button id="resetPasswordBtn" class="btn">Reset Password</button>
+</div>
 
-    <!-- Sign Up Modal -->
-    <div id="signup-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Sign Up</h3>
-            <form id="signup-form">
-                <div class="form-group">
-                    <!-- Full name input field for sign up -->
-                    <input type="text" id="signup-name" placeholder="Full Name" required>
-                </div>
-                <div class="form-group">
-                    <!-- Email input field for sign up -->
-                    <input type="email" id="signup-email" placeholder="Email" required>
-                </div>
-                <div class="form-group">
-                    <!-- Password input field for sign up -->
-                    <input type="password" id="signup-password" placeholder="Password" required>
-                </div>
-                <div class="form-group">
-                    <!-- Role selection dropdown for sign up -->
-                    <select id="signup-role" required>
-                        <option value="">Select Role</option>
-                        <option value="customer_service">Customer Service</option>
-                        <option value="sales_manager">Sales Manager</option>
-                        <option value="group_leader">Group Coordinator</option>
-                        <option value="other_manager">Other Manager</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <!-- Sign up button -->
-                <button type="submit" class="signup-button">Sign Up</button>
-            </form>
-        </div>
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="email" id="loginEmail" required placeholder=" ">
+                <label for="loginEmail">Email</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="loginPassword" required placeholder=" ">
+                <label for="loginPassword">Password</label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
     </div>
+</div>
 
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Reset Password</h3>
-            <form id="forgot-password-form">
-                <div class="form-group">
-                    <!-- Email input field for password reset -->
-                    <input type="email" id="forgot-password-email" placeholder="Email" required>
-                </div>
-                <!-- Button to send password reset link -->
-                <button type="submit" class="reset-button">Send Reset Link</button>
-            </form>
-        </div>
+<!-- Register Modal -->
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Register</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <input type="text" id="registerName" required placeholder=" ">
+                <label for="registerName">Name</label>
+            </div>
+            <div class="form-group">
+                <input type="email" id="registerEmail" required placeholder=" ">
+                <label for="registerEmail">Email</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="registerPassword" required placeholder=" ">
+                <label for="registerPassword">Password</label>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirmPassword" required placeholder=" ">
+                <label for="confirmPassword">Confirm Password</label>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        </form>
     </div>
+</div>
 
-    <!-- Footer section -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Inua Solutions. All rights reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-        </div>
-    </footer>
+<!-- Reset Password Modal -->
+<div id="resetPasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Reset Password</h2>
+        <form id="resetPasswordForm">
+            <div class="form-group">
+                <input type="email" id="resetEmail" required placeholder=" ">
+                <label for="resetEmail">Email</label>
+            </div>
+            <button type="submit" class="btn">Reset Password</button>
+        </form>
+    </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
