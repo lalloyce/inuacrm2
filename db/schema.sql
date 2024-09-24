@@ -349,3 +349,4 @@ CREATE INDEX idx_created_by ON customers(created_by);
 CREATE INDEX idx_group_id ON group_sales_contracts(group_id);
 CREATE INDEX idx_event_id ON group_event_attendees(event_id);
 CREATE INDEX idx_group_event_id ON group_event_groups(event_id);
+CREATE INDEX idx_userId ON AuditLogs(userId);

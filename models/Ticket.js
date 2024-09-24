@@ -12,6 +12,7 @@ Ticket.init({
     },
     customer_id: {
         type: DataTypes.INTEGER,
+        allowNull: false, // Ensure customer_id is required
     },
     assigned_to: {
         type: DataTypes.INTEGER,
@@ -19,6 +20,7 @@ Ticket.init({
             model: User,
             key: 'id',
         },
+        onDelete: 'SET NULL', // Optional: define behavior on user deletion
     },
     status: {
         type: DataTypes.ENUM('open', 'in_progress', 'closed'),
@@ -32,10 +34,14 @@ Ticket.init({
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    description: DataTypes.TEXT,
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true, // Explicitly allowing null
+    },
 }, {
     sequelize,
     modelName: 'Ticket',
+    tableName: 'tickets', // Explicitly define table name
     timestamps: true,
 });
 

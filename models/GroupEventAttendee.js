@@ -10,19 +10,27 @@ const GroupEventAttendee = sequelize.define('GroupEventAttendee', {
   event_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'GroupEvents', // Assuming you have a GroupEvent model
+      key: 'id',
+    },
   },
   customer_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'Customers', // Assuming you have a Customers model
+      key: 'id',
+    },
   },
-  attended: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
+  status: {
+    type: DataTypes.ENUM('attending', 'not_attending', 'maybe'),
+    defaultValue: 'attending',
   },
 }, {
   tableName: 'group_event_attendees',
-  timestamps: false,
+  timestamps: true,
+  underscored: true,
 });
 
 module.exports = GroupEventAttendee;

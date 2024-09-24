@@ -17,19 +17,22 @@ PasswordResetToken.init({
             model: User,
             key: 'id',
         },
+        onDelete: 'CASCADE', // Optional: define behavior on user deletion
     },
     token: {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
     expires_at: {
-        type: DataTypes.TIMESTAMP,
+        type: DataTypes.DATE, // Changed to DATE for better compatibility
         allowNull: false,
     },
 }, {
     sequelize,
     modelName: 'PasswordResetToken',
+    tableName: 'password_reset_tokens', // Explicitly define table name
     timestamps: true,
+    underscored: true, // Use underscored naming convention
 });
 
 module.exports = PasswordResetToken;

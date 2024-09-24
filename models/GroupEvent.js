@@ -41,6 +41,10 @@ const GroupEvent = sequelize.define('GroupEvent', {
   created_by: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: 'Users', // Assuming you have a Users model
+      key: 'id',
+    },
   },
 }, {
   tableName: 'group_events',

@@ -1,158 +1,107 @@
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const config = require('../config/database');
 
-// Initialize Sequelize
-const dotenv = require('dotenv');
-const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-// Load environment variables
-dotenv.config();
+const db = {};
 
-// Parse database URL
-const dbUrl = new URL(process.env.DATABASE_URL);
+// Read all model files and import them
+fs.readdirSync(__dirname)
+    .filter(file => file.endsWith('.js') && file !== 'index.js')
+    .forEach(file => {
+        const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+        db[model.name] = model;
+    });
 
-// Initialize Sequelize with MySQL dialect
-const sequelize = new Sequelize(dbUrl.pathname.slice(1), dbUrl.username, decodeURIComponent(dbUrl.password), {
-    host: dbUrl.hostname,
-    port: dbUrl.port,
-    dialect: 'mysql',
-    logging: false, // Disable logging; set to console.log for debugging
+// Associate models
+Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+    }
 });
 
-const { DataTypes } = require('sequelize');
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-const User = sequelize.define('User', {
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    role: {
-        type: DataTypes.ENUM('admin', 'group_coordinator', 'sales_manager', 'customer_service', 'management'),
-        allowNull: false,
-    },
-});
+// In your index.js file, after defining the models
+const User = require('./User');
+const GroupLeader = require('./GroupLeader');
+const Group = require('./Group');
+const GroupSalesContract = require('./GroupSalesContract');
+const Customer = require('./Customer');
+const Product = require('./Product');
+const SalesTarget = require('./SalesTarget');
+const Payment = require('./Payment');
+const Notification = require('./Notification');
+const AuditLog = require('./AuditLog');
 
-const PasswordResetToken = sequelize.define('PasswordResetToken', {
-    token: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    expiresAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-});
-
-const CustomerGroup = sequelize.define('CustomerGroup', {
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-});
-
-const Customer = sequelize.define('Customer', {
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    email: {
-        type: DataTypes.STRING,
-        unique: true,
-    },
-    phone: DataTypes.STRING,
-    address: DataTypes.TEXT,
-});
-
-const SalesContract = sequelize.define('SalesContract', {
-    productName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    totalAmount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-    },
-    installmentAmount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-    },
-    installmentFrequency: {
-        type: DataTypes.ENUM('weekly', 'bi-weekly', 'monthly'),
-        allowNull: false,
-    },
-    startDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    endDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    status: {
-        type: DataTypes.ENUM('active', 'completed', 'defaulted'),
-        allowNull: false,
-    },
-});
-
-const Payment = sequelize.define('Payment', {
-    amount: {
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
-    },
-    paymentDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-});
-
-const SupportTicket = sequelize.define('SupportTicket', {
-    subject: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    description: DataTypes.TEXT,
-    status: {
-        type: DataTypes.ENUM('open', 'in_progress', 'resolved', 'closed'),
-        allowNull: false,
-    },
-});
-
-// Define associations
-User.hasMany(PasswordResetToken);
-PasswordResetToken.belongsTo(User);
-
-User.hasMany(CustomerGroup, { foreignKey: 'coordinatorId' });
-CustomerGroup.belongsTo(User, { as: 'coordinator', foreignKey: 'coordinatorId' });
-
-CustomerGroup.hasMany(Customer);
-Customer.belongsTo(CustomerGroup);
-
-Customer.hasMany(SalesContract);
-SalesContract.belongsTo(Customer);
-
-SalesContract.hasMany(Payment);
-Payment.belongsTo(SalesContract);
-
-Customer.hasMany(SupportTicket);
-SupportTicket.belongsTo(Customer);
-
-User.hasMany(SupportTicket, { foreignKey: 'assignedTo' });
-SupportTicket.belongsTo(User, { as: 'assignedUser', foreignKey: 'assignedTo' });
-
-module.exports = {
+// Define indexes
+User.init({
+    // ... existing fields ...
+}, {
     sequelize,
-    User,
-    PasswordResetToken,
-    CustomerGroup,
-    Customer,
-    SalesContract,
-    Payment,
-    SupportTicket,
-};
+    modelName: 'User',
+    tableName: 'users',
+    timestamps: true,
+    indexes: [
+        { unique: true, fields: ['email'] },
+        { fields: ['email'] },
+    ],
+});
+
+GroupLeader.init({
+    // ... existing fields ...
+}, {
+    sequelize,
+    modelName: 'GroupLeader',
+    tableName: 'group_leaders',
+    timestamps: true,
+    indexes: [
+        { fields: ['mobile_number'] },
+    ],
+});
+
+Customer.init({
+    // ... existing fields ...
+}, {
+    sequelize,
+    modelName: 'Customer',
+    tableName: 'customers',
+    timestamps: true,
+    indexes: [
+        { fields: ['national_id_number'] },
+        { fields: ['mpesa_mobile_number'] },
+        { fields: ['group_sales_contract_id'] },
+        { fields: ['created_by'] },
+    ],
+});
+
+GroupSalesContract.init({
+    // ... existing fields ...
+}, {
+    sequelize,
+    modelName: 'GroupSalesContract',
+    tableName: 'group_sales_contracts',
+    timestamps: true,
+    indexes: [
+        { fields: ['group_id'] },
+    ],
+});
+
+Payment.init({
+    // ... existing fields ...
+}, {
+    sequelize,
+    modelName: 'Payment',
+    tableName: 'payments',
+    timestamps: true,
+    indexes: [
+        { fields: ['customer_id'] },
+    ],
+});
+
+// Continue for other models...
+
+module.exports = db;

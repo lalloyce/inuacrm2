@@ -1,37 +1,44 @@
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const CustomerBalance = sequelize.define('CustomerBalance', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  customer_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  contract_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  total_amount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  amount_paid: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  remaining_balance: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-  },
+class CustomerBalance extends Model {}
+
+CustomerBalance.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    customer_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: 'Customers',
+            key: 'id',
+        },
+        allowNull: false,
+    },
+    balance: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+    },
+    last_updated: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
 }, {
-  tableName: 'customer_balances',
-  timestamps: true,
-  updatedAt: 'last_updated',
-  underscored: true,
+    sequelize,
+    modelName: 'CustomerBalance',
+    tableName: 'customer_balances',
+    timestamps: true,
 });
+
+// Define associations if necessary
+CustomerBalance.associate = (models) => {
+    CustomerBalance.belongsTo(models.Customer, {
+        foreignKey: 'customer_id',
+        as: 'customer',
+    });
+};
 
 module.exports = CustomerBalance;

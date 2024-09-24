@@ -1,6 +1,5 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
-const User = require('./User');
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 class Notification extends Model {}
 
@@ -11,20 +10,20 @@ Notification.init({
         primaryKey: true,
     },
     message: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING,
         allowNull: false,
     },
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
-            model: User,
+            model: 'Users',
             key: 'id',
         },
     },
 }, {
     sequelize,
     modelName: 'Notification',
+    tableName: 'notifications',
     timestamps: true,
 });
 

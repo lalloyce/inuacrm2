@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 class User extends Model {}
 
@@ -10,16 +10,16 @@ User.init({
         primaryKey: true,
     },
     email: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
+        type: DataTypes.STRING,
         unique: true,
+        allowNull: false,
     },
     password: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING,
         allowNull: false,
     },
     full_name: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING,
         allowNull: false,
     },
     role: {
@@ -30,9 +30,15 @@ User.init({
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
-    verification_token: DataTypes.STRING(255),
-    avatar: DataTypes.STRING(255),
-    last_login: DataTypes.DATE,
+    verification_token: {
+        type: DataTypes.STRING,
+    },
+    avatar: {
+        type: DataTypes.STRING,
+    },
+    last_login: {
+        type: DataTypes.DATE,
+    },
     login_count: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -40,6 +46,7 @@ User.init({
 }, {
     sequelize,
     modelName: 'User',
+    tableName: 'users',
     timestamps: true,
 });
 

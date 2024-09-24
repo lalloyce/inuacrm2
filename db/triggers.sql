@@ -1,5 +1,5 @@
--- This script creates triggers for the users table in the Inua CRM database.
--- These triggers are used to log user actions in the AuditLogs table.
+-- Ensure indexing on userId
+CREATE INDEX idx_userId ON AuditLogs(userId);
 
 -- Trigger for INSERT operations on users table
 DELIMITER //
@@ -18,9 +18,11 @@ CREATE TRIGGER users_update_trigger
 AFTER UPDATE ON users
 FOR EACH ROW
 BEGIN
-    -- Insert a new record into the AuditLogs table when a user is updated
-    INSERT INTO AuditLogs (userId, action, endpoint, method, statusCode, message)
-    VALUES (NEW.id, 'UPDATE', 'users', 'UPDATE', 200, CONCAT('User updated: ', NEW.email));
+    -- Only log changes when important fields are updated
+    IF NEW.email <> OLD.email OR NEW.password <> OLD.password OR NEW.role <> OLD.role THEN
+        INSERT INTO AuditLogs (userId, action, endpoint, method, statusCode, message)
+        VALUES (NEW.id, 'UPDATE', 'users', 'UPDATE', 200, CONCAT('User updated: ', NEW.email));
+    END IF;
 END;
 //
 

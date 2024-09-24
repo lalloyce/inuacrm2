@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../config/database');
 const User = require('./User');
 
 class Session extends Model {}
@@ -28,6 +28,7 @@ Session.init({
 }, {
     sequelize,
     modelName: 'Session',
+    tableName: 'sessions', // Explicitly define table name
     timestamps: true,
 });
 

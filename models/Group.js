@@ -1,7 +1,5 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
-const GroupLeader = require('./GroupLeader');
-const User = require('./User');
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 class Group extends Model {}
 
@@ -11,33 +9,21 @@ Group.init({
         autoIncrement: true,
         primaryKey: true,
     },
+    group_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     group_leader_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
         references: {
-            model: GroupLeader,
+            model: 'GroupLeaders',
             key: 'id',
-        },
-    },
-    group_coordinator_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: User,
-            key: 'id',
-        },
-    },
-    member_count: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: 5,
-            max: 10,
         },
     },
 }, {
     sequelize,
     modelName: 'Group',
+    tableName: 'groups',
     timestamps: true,
 });
 

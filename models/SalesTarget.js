@@ -1,34 +1,38 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-class Payment extends Model {}
+class SalesTarget extends Model {}
 
-Payment.init({
+SalesTarget.init({
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
     },
-    amount: {
+    target_amount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
+        validate: {
+            min: 0, // Ensure target amount cannot be negative
+        },
     },
-    payment_date: {
+    target_date: {
         type: DataTypes.DATE,
         allowNull: false,
     },
-    customer_id: {
+    group_sales_contract_id: {
         type: DataTypes.INTEGER,
         references: {
-            model: 'Customers',
+            model: 'GroupSalesContracts',
             key: 'id',
         },
+        onDelete: 'CASCADE', // Optional: define behavior on contract deletion
     },
 }, {
     sequelize,
-    modelName: 'Payment',
-    tableName: 'payments',
+    modelName: 'SalesTarget',
+    tableName: 'sales_targets',
     timestamps: true,
 });
 
-module.exports = Payment;
+module.exports = SalesTarget;
