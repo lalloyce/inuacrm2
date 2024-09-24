@@ -52,11 +52,28 @@ CREATE TABLE IF NOT EXISTS groups (
     FOREIGN KEY (group_leader_id) REFERENCES group_leaders(id)
 );
 
--- Add foreign key to group_leaders table
--- This adds a foreign key to the group_leaders table, linking it to the groups table
+-- Check if the group_id column exists, and only add it if it doesn't
+SET @column_exists = (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = 'inuacrm'
+      AND TABLE_NAME = 'group_leaders'
+      AND COLUMN_NAME = 'group_id'
+);
+
+SET @alter_statement = IF(@column_exists = 0,
+    'ALTER TABLE group_leaders ADD COLUMN group_id INT',
+    'SELECT "group_id column already exists" AS message'
+);
+
+PREPARE stmt FROM @alter_statement;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Add the foreign key constraint if it doesn't exist
 ALTER TABLE group_leaders
-ADD COLUMN group_id INT,
-ADD FOREIGN KEY (group_id) REFERENCES groups(id);
+ADD CONSTRAINT IF NOT EXISTS fk_group_leaders_group
+FOREIGN KEY (group_id) REFERENCES groups(id);
 
 -- Create the group_sales_contracts table
 -- This table stores information about the group sales contracts
@@ -165,7 +182,7 @@ CREATE TABLE IF NOT EXISTS customer_balances (
     loan_term INT NOT NULL COMMENT 'in months',
     loan_principle DECIMAL(10, 2) NOT NULL,
     downpayment DECIMAL(10,2) NOT NULL,
-    weekly_repayment_amount DECIMAL(10,2) GENERATED ALWAYS AS ((selling_price - downpayment) / loan_term) STORED,
+    weekly_repayment_amount DECIMAL(10,2) GENERATED ALWAYS AS ((loan_principle - downpayment) / (loan_term * 4)) STORED,
     amount_paid DECIMAL(10, 2) NOT NULL,
     loan_outstanding_balance DECIMAL(10, 2) NOT NULL,
     last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
