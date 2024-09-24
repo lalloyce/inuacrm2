@@ -1,25 +1,15 @@
-/**
- * Server configuration and main application logic for Inua CRM.
- * This file sets up the Express server, configures middleware, defines routes,
- * and initializes the database connection.
- */
-
 // Import required modules
 const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
-const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const FormData = require('form-data');
 const dotenv = require('dotenv');
 const path = require('path');
-const multer = require('multer');
 const errorHandler = require('./middleware/errorHandler');
 const bodyParser = require('body-parser');
-const { authMiddleware, roleMiddleware, authenticateToken } = require('./middleware/authMiddleware');
-const url = require('url');
+const { authMiddleware } = require('./middleware/authMiddleware');
 const jwt = require('jsonwebtoken');
 const { Sequelize } = require('sequelize');
 const moment = require('moment-timezone');
@@ -53,7 +43,7 @@ const sessionStore = new MySQLStore({
 // Configure session middleware
 app.use(session({
     key: 'session_cookie_name',
-    secret: 'session_cookie_secret',
+    secret: process.env.SESSION_SECRET, // Use an environment variable for the secret
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
@@ -64,8 +54,10 @@ app.use(session({
     }
 }));
 
-// Import Sequelize instance and models
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// Initialize Sequelize with the parsed DATABASE_URL
+const sequelize = new Sequelize(dbUrl.pathname.substr(1), dbUrl.username, decodeURIComponent(dbUrl.password), {
+    host: dbUrl.hostname,
+    port: dbUrl.port,
     dialect: 'mysql',
     timezone: '+03:00', // East Africa Time (EAT) is UTC+3
     logging: false,
@@ -74,6 +66,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
         underscored: true,
     },
 });
+
+// Import models
 const User = require('./models/User');
 const Notification = require('./models/Notification');
 const Customer = require('./models/Customer');
@@ -81,6 +75,18 @@ const Group = require('./models/Group');
 const AuditLog = require('./models/AuditLog');
 const Payment = require('./models/Payment');
 const Ticket = require('./models/Ticket');
+const Deal = require('./models/Deal'); 
+
+// Initialize nodemailer transporter
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: true,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD
+    }
+});
 
 /**
  * Function to send email using nodemailer
@@ -89,29 +95,24 @@ const Ticket = require('./models/Ticket');
  * @param {string} text - Email body text
  */
 const sendEmail = async (to, subject, text) => {
-    let transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: true, // true for 465, false for other ports
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASSWORD
-        }
-    });
-
     try {
         let info = await transporter.sendMail({
-            from: `"Inua CRM" <${process.env.SMTP_USER}>`, // sender address
-            to: to, // list of receivers
-            subject: subject, // Subject line
-            text: text, // plain text body
+            from: `"Inua CRM" <${process.env.SMTP_USER}>`,
+            to: to,
+            subject: subject,
+            text: text,
         });
-
         console.log('Email sent:', info);
     } catch (error) {
         console.error('Error sending email:', error);
     }
 };
+
+// Apply CORS middleware
+app.use(cors());
+
+// Apply authentication middleware to all routes
+app.use(authMiddleware);
 
 // Route to handle user login
 app.post('/api/login', async (req, res) => {
@@ -151,16 +152,17 @@ app.post('/api/forgot-password', async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const resetToken = crypto.randomBytes(64).toString('hex');
+        const resetToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         user.reset_token = resetToken;
-        user.reset_token_expires = moment().add(1, 'hour').tz('Africa/Nairobi').format(); // 1 hour
+        user.reset_token_expires = moment().add(1, 'hour').tz('Africa/Nairobi').format();
         await user.save();
 
         // Send email with reset token
-        await sendEmail(user.email, 'Password Reset', `Your password reset token is: ${resetToken}`);
+        await sendEmail(user.email, 'Password Reset', `Your password reset link is: ${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`);
 
         res.json({ message: 'Password reset email sent' });
     } catch (error) {
+        console.error('Error in forgot password:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -171,31 +173,14 @@ app.get('/api/test-db', async (req, res) => {
         await sequelize.authenticate();
         res.json({ message: 'Database connection has been established successfully.' });
     } catch (error) {
-        res.status(500).json({ error: 'Unable to connect to the database:', details: error.message });
+        console.error('Unable to connect to the database:', error);
+        res.status(500).json({ error: 'Unable to connect to the database', details: error.message });
     }
 });
 
 // Default route to serve the index.html file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Protected route example
-app.get('/api/protected-route', authMiddleware, (req, res) => {
-    res.json({ message: 'This is a protected route' });
-});
-
-// Error handling middleware
-console.log('Error handler type:', typeof errorHandler);
-app.use(errorHandler);
-
-// Start the server
-sequelize.authenticate().then(() => {
-    app.listen(process.env.PORT || 3000, () => {
-        console.log(`Server is running on port ${process.env.PORT || 3000}`);
-    });
-}).catch(err => {
-    console.error('Unable to connect to the database:', err);
 });
 
 // Route to fetch notifications
@@ -227,7 +212,7 @@ app.get('/api/verify-token', (req, res) => {
 // Route to fetch all users
 app.get('/api/users', async (req, res) => {
     try {
-        const users = await User.findAll();
+        const users = await User.findAll({ attributes: { exclude: ['password'] } });
         res.json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -236,10 +221,10 @@ app.get('/api/users', async (req, res) => {
 });
 
 // Route to fetch all groups
-app.get('/api/groups', authMiddleware, async (req, res) => {
+app.get('/api/groups', async (req, res) => {
     try {
         const groups = await Group.findAll({
-            include: [{ model: User, as: 'leader' }]
+            include: [{ model: User, as: 'leader', attributes: ['id', 'full_name'] }]
         });
         res.json(groups.map(group => ({
             id: group.id,
@@ -253,12 +238,12 @@ app.get('/api/groups', authMiddleware, async (req, res) => {
 });
 
 // Route to get user role
-app.get('/api/user-role', authMiddleware, (req, res) => {
+app.get('/api/user-role', (req, res) => {
     res.json({ role: req.user.role });
 });
 
 // Route to get users by role
-app.get('/api/users-by-role', authMiddleware, async (req, res) => {
+app.get('/api/users-by-role', async (req, res) => {
     try {
         const users = await User.findAll({
             attributes: ['role', [sequelize.fn('COUNT', sequelize.col('role')), 'count']],
@@ -275,7 +260,7 @@ app.get('/api/users-by-role', authMiddleware, async (req, res) => {
 });
 
 // Route to get groups count
-app.get('/api/groups-count', authMiddleware, async (req, res) => {
+app.get('/api/groups-count', async (req, res) => {
     try {
         const count = await Group.count();
         res.json({ count });
@@ -286,7 +271,7 @@ app.get('/api/groups-count', authMiddleware, async (req, res) => {
 });
 
 // Route to get tickets by status
-app.get('/api/tickets-by-status', authMiddleware, async (req, res) => {
+app.get('/api/tickets-by-status', async (req, res) => {
     try {
         const tickets = await Ticket.findAll({
             attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
@@ -303,7 +288,7 @@ app.get('/api/tickets-by-status', authMiddleware, async (req, res) => {
 });
 
 // Route to get deals by status
-app.get('/api/deals-by-status', authMiddleware, async (req, res) => {
+app.get('/api/deals-by-status', async (req, res) => {
     try {
         const deals = await Deal.findAll({
             attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
@@ -320,7 +305,7 @@ app.get('/api/deals-by-status', authMiddleware, async (req, res) => {
 });
 
 // Route to fetch audit logs
-app.get('/api/audit-logs', authMiddleware, async (req, res) => {
+app.get('/api/audit-logs', async (req, res) => {
     try {
         const auditLogs = await AuditLog.findAll();
         res.json(auditLogs);
@@ -335,7 +320,7 @@ const auditMiddleware = require('./middleware/audit');
 app.use(auditMiddleware);
 
 // Route to get all customers
-app.get('/api/customers', authMiddleware, async (req, res) => {
+app.get('/api/customers', async (req, res) => {
     try {
         const customers = await Customer.findAll();
         res.json(customers);
@@ -346,7 +331,7 @@ app.get('/api/customers', authMiddleware, async (req, res) => {
 });
 
 // Route to create a new customer
-app.post('/api/customers', authMiddleware, async (req, res) => {
+app.post('/api/customers', async (req, res) => {
     try {
         const {
             first_name,
@@ -392,7 +377,7 @@ app.post('/api/customers', authMiddleware, async (req, res) => {
 });
 
 // Route to create a new group
-app.post('/api/groups', authMiddleware, async (req, res) => {
+app.post('/api/groups', async (req, res) => {
     try {
         const { name, leaderId } = req.body;
         const group = await Group.create({ 
@@ -406,7 +391,7 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
         if (salesManager) {
             await Notification.create({
                 message: `New group: "${name}" created and needs approval.`,
-                userId: salesManager.id, // Sending notification to the sales manager
+                userId: salesManager.id,
             });
         } else {
             console.log('No sales manager found to send notification');
@@ -414,13 +399,11 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
 
         // Send email
         const leader = await User.findByPk(leaderId);
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: leader.email,
-            subject: 'New Group Created',
-            text: `A new group "${name}" has been created and needs your approval.`,
-        };
-        await transporter.sendMail(mailOptions);
+        await sendEmail(
+            leader.email,
+            'New Group Created',
+            `A new group "${name}" has been created and needs your approval.`
+        );
 
         res.status(201).json(group);
     } catch (error) {
@@ -429,17 +412,13 @@ app.post('/api/groups', authMiddleware, async (req, res) => {
     }
 });
 
-// Example of using roleMiddleware
-app.get('/api/admin-route', authMiddleware, roleMiddleware(['admin']), (req, res) => {
-    res.json({ message: 'This is an admin route' });
-});
-
 // Route to search counties
 app.get('/api/counties', async (req, res) => {
     const { search } = req.query;
     const allCounties = [
         'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado',
-        'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
+        'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kakamega', 'Kericho', 'Kiambu', 
+        'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
         'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi',
         'Nakuru', 'Nandi', 'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
         'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
@@ -450,12 +429,8 @@ app.get('/api/counties', async (req, res) => {
     res.json(filteredCounties);
 });
 
-app.use(cors());
-
-app.use(authMiddleware);
-
 // Route to process a repayment
-app.post('/api/repayments', authMiddleware, async (req, res) => {
+app.post('/api/repayments', async (req, res) => {
     const { customerId, amount, transactionNumber } = req.body;
 
     try {
@@ -473,8 +448,15 @@ app.post('/api/repayments', authMiddleware, async (req, res) => {
                 throw new Error('Repayment amount exceeds outstanding loan');
             }
 
-            // 3. Update customer's outstanding balance
-            await customer.update({ outstandingLoan: newOutstandingBalance }, { transaction: t });
+            // 3. Update customer's outstanding balance using atomic update
+            const [updatedRows] = await Customer.update(
+                { outstandingLoan: sequelize.literal(`outstandingLoan - ${amount}`) },
+                { where: { id: customerId, outstandingLoan: { [Sequelize.Op.gte]: amount } }, transaction: t }
+            );
+
+            if (updatedRows === 0) {
+                throw new Error('Failed to update customer balance');
+            }
 
             // 4. Create a new repayment record
             const payment = await Payment.create({
@@ -484,12 +466,15 @@ app.post('/api/repayments', authMiddleware, async (req, res) => {
                 createdBy: req.user.id
             }, { transaction: t });
 
-            return { customer, payment };
+            // Fetch the updated customer data
+            const updatedCustomer = await Customer.findByPk(customerId, { transaction: t });
+
+            return { customer: updatedCustomer, payment };
         });
 
         // 5. Generate receipt data
         const receiptData = {
-            customerName: result.customer.fullName,
+            customerName: `${result.customer.firstName} ${result.customer.lastName}`,
             repaymentAmount: amount,
             transactionNumber: transactionNumber,
             newOutstandingBalance: result.customer.outstandingLoan,
@@ -503,12 +488,12 @@ app.post('/api/repayments', authMiddleware, async (req, res) => {
         });
     } catch (error) {
         console.error('Error processing repayment:', error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, error: 'An error occurred while processing the repayment' });
     }
 });
 
 // Route to create a new ticket
-app.post('/api/tickets', authenticateToken, async (req, res) => {
+app.post('/api/tickets', async (req, res) => {
   try {
     const { title, description, priority, customerId } = req.body;
     const ticket = await Ticket.create({
@@ -520,22 +505,24 @@ app.post('/api/tickets', authenticateToken, async (req, res) => {
     });
     res.status(201).json(ticket);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error creating ticket:', error);
+    res.status(400).json({ error: 'Failed to create ticket' });
   }
 });
 
 // Get all tickets
-app.get('/api/tickets', authenticateToken, async (req, res) => {
+app.get('/api/tickets', async (req, res) => {
   try {
     const tickets = await Ticket.findAll();
     res.json(tickets);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching tickets:', error);
+    res.status(500).json({ error: 'Failed to fetch tickets' });
   }
 });
 
 // Get a specific ticket
-app.get('/api/tickets/:id', authenticateToken, async (req, res) => {
+app.get('/api/tickets/:id', async (req, res) => {
   try {
     const ticket = await Ticket.findByPk(req.params.id);
     if (ticket) {
@@ -544,12 +531,13 @@ app.get('/api/tickets/:id', authenticateToken, async (req, res) => {
       res.status(404).json({ error: 'Ticket not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching ticket:', error);
+    res.status(500).json({ error: 'Failed to fetch ticket' });
   }
 });
 
 // Update a ticket
-app.put('/api/tickets/:id', authenticateToken, async (req, res) => {
+app.put('/api/tickets/:id', async (req, res) => {
   try {
     const [updated] = await Ticket.update(req.body, {
       where: { id: req.params.id }
@@ -561,6 +549,36 @@ app.put('/api/tickets/:id', authenticateToken, async (req, res) => {
       res.status(404).json({ error: 'Ticket not found' });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error updating ticket:', error);
+    res.status(400).json({ error: 'Failed to update ticket' });
   }
 });
+
+// Error handling middleware
+app.use(errorHandler);
+
+// Use process.env.PORT instead of hardcoding the port number
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+// Check for NODE_ENV to enable certain features only in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'client/build')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    });
+}
+
+
+// Start the server
+sequelize.authenticate().then(() => {
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Server is running on port ${process.env.PORT || 3000}`);
+    });
+}).catch(err => {
+    console.error('Unable to connect to the database:', err);
+});
+
+module.exports = app; // Export the app for testing purposes
