@@ -1,25 +1,36 @@
 // Import required modules
-const express = require('express'); // Express.js for building web applications
-const mysql = require('mysql2/promise'); // MySQL2 for MySQL database connection
+const express = require('express'); // Express.js for creating the server
+const mysql = require('mysql2/promise'); // MySQL2 for database connection
 const bcrypt = require('bcrypt'); // Bcrypt for password hashing
 const session = require('express-session'); // Express-session for session management
 const MySQLStore = require('express-mysql-session')(session); // MySQLStore for session store
 const nodemailer = require('nodemailer'); // Nodemailer for sending emails
 const dotenv = require('dotenv'); // Dotenv for loading environment variables
-const path = require('path'); // Path for working with file and directory paths
+const path = require('path'); // Path for file path operations
 const errorHandler = require('./middleware/errorHandler'); // Custom error handling middleware
 const bodyParser = require('body-parser'); // Body-parser for parsing request bodies
 const { authMiddleware } = require('./middleware/authMiddleware'); // Custom authentication middleware
 const jwt = require('jsonwebtoken'); // JSON Web Token for user authentication
 const { Sequelize } = require('sequelize'); // Sequelize for ORM
 const moment = require('moment-timezone'); // Moment.js for date and time manipulation
-const cors = require('cors'); // CORS for enabling cross-origin resource sharing
+const cors = require('cors'); // CORS for cross-origin resource sharing
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Initialize Express app
 const app = express();
+
+// Import Sequelize instance and models
+const sequelize = require('./config/database');
+const User = require('./models/User');
+const Notification = require('./models/Notification');
+const Customer = require('./models/Customer');
+const Group = require('./models/Group');
+const AuditLog = require('./models/AuditLog');
+const Payment = require('./models/Payment');
+const Ticket = require('./models/Ticket');
+const Deal = require('./models/Deal');
 
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
@@ -28,22 +39,19 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Parse DATABASE_URL from .env
-const dbUrl = new URL(process.env.DATABASE_URL);
-
 // Configure session store using MySQL
 const sessionStore = new MySQLStore({
-    host: dbUrl.hostname,
-    port: dbUrl.port,
-    user: dbUrl.username,
-    password: decodeURIComponent(dbUrl.password),
-    database: dbUrl.pathname.substr(1) // Remove the leading slash
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 // Configure session middleware
 app.use(session({
     key: 'session_cookie_name',
-    secret: process.env.SESSION_SECRET, // Use an environment variable for the secret
+    secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
@@ -53,29 +61,6 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 // 1 day
     }
 }));
-
-// Initialize Sequelize with the parsed DATABASE_URL
-const sequelize = new Sequelize(dbUrl.pathname.substr(1), dbUrl.username, decodeURIComponent(dbUrl.password), {
-    host: dbUrl.hostname,
-    port: dbUrl.port,
-    dialect: 'mysql',
-    timezone: '+03:00', // East Africa Time (EAT) is UTC+3
-    logging: false,
-    define: {
-        timestamps: true,
-        underscored: true,
-    },
-});
-
-// Import models
-const User = require('./models/User');
-const Notification = require('./models/Notification');
-const Customer = require('./models/Customer');
-const Group = require('./models/Group');
-const AuditLog = require('./models/AuditLog');
-const Payment = require('./models/Payment');
-const Ticket = require('./models/Ticket');
-const Deal = require('./models/Deal'); 
 
 // Initialize nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -88,12 +73,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-/**
- * Function to send email using nodemailer
- * @param {string} to - Recipient email address
- * @param {string} subject - Email subject
- * @param {string} text - Email body text
- */
+// Function to send email using nodemailer
 const sendEmail = async (to, subject, text) => {
     try {
         let info = await transporter.sendMail({
@@ -557,28 +537,25 @@ app.put('/api/tickets/:id', async (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Use process.env.PORT instead of hardcoding the port number
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-// Check for NODE_ENV to enable certain features only in production
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'client/build')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
-    });
-}
-
+// Sync all models with the database
+sequelize.sync({ alter: true })
+  .then(() => {
+    console.log('Database & tables created!');
+  })
+  .catch((error) => {
+    console.error('Error syncing database:', error);
+  });
 
 // Start the server
-sequelize.authenticate().then(() => {
-    app.listen(process.env.PORT || 3000, () => {
-        console.log(`Server is running on port ${process.env.PORT || 3000}`);
+sequelize.authenticate()
+  .then(() => {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
     });
-}).catch(err => {
+  })
+  .catch(err => {
     console.error('Unable to connect to the database:', err);
-});
+  });
 
 module.exports = app; // Export the app for testing purposes

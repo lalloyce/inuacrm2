@@ -1,43 +1,43 @@
 {
-  "name": "inua-solutions-crm", // Name of the project
-  "version": "1.0.0", // Version of the project
-  "description": "CRM for Inua Solutions", // Description of the project
-  "main": "server.js", // Entry point of the application
+  "name": "inua-solutions-crm",
+  "version": "1.0.0",
+  "description": "CRM for Inua Solutions",
+  "main": "server.js",
   "scripts": {
-    "start": "node server.js", // Script to start the application
-    "dev": "nodemon server.js", // Script to start the application in development mode
-    "structure": "node scripts/generateStructure.js" // Script to generate project structure
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "structure": "node scripts/generateStructure.js"
   },
   "dependencies": {
-    "bcrypt": "^5.0.1", // Dependency for password hashing
-    "cors": "^2.8.5", // Dependency for enabling CORS
-    "dotenv": "^10.0.0", // Dependency for environment variables
-    "express": "^4.17.1", // Dependency for Express framework
-    "express-mysql-session": "^2.1.7", // Dependency for MySQL session management
-    "express-session": "^1.17.2", // Dependency for session management
-    "express-validator": "^6.14.0", // Dependency for request validation
-    "form-data": "^4.0.0", // Dependency for form data handling
-    "helmet": "^4.6.0", // Dependency for security headers
-    "jsonwebtoken": "^9.0.2", // Dependency for JSON Web Tokens
-    "moment-timezone": "^0.5.45", // Dependency for date and time handling
-    "morgan": "^1.10.0", // Dependency for HTTP request logger
-    "multer": "^1.4.5-lts.1", // Dependency for file uploads
-    "mysql2": "^3.11.3", // Dependency for MySQL database
-    "nodemailer": "^6.6.3", // Dependency for email sending
-    "sequelize": "^6.37.3" // Dependency for ORM
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-mysql-session": "^2.1.7",
+    "express-session": "^1.17.2",
+    "express-validator": "^6.14.0",
+    "form-data": "^4.0.0",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.45",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.3",
+    "nodemailer": "^6.6.3",
+    "sequelize": "^6.37.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12", // Dependency for automatic server restart
-    "sequelize-cli": "^6.6.2" // Dependency for Sequelize CLI
+    "nodemon": "^2.0.12",
+    "sequelize-cli": "^6.6.2"
   },
   "keywords": [
     "crm",
     "inua-solutions",
-    "authentication" // Keywords for the project
+    "authentication"
   ],
-  "author": "Lawrence Juma", // Author of the project
-  "license": "ISC", // License under which the project is released
+  "author": "Lawrence Juma",
+  "license": "ISC",
   "directories": {
-    "test": "tests" // Directory for tests
+    "test": "tests"
   }
 }

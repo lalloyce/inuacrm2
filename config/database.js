@@ -18,7 +18,7 @@ function parseDbUrl(dbUrl) {
   return {
     username: parsedUrl.username,
     password: decodeURIComponent(parsedUrl.password),
-    database: parsedUrl.pathname.substr(1),
+    database: parsedUrl.pathname.slice(1), // Replaced substr with slice
     host: parsedUrl.hostname,
     port: parsedUrl.port,
     dialect: 'mysql',
@@ -50,6 +50,17 @@ const env = process.env.NODE_ENV || 'development';
 const sequelize = new Sequelize(config[env]);
 
 /**
- * Export the Sequelize instance and configuration.
+ * Authenticate the database connection.
  */
-module.exports = { sequelize, config };
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
+
+/**
+ * Export the Sequelize instance directly.
+ */
+module.exports = sequelize;

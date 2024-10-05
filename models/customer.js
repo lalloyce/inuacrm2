@@ -1,5 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
+const { DataTypes } = require('sequelize');
+
 
 /**
  * Customer Model
