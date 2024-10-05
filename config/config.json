@@ -1,26 +1,23 @@
 {
-  // Configuration for the development environment
   "development": {
-    "username": "root", // MySQL username for the development environment
-    "password": "D#FR$GG#D", // MySQL password for the development environment
-    "database": "inua_crm", // Database name for the development environment
-    "host": "127.0.0.1", // Host IP for the development environment
-    "dialect": "mysql" // Database dialect for the development environment
+    "username": "root",
+    "password": "D#FR$GG#D",
+    "database": "inua_crm",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
-  // Configuration for the test environment
   "test": {
-    "username": "root", // MySQL username for the test environment
-    "password": "D#FR$GG#D", // MySQL password for the test environment
-    "database": "inua_crm", // Database name for the test environment
-    "host": "127.0.0.1", // Host IP for the test environment
-    "dialect": "mysql" // Database dialect for the test environment
+    "username": "root",
+    "password": "D#FR$GG#D",
+    "database": "inua_crm",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
-  // Configuration for the production environment
   "production": {
-    "username": "root", // MySQL username for the production environment
-    "password": "D#FR$GG#D", // MySQL password for the production environment
-    "database": "inua_crm", // Database name for the production environment
-    "host": "127.0.0.1", // Host IP for the production environment
-    "dialect": "mysql" // Database dialect for the production environment
+    "username": "root",
+    "password": "D#FR$GG#D",
+    "database": "inua_crm",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   }
 }
