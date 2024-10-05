@@ -1,9 +1,18 @@
+/**
+ * Import required modules and configure environment variables.
+ */
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 const url = require('url');
 
 dotenv.config();
 
+/**
+ * Parse a database URL into a configuration object.
+ * 
+ * @param {string} dbUrl - The database URL to parse.
+ * @returns {object} - An object containing the parsed database configuration.
+ */
 function parseDbUrl(dbUrl) {
   const parsedUrl = new URL(dbUrl);
   return {
@@ -16,6 +25,9 @@ function parseDbUrl(dbUrl) {
   };
 }
 
+/**
+ * Define database configurations for different environments.
+ */
 const config = {
   development: {
     ...parseDbUrl(process.env.DATABASE_URL),
@@ -31,7 +43,13 @@ const config = {
   }
 };
 
+/**
+ * Determine the current environment and create a Sequelize instance.
+ */
 const env = process.env.NODE_ENV || 'development';
 const sequelize = new Sequelize(config[env]);
 
+/**
+ * Export the Sequelize instance and configuration.
+ */
 module.exports = { sequelize, config };

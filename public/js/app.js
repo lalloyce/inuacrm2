@@ -1,6 +1,8 @@
 // app.js
 
+// When the DOM is fully loaded, the following code will be executed
 document.addEventListener('DOMContentLoaded', () => {
+    // Get the necessary elements from the DOM
     const loginBtn = document.getElementById('loginBtn');
     const registerBtn = document.getElementById('registerBtn');
     const resetPasswordBtn = document.getElementById('resetPasswordBtn');
@@ -9,26 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetPasswordModal = document.getElementById('resetPasswordModal');
     const closeBtns = document.getElementsByClassName('close');
 
-    // Open modals
+    // Open modals when the corresponding button is clicked
     loginBtn.onclick = () => loginModal.style.display = 'block';
     registerBtn.onclick = () => registerModal.style.display = 'block';
     resetPasswordBtn.onclick = () => resetPasswordModal.style.display = 'block';
 
-    // Close modals
+    // Close modals when the close button is clicked
     Array.from(closeBtns).forEach(btn => {
         btn.onclick = function() {
             this.closest('.modal').style.display = 'none';
         }
     });
 
-    // Close modals when clicking outside
+    // Close modals when clicking outside the modal
     window.onclick = (event) => {
         if (event.target.classList.contains('modal')) {
             event.target.style.display = 'none';
         }
     }
 
-    // Form submissions
+    // Handle form submissions
     document.getElementById('loginForm').onsubmit = (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value;
@@ -52,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Function to handle user login
 async function login(email, password) {
     try {
         const response = await fetch('/api/login', {
@@ -75,6 +78,7 @@ async function login(email, password) {
     }
 }
 
+// Function to handle user registration
 async function register(name, email, password, confirmPassword) {
     if (password !== confirmPassword) {
         console.error('Passwords do not match');
@@ -103,6 +107,7 @@ async function register(name, email, password, confirmPassword) {
     }
 }
 
+// Function to handle password reset
 async function resetPassword(email) {
     try {
         const response = await fetch('/api/reset-password', {

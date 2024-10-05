@@ -1,6 +1,19 @@
+/**
+ * Importing Sequelize and setting up the database connection.
+ */
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
+/**
+ * Defining the GroupEventAttendee model.
+ * 
+ * This model represents the association between a group event and an attendee.
+ * 
+ * @param {integer} id - The unique identifier for the group event attendee, auto-incrementing and primary key.
+ * @param {integer} event_id - The foreign key referencing the 'GroupEvents' model.
+ * @param {integer} customer_id - The foreign key referencing the 'Customers' model.
+ * @param {string} status - The status of the attendee, default is 'attending'.
+ */
 const GroupEventAttendee = sequelize.define('GroupEventAttendee', {
   id: {
     type: DataTypes.INTEGER,
@@ -33,4 +46,5 @@ const GroupEventAttendee = sequelize.define('GroupEventAttendee', {
   underscored: true,
 });
 
+// Exporting the GroupEventAttendee model
 module.exports = GroupEventAttendee;

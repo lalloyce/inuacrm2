@@ -1,9 +1,23 @@
+/**
+ * Importing Sequelize and setting up the database connection.
+ */
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = new Sequelize(process.env.DATABASE_URL);
 const User = require('./User');
 
+/**
+ * Defining the Ticket model.
+ * 
+ * @class Ticket
+ * @extends Model
+ */
 class Ticket extends Model {}
 
+/**
+ * Initializing the Ticket model with its attributes.
+ * 
+ * @param {object} attributes - The attributes of the Ticket model.
+ */
 Ticket.init({
     id: {
         type: DataTypes.INTEGER,
@@ -45,4 +59,5 @@ Ticket.init({
     timestamps: true,
 });
 
+// Exporting the Ticket model
 module.exports = Ticket;

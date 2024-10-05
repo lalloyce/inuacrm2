@@ -1,5 +1,11 @@
-// Ticket-related functionality
+/**
+ * Ticket-related functionality
+ */
 
+/**
+ * Displays the form for creating a new issue.
+ * This function updates the UI with a form for creating a new issue. It includes fields for customer ID, issue title, description, and priority.
+ */
 function showCreateIssueForm() {
     const content = document.getElementById('customer-management-content');
     content.innerHTML = `
@@ -33,6 +39,13 @@ function showCreateIssueForm() {
     document.getElementById('createIssueForm').addEventListener('submit', createIssue);
 }
 
+/**
+ * Handles the creation of a new issue.
+ * This function is called when the 'createIssueForm' is submitted. It fetches the form data, sends a POST request to the server to create a new issue,
+ * and handles the response. If the issue is created successfully, it alerts the user with the issue ID. If not, it alerts the user with the error message.
+ * 
+ * @throws {Error} If the issue creation fails.
+ */
 async function createIssue(event) {
     event.preventDefault();
     const customerId = document.getElementById('customerId').value;

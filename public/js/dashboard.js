@@ -1,19 +1,31 @@
+/**
+ * Initializes the dashboard by fetching the user's role and loading charts based on that role.
+ */
 document.addEventListener('DOMContentLoaded', async () => {
-    const role = await getUserRole();
-    displayRoleBasedContent(role);
-    loadCharts(role);
+    const role = await getUserRole(); // Fetches the user's role
+    displayRoleBasedContent(role); // Displays content based on the user's role
+    loadCharts(role); // Loads charts specific to the user's role
 });
 
+/**
+ * Fetches the user's role from the server.
+ * @returns {Promise<string>} A promise that resolves to the user's role.
+ */
 async function getUserRole() {
     const response = await apiCall('/api/user-role', { method: 'GET' });
     return response.role;
 }
 
+/**
+ * Displays or hides content based on the user's role.
+ * @param {string} role The user's role.
+ */
 function displayRoleBasedContent(role) {
     const adminCharts = document.getElementById('admin-charts');
     const salesManagerCharts = document.getElementById('sales-manager-charts');
     const customerServiceCharts = document.getElementById('customer-service-charts');
 
+    // Shows the appropriate charts based on the user's role
     if (role === 'admin') {
         adminCharts.classList.remove('hidden');
     } else if (role === 'sales_manager') {
@@ -23,22 +35,29 @@ function displayRoleBasedContent(role) {
     }
 }
 
+/**
+ * Loads charts specific to the user's role.
+ * @param {string} role The user's role.
+ */
 async function loadCharts(role) {
     if (role === 'admin') {
-        await loadUsersByRoleChart();
-        await loadGroupsChart();
-        await loadTicketsByStatusChart();
+        await loadUsersByRoleChart(); // Loads users by role chart
+        await loadGroupsChart(); // Loads groups chart
+        await loadTicketsByStatusChart(); // Loads tickets by status chart
     } else if (role === 'sales_manager') {
-        await loadDealsByStatusChart();
-        await loadSalesByMonthChart();
-        await loadGroupsHoldingEventsChart();
+        await loadDealsByStatusChart(); // Loads deals by status chart
+        await loadSalesByMonthChart(); // Loads sales by month chart
+        await loadGroupsHoldingEventsChart(); // Loads groups holding events chart
     } else if (role === 'customer_service') {
-        await loadTicketsByPriorityChart();
-        await loadTicketsByStatusChartCS();
-        await loadCustomersByCountyChart();
+        await loadTicketsByPriorityChart(); // Loads tickets by priority chart
+        await loadTicketsByStatusChartCS(); // Loads tickets by status chart for customer service
+        await loadCustomersByCountyChart(); // Loads customers by county chart
     }
 }
 
+/**
+ * Loads the users by role chart.
+ */
 async function loadUsersByRoleChart() {
     const data = await apiCall('/api/users-by-role', { method: 'GET' });
     const ctx = document.getElementById('usersByRoleChart').getContext('2d');
@@ -64,6 +83,9 @@ async function loadUsersByRoleChart() {
     });
 }
 
+/**
+ * Loads the groups chart.
+ */
 async function loadGroupsChart() {
     const data = await apiCall('/api/groups-count', { method: 'GET' });
     const ctx = document.getElementById('groupsChart').getContext('2d');
@@ -82,6 +104,9 @@ async function loadGroupsChart() {
     });
 }
 
+/**
+ * Loads the tickets by status chart.
+ */
 async function loadTicketsByStatusChart() {
     const data = await apiCall('/api/tickets-by-status', { method: 'GET' });
     const ctx = document.getElementById('ticketsByStatusChart').getContext('2d');
@@ -108,6 +133,9 @@ async function loadTicketsByStatusChart() {
     });
 }
 
+/**
+ * Loads the deals by status chart.
+ */
 async function loadDealsByStatusChart() {
     const data = await apiCall('/api/deals-by-status', { method: 'GET' });
     const ctx = document.getElementById('dealsByStatusChart').getContext('2d');
@@ -133,6 +161,9 @@ async function loadDealsByStatusChart() {
     });
 }
 
+/**
+ * Loads the sales by month chart.
+ */
 async function loadSalesByMonthChart() {
     const data = await apiCall('/api/sales-by-month', { method: 'GET' });
     const ctx = document.getElementById('salesByMonthChart').getContext('2d');
@@ -158,6 +189,9 @@ async function loadSalesByMonthChart() {
     });
 }
 
+/**
+ * Loads the groups holding events chart.
+ */
 async function loadGroupsHoldingEventsChart() {
     const data = await apiCall('/api/groups-holding-events', { method: 'GET' });
     const ctx = document.getElementById('groupsHoldingEventsChart').getContext('2d');
@@ -183,6 +217,9 @@ async function loadGroupsHoldingEventsChart() {
     });
 }
 
+/**
+ * Loads the tickets by priority chart.
+ */
 async function loadTicketsByPriorityChart() {
     const data = await apiCall('/api/tickets-by-priority', { method: 'GET' });
     const ctx = document.getElementById('ticketsByPriorityChart').getContext('2d');
@@ -208,6 +245,9 @@ async function loadTicketsByPriorityChart() {
     });
 }
 
+/**
+ * Loads the tickets by status chart for customer service.
+ */
 async function loadTicketsByStatusChartCS() {
     const data = await apiCall('/api/tickets-by-status', { method: 'GET' });
     const ctx = document.getElementById('ticketsByStatusChartCS').getContext('2d');
@@ -234,6 +274,9 @@ async function loadTicketsByStatusChartCS() {
     });
 }
 
+/**
+ * Loads the customers by county chart.
+ */
 async function loadCustomersByCountyChart() {
     const data = await apiCall('/api/customers-by-county', { method: 'GET' });
     const ctx = document.getElementById('customersByCountyChart').getContext('2d');
@@ -259,6 +302,12 @@ async function loadCustomersByCountyChart() {
     });
 }
 
+/**
+ * Makes an API call to the specified URL with the given options.
+ * @param {string} url The URL of the API endpoint.
+ * @param {Object} options The options for the fetch request.
+ * @returns {Promise<any>} A promise that resolves to the response data.
+ */
 async function apiCall(url, options) {
     const response = await fetch(url, options);
     if (!response.ok) {

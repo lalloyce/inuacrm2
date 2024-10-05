@@ -1,6 +1,18 @@
+/**
+ * Importing Sequelize and setting up the database connection.
+ */
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
+/**
+ * Defining the GroupEventGroup model.
+ * 
+ * This model represents the association between a group and an event.
+ * 
+ * @param {integer} id - The unique identifier for the group event group, auto-incrementing and primary key.
+ * @param {integer} event_id - The foreign key referencing the 'GroupEvents' model.
+ * @param {integer} group_id - The foreign key referencing the 'Groups' model.
+ */
 const GroupEventGroup = sequelize.define('GroupEventGroup', {
   id: {
     type: DataTypes.INTEGER,
@@ -28,4 +40,5 @@ const GroupEventGroup = sequelize.define('GroupEventGroup', {
   timestamps: false,
 });
 
+// Exporting the GroupEventGroup model
 module.exports = GroupEventGroup;

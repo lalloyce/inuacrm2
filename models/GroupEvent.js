@@ -1,6 +1,27 @@
+/**
+ * Importing Sequelize and setting up the database connection.
+ */
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
+/**
+ * Defining the GroupEvent model.
+ * 
+ * This model represents a group event within the system.
+ * 
+ * @param {integer} id - The unique identifier for the group event, auto-incrementing and primary key.
+ * @param {string} event_type - The type of the event, can be 'arrears_meeting', 'formation_meeting', or 'training_meeting'.
+ * @param {string} title - The title of the event.
+ * @param {text} description - The description of the event.
+ * @param {date} event_date - The date of the event.
+ * @param {time} start_time - The start time of the event.
+ * @param {time} end_time - The end time of the event.
+ * @param {string} sub_location - The sub-location where the event will take place.
+ * @param {string} ward - The ward where the event will take place.
+ * @param {string} county - The county where the event will take place.
+ * @param {string} status - The status of the event, can be 'planned', 'in_progress', 'completed', or 'cancelled'.
+ * @param {integer} created_by - The foreign key referencing the 'Users' model, indicating the user who created the event.
+ */
 const GroupEvent = sequelize.define('GroupEvent', {
   id: {
     type: DataTypes.INTEGER,
@@ -52,4 +73,5 @@ const GroupEvent = sequelize.define('GroupEvent', {
   underscored: true,
 });
 
+// Exporting the GroupEvent model
 module.exports = GroupEvent;

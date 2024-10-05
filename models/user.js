@@ -1,9 +1,27 @@
-const { Model, DataTypes } = require('sequelize');
+/**
+ * Importing Sequelize and setting up the database connection.
+ */
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-class User extends Model {}
+// Logging the sequelize instance to ensure it's not undefined
+console.log(sequelize); // Should not be undefined
 
-User.init({
+/**
+ * Defining the User model.
+ * 
+ * @param {string} id - The unique identifier for the user, auto-incrementing and primary key.
+ * @param {string} email - The user's email address, unique and not null.
+ * @param {string} password - The user's password, not null.
+ * @param {string} full_name - The user's full name, not null.
+ * @param {string} role - The user's role, an enumeration of predefined roles, not null.
+ * @param {boolean} is_verified - Indicates if the user is verified, default is false.
+ * @param {string} verification_token - The token used for verification.
+ * @param {string} avatar - The user's avatar URL.
+ * @param {Date} last_login - The date and time of the user's last login.
+ * @param {integer} login_count - The number of times the user has logged in, default is 0.
+ */
+const User = sequelize.define('User', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -44,10 +62,9 @@ User.init({
         defaultValue: 0,
     },
 }, {
-    sequelize,
-    modelName: 'User',
     tableName: 'users',
     timestamps: true,
 });
 
+// Exporting the User model
 module.exports = User;

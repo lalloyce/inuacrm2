@@ -1,5 +1,7 @@
 /**
  * Initializes the repayment process by adding an event listener to the 'findCustomer' button.
+ * This function sets up the repayment process by listening for a click event on the 'findCustomer' button.
+ * When the button is clicked, it calls the handleRepayment function to start the repayment process.
  */
 function initializeRepaymentProcess() {
     document.getElementById('findCustomer').addEventListener('click', handleRepayment);
@@ -7,7 +9,10 @@ function initializeRepaymentProcess() {
 
 /**
  * Handles the repayment process when a customer is found.
- * Fetches customer details, displays them, and sets up the repayment form submission.
+ * This function is called when the 'findCustomer' button is clicked. It fetches customer details,
+ * displays them on the page, and sets up the repayment form submission event listener.
+ * 
+ * @throws {Error} If the customer details fetch or repayment process fails.
  */
 async function handleRepayment() {
     const customerId = document.getElementById('customerId').value;
@@ -41,6 +46,9 @@ async function handleRepayment() {
 
 /**
  * Fetches customer details from the server.
+ * This function sends a GET request to the server to fetch customer details based on the provided customerId.
+ * It returns a promise that resolves to the customer details object if the request is successful.
+ * 
  * @param {string} customerId - The ID of the customer.
  * @returns {Promise<Object>} The customer details.
  * @throws {Error} If the fetch operation fails.
@@ -60,6 +68,10 @@ async function fetchCustomerDetails(customerId) {
 
 /**
  * Displays the customer details on the page.
+ * This function updates the UI with the customer details fetched from the server.
+ * It populates the customer details container with the customer's name, group, group leader, outstanding loan,
+ * downpayment made, instalment due date, and loan due date.
+ * 
  * @param {Object} customer - The customer object containing details to display.
  */
 function displayCustomerDetails(customer) {
@@ -78,6 +90,10 @@ function displayCustomerDetails(customer) {
 
 /**
  * Processes a repayment by sending a request to the server.
+ * This function sends a POST request to the server to process a repayment. It includes the customerId,
+ * repayment amount, and transaction number in the request body. It returns a promise that resolves to
+ * the result of the repayment process.
+ * 
  * @param {string} customerId - The ID of the customer making the repayment.
  * @param {number} amount - The amount being repaid.
  * @param {string} transactionNumber - The transaction number for the repayment.
@@ -114,6 +130,10 @@ async function processRepayment(customerId, amount, transactionNumber) {
 
 /**
  * Generates a PDF receipt for the repayment.
+ * This function creates a new PDF document using jsPDF and populates it with the repayment details.
+ * It includes the customer's name, repayment amount, transaction number, new outstanding balance, and date.
+ * The PDF is then saved with a filename that includes the transaction number.
+ * 
  * @param {Object} receiptData - The data to be included in the receipt.
  */
 function generateReceipt(receiptData) {

@@ -1,3 +1,7 @@
+/**
+ * This function is executed when the DOM is fully loaded.
+ * It sets up the event listener for the login form submission.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     // Get the login form element by its ID
     const loginForm = document.getElementById('login-form');

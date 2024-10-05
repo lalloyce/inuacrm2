@@ -1,3 +1,9 @@
+/**
+ * Fetches and displays the customer profile based on the current customer ID.
+ * This function first retrieves the current customer ID, then fetches the customer data
+ * using the ID and an authentication token. It then updates the UI with the customer's
+ * profile information. If the customer has any contracts, it also fetches and displays those.
+ */
 async function showCustomerProfile() {
     const customerId = getCurrentCustomerId(); // Implement this function to get the current customer ID
     if (!customerId) {
@@ -61,6 +67,11 @@ async function showCustomerProfile() {
     }
 }
 
+/**
+ * Fetches and displays the contracts associated with a given customer ID.
+ * This function fetches the contracts using the customer ID and an authentication token.
+ * It then updates the UI with the contract information.
+ */
 async function fetchCustomerContracts(customerId) {
     try {
         const token = localStorage.getItem('token');

@@ -1,3 +1,9 @@
+/**
+ * Middleware function to authenticate user.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next function to be called.
+ */
 const authMiddleware = async (req, res, next) => {
     try {
         const token = req.headers['authorization']?.split(' ')[1];

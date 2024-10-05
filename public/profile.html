@@ -40,6 +40,7 @@
     </main>
 
     <script>
+        // Function to handle profile picture upload and preview
         document.getElementById('profilePicture').addEventListener('change', function(event) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -50,6 +51,7 @@
             reader.readAsDataURL(event.target.files[0]);
         });
 
+        // Function to handle form submission and update profile
         document.getElementById('profileForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(this);

@@ -1,4 +1,17 @@
+# Ignore environment variables file
 .env
+
+# Ignore node_modules directory
 node_modules
-node_modules
+
+# Ignore .DS_Store file
 .DS_Store
+
+# Ignore config.json file
+config/config.json
+
+# Ignore .gitignore file
+.gitignore
+
+
+

@@ -1,19 +1,19 @@
 // Import required modules
-const express = require('express');
-const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-const path = require('path');
-const errorHandler = require('./middleware/errorHandler');
-const bodyParser = require('body-parser');
-const { authMiddleware } = require('./middleware/authMiddleware');
-const jwt = require('jsonwebtoken');
-const { Sequelize } = require('sequelize');
-const moment = require('moment-timezone');
-const cors = require('cors');
+const express = require('express'); // Express.js for building web applications
+const mysql = require('mysql2/promise'); // MySQL2 for MySQL database connection
+const bcrypt = require('bcrypt'); // Bcrypt for password hashing
+const session = require('express-session'); // Express-session for session management
+const MySQLStore = require('express-mysql-session')(session); // MySQLStore for session store
+const nodemailer = require('nodemailer'); // Nodemailer for sending emails
+const dotenv = require('dotenv'); // Dotenv for loading environment variables
+const path = require('path'); // Path for working with file and directory paths
+const errorHandler = require('./middleware/errorHandler'); // Custom error handling middleware
+const bodyParser = require('body-parser'); // Body-parser for parsing request bodies
+const { authMiddleware } = require('./middleware/authMiddleware'); // Custom authentication middleware
+const jwt = require('jsonwebtoken'); // JSON Web Token for user authentication
+const { Sequelize } = require('sequelize'); // Sequelize for ORM
+const moment = require('moment-timezone'); // Moment.js for date and time manipulation
+const cors = require('cors'); // CORS for enabling cross-origin resource sharing
 
 // Load environment variables from .env file
 dotenv.config();
