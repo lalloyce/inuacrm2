@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken'); // Jsonwebtoken for generating and verifyin
 const { Sequelize } = require('sequelize'); // Sequelize for ORM
 const moment = require('moment-timezone'); // Moment-timezone for date and time manipulation
 const cors = require('cors'); // Cors for enabling CORS
+const { consoleLog, setLogLevel } = require('console-drop-logs'); // Console-drop-logs for environment-aware logging
 
 // Load environment variables from .env file
 dotenv.config();
@@ -24,16 +25,8 @@ const errorHandler = require('./middleware/errorHandler'); // Error handling mid
 // Initialize Express app
 const app = express();
 
-// Import Sequelize instance and models
-const sequelize = require('./config/database'); // Sequelize instance
-const User = require('./models/User'); // User model
-const Notification = require('./models/Notification'); // Notification model
-const Customer = require('./models/Customer'); // Customer model
-const Group = require('./models/Group'); // Group model
-const AuditLog = require('./models/AuditLog'); // AuditLog model
-const Payment = require('./models/Payment'); // Payment model
-const Ticket = require('./models/Ticket'); // Ticket model
-const Deal = require('./models/Deal'); // Deal model
+// Import all models from the models directory
+const models = require('require-all')(__dirname + '/models');
 
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
@@ -85,9 +78,9 @@ const sendEmail = async (to, subject, text) => {
             subject: subject,
             text: text,
         });
-        console.log('Email sent:', info);
+        consoleLog('Email sent:', info);
     } catch (error) {
-        console.error('Error sending email:', error);
+        consoleLog('Error sending email:', error);
     }
 };
 
@@ -104,7 +97,7 @@ app.use(auditMiddleware);
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ where: { email } });
+        const user = await models.User.findOne({ where: { email } });
         if (user && bcrypt.compareSync(password, user.password)) {
             const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.json({ message: 'Login successful', token });
@@ -112,7 +105,7 @@ app.post('/api/login', async (req, res) => {
             res.status(401).json({ error: 'Invalid email or password' });
         }
     } catch (error) {
-        console.error('Login error:', error);
+        consoleLog('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -122,10 +115,10 @@ app.post('/api/signup', async (req, res) => {
     try {
         const { email, password, full_name, role } = req.body;
         const hashedPassword = bcrypt.hashSync(password, 10);
-        const user = await User.create({ email, password: hashedPassword, full_name, role });
+        const user = await models.User.create({ email, password: hashedPassword, full_name, role });
         res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
-        console.error('Validation Error:', error);
+        consoleLog('Validation Error:', error);
         res.status(400).json({ error: error.message });
     }
 });
@@ -134,7 +127,7 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ where: { email } });
+        const user = await models.User.findOne({ where: { email } });
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -148,7 +141,7 @@ app.post('/api/forgot-password', async (req, res) => {
 
         res.json({ message: 'Password reset email sent' });
     } catch (error) {
-        console.error('Error in forgot password:', error);
+        consoleLog('Error in forgot password:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -159,7 +152,7 @@ app.get('/api/test-db', async (req, res) => {
         await sequelize.authenticate();
         res.json({ message: 'Database connection has been established successfully.' });
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        consoleLog('Unable to connect to the database:', error);
         res.status(500).json({ error: 'Unable to connect to the database', details: error.message });
     }
 });
@@ -172,10 +165,10 @@ app.get('/', (req, res) => {
 // Route to fetch notifications
 app.get('/api/notifications', async (req, res) => {
     try {
-        const notifications = await Notification.findAll();
+        const notifications = await models.Notification.findAll();
         res.json(notifications);
     } catch (error) {
-        console.error('Error fetching notifications:', error);
+        consoleLog('Error fetching notifications:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -198,10 +191,10 @@ app.get('/api/verify-token', (req, res) => {
 // Route to fetch all users
 app.get('/api/users', async (req, res) => {
     try {
-        const users = await User.findAll({ attributes: { exclude: ['password'] } });
+        const users = await models.User.findAll({ attributes: { exclude: ['password'] } });
         res.json(users);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        consoleLog('Error fetching users:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -209,8 +202,8 @@ app.get('/api/users', async (req, res) => {
 // Route to fetch all groups
 app.get('/api/groups', async (req, res) => {
     try {
-        const groups = await Group.findAll({
-            include: [{ model: User, as: 'leader', attributes: ['id', 'full_name'] }]
+        const groups = await models.Group.findAll({
+            include: [{ model: models.User, as: 'leader', attributes: ['id', 'full_name'] }]
         });
         res.json(groups.map(group => ({
             id: group.id,
@@ -218,7 +211,7 @@ app.get('/api/groups', async (req, res) => {
             leader_name: group.leader.full_name
         })));
     } catch (error) {
-        console.error('Error fetching groups:', error);
+        consoleLog('Error fetching groups:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -231,7 +224,7 @@ app.get('/api/user-role', (req, res) => {
 // Route to get users by role
 app.get('/api/users-by-role', async (req, res) => {
     try {
-        const users = await User.findAll({
+        const users = await models.User.findAll({
             attributes: ['role', [sequelize.fn('COUNT', sequelize.col('role')), 'count']],
             group: ['role']
         });
@@ -240,7 +233,7 @@ app.get('/api/users-by-role', async (req, res) => {
             counts: users.map(user => user.get('count'))
         });
     } catch (error) {
-        console.error('Error fetching users by role:', error);
+        consoleLog('Error fetching users by role:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -248,10 +241,10 @@ app.get('/api/users-by-role', async (req, res) => {
 // Route to get groups count
 app.get('/api/groups-count', async (req, res) => {
     try {
-        const count = await Group.count();
+        const count = await models.Group.count();
         res.json({ count });
     } catch (error) {
-        console.error('Error fetching groups count:', error);
+        consoleLog('Error fetching groups count:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -259,7 +252,7 @@ app.get('/api/groups-count', async (req, res) => {
 // Route to get tickets by status
 app.get('/api/tickets-by-status', async (req, res) => {
     try {
-        const tickets = await Ticket.findAll({
+        const tickets = await models.Ticket.findAll({
             attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
             group: ['status']
         });
@@ -268,7 +261,7 @@ app.get('/api/tickets-by-status', async (req, res) => {
             counts: tickets.map(ticket => ticket.get('count'))
         });
     } catch (error) {
-        console.error('Error fetching tickets by status:', error);
+        consoleLog('Error fetching tickets by status:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -276,7 +269,7 @@ app.get('/api/tickets-by-status', async (req, res) => {
 // Route to get deals by status
 app.get('/api/deals-by-status', async (req, res) => {
     try {
-        const deals = await Deal.findAll({
+        const deals = await models.Deal.findAll({
             attributes: ['status', [sequelize.fn('COUNT', sequelize.col('status')), 'count']],
             group: ['status']
         });
@@ -285,7 +278,7 @@ app.get('/api/deals-by-status', async (req, res) => {
             counts: deals.map(deal => deal.get('count'))
         });
     } catch (error) {
-        console.error('Error fetching deals by status:', error);
+        consoleLog('Error fetching deals by status:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -293,10 +286,10 @@ app.get('/api/deals-by-status', async (req, res) => {
 // Route to fetch audit logs
 app.get('/api/audit-logs', async (req, res) => {
     try {
-        const auditLogs = await AuditLog.findAll();
+        const auditLogs = await models.AuditLog.findAll();
         res.json(auditLogs);
     } catch (error) {
-        console.error('Error fetching audit logs:', error);
+        consoleLog('Error fetching audit logs:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -304,10 +297,10 @@ app.get('/api/audit-logs', async (req, res) => {
 // Route to get all customers
 app.get('/api/customers', async (req, res) => {
     try {
-        const customers = await Customer.findAll();
+        const customers = await models.Customer.findAll();
         res.json(customers);
     } catch (error) {
-        console.error('Error fetching customers:', error);
+        consoleLog('Error fetching customers:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -331,7 +324,7 @@ app.post('/api/customers', async (req, res) => {
             county
         } = req.body;
 
-        const customer = await Customer.create({
+        const customer = await models.Customer.create({
             first_name,
             middle_name,
             last_name,
@@ -350,7 +343,7 @@ app.post('/api/customers', async (req, res) => {
 
         res.status(201).json(customer);
     } catch (error) {
-        console.error('Error creating customer:', error);
+        consoleLog('Error creating customer:', error);
         if (error.name === 'SequelizeValidationError') {
             return res.status(400).json({ error: error.errors.map(e => e.message).join(', ') });
         }
@@ -362,25 +355,25 @@ app.post('/api/customers', async (req, res) => {
 app.post('/api/groups', async (req, res) => {
     try {
         const { name, leaderId } = req.body;
-        const group = await Group.create({
+        const group = await models.Group.create({
             name,
             leaderId,
             created_by: req.user.id
         });
 
         // Send notification
-        const salesManager = await User.findOne({ where: { role: 'sales_manager' } });
+        const salesManager = await models.User.findOne({ where: { role: 'sales_manager' } });
         if (salesManager) {
-            await Notification.create({
+            await models.Notification.create({
                 message: `New group: "${name}" created and needs approval.`,
                 userId: salesManager.id,
             });
         } else {
-            console.log('No sales manager found to send notification');
+            consoleLog('No sales manager found to send notification');
         }
 
         // Send email
-        const leader = await User.findByPk(leaderId);
+        const leader = await models.User.findByPk(leaderId);
         await sendEmail(
             leader.email,
             'New Group Created',
@@ -389,7 +382,7 @@ app.post('/api/groups', async (req, res) => {
 
         res.status(201).json(group);
     } catch (error) {
-        console.error('Error creating group:', error);
+        consoleLog('Error creating group:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -419,7 +412,7 @@ app.post('/api/repayments', async (req, res) => {
         // Start a database transaction
         const result = await sequelize.transaction(async (t) => {
             // 1. Fetch customer details
-            const customer = await Customer.findByPk(customerId, { transaction: t });
+            const customer = await models.Customer.findByPk(customerId, { transaction: t });
             if (!customer) {
                 throw new Error('Customer not found');
             }
@@ -431,7 +424,7 @@ app.post('/api/repayments', async (req, res) => {
             }
 
             // 3. Update customer's outstanding balance using atomic update
-            const [updatedRows] = await Customer.update(
+            const [updatedRows] = await models.Customer.update(
                 { outstandingLoan: sequelize.literal(`outstandingLoan - ${amount}`) },
                 { where: { id: customerId, outstandingLoan: { [Sequelize.Op.gte]: amount } }, transaction: t }
             );
@@ -441,7 +434,7 @@ app.post('/api/repayments', async (req, res) => {
             }
 
             // 4. Create a new repayment record
-            const payment = await Payment.create({
+            const payment = await models.Payment.create({
                 customerId,
                 amount,
                 transactionNumber,
@@ -449,7 +442,7 @@ app.post('/api/repayments', async (req, res) => {
             }, { transaction: t });
 
             // Fetch the updated customer data
-            const updatedCustomer = await Customer.findByPk(customerId, { transaction: t });
+            const updatedCustomer = await models.Customer.findByPk(customerId, { transaction: t });
 
             return { customer: updatedCustomer, payment };
         });
@@ -469,7 +462,7 @@ app.post('/api/repayments', async (req, res) => {
             receipt: receiptData
         });
     } catch (error) {
-        console.error('Error processing repayment:', error);
+        consoleLog('Error processing repayment:', error);
         res.status(500).json({ success: false, error: 'An error occurred while processing the repayment' });
     }
 });
@@ -478,7 +471,7 @@ app.post('/api/repayments', async (req, res) => {
 app.post('/api/tickets', async (req, res) => {
   try {
     const { title, description, priority, customerId } = req.body;
-    const ticket = await Ticket.create({
+    const ticket = await models.Ticket.create({
       title,
       description,
       priority,
@@ -487,7 +480,7 @@ app.post('/api/tickets', async (req, res) => {
     });
     res.status(201).json(ticket);
   } catch (error) {
-    console.error('Error creating ticket:', error);
+    consoleLog('Error creating ticket:', error);
     res.status(400).json({ error: 'Failed to create ticket' });
   }
 });
@@ -495,10 +488,10 @@ app.post('/api/tickets', async (req, res) => {
 // Get all tickets
 app.get('/api/tickets', async (req, res) => {
   try {
-    const tickets = await Ticket.findAll();
+    const tickets = await models.Ticket.findAll();
     res.json(tickets);
   } catch (error) {
-    console.error('Error fetching tickets:', error);
+    consoleLog('Error fetching tickets:', error);
     res.status(500).json({ error: 'Failed to fetch tickets' });
   }
 });
@@ -506,14 +499,14 @@ app.get('/api/tickets', async (req, res) => {
 // Get a specific ticket
 app.get('/api/tickets/:id', async (req, res) => {
   try {
-    const ticket = await Ticket.findByPk(req.params.id);
+    const ticket = await models.Ticket.findByPk(req.params.id);
     if (ticket) {
       res.json(ticket);
     } else {
       res.status(404).json({ error: 'Ticket not found' });
     }
   } catch (error) {
-    console.error('Error fetching ticket:', error);
+    consoleLog('Error fetching ticket:', error);
     res.status(500).json({ error: 'Failed to fetch ticket' });
   }
 });
@@ -521,19 +514,90 @@ app.get('/api/tickets/:id', async (req, res) => {
 // Update a ticket
 app.put('/api/tickets/:id', async (req, res) => {
   try {
-    const [updated] = await Ticket.update(req.body, {
+    const [updated] = await models.Ticket.update(req.body, {
       where: { id: req.params.id }
     });
     if (updated) {
-      const updatedTicket = await Ticket.findByPk(req.params.id);
+      const updatedTicket = await models.Ticket.findByPk(req.params.id);
       res.json(updatedTicket);
     } else {
       res.status(404).json({ error: 'Ticket not found' });
     }
   } catch (error) {
-    console.error('Error updating ticket:', error);
+    consoleLog('Error updating ticket:', error);
     res.status(400).json({ error: 'Failed to update ticket' });
   }
+});
+
+// Route to get a specific customer (View Profile)
+app.get('/api/customers/:id', async (req, res) => {
+    try {
+        const customer = await models.Customer.findByPk(req.params.id, {
+            include: [
+                { model: models.Loan, as: 'loans' },
+                { model: models.Ticket, as: 'tickets' }
+            ]
+        });
+        if (customer) {
+            res.json(customer);
+        } else {
+            res.status(404).json({ error: 'Customer not found' });
+        }
+    } catch (error) {
+        consoleLog('Error fetching customer:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to create a new repayment
+app.post('/api/repayments', async (req, res) => {
+    try {
+        const { loanId, amount, transactionNumber } = req.body;
+        const repayment = await models.Repayment.create({
+            loanId,
+            amount,
+            transactionNumber,
+            createdBy: req.user.id
+        });
+
+        // Update loan balance
+        const loan = await models.Loan.findByPk(loanId);
+        loan.balance -= amount;
+        await loan.save();
+
+        // Send notification
+        const customer = await models.Customer.findByPk(loan.customerId);
+        await models.Notification.create({
+            message: `Repayment of ${amount} received for loan ${loanId}`,
+            userId: customer.userId,
+        });
+
+        res.status(201).json(repayment);
+    } catch (error) {
+        consoleLog('Error creating repayment:', error);
+        if (error.name === 'SequelizeValidationError') {
+            return res.status(400).json({ error: error.errors.map(e => e.message).join(', ') });
+        }
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Route to create a new issue (already implemented as POST /api/tickets)
+app.post('/api/issues', async (req, res) => {
+    try {
+        const { title, description, priority, customerId } = req.body;
+        const issue = await models.Ticket.create({
+            title,
+            description,
+            priority,
+            createdBy: req.user.id,
+            customerId
+        });
+        res.status(201).json(issue);
+    } catch (error) {
+        consoleLog('Error creating issue:', error);
+        res.status(400).json({ error: 'Failed to create issue' });
+    }
 });
 
 // Error handling middleware (should be last)
@@ -542,10 +606,10 @@ app.use(errorHandler);
 // Sync all models with the database
 sequelize.sync({ alter: true })
   .then(() => {
-    console.log('Database & tables created!');
+    consoleLog('Database & tables created!');
   })
   .catch((error) => {
-    console.error('Error syncing database:', error);
+    consoleLog('Error syncing database:', error);
   });
 
 // Start the server
@@ -553,11 +617,11 @@ sequelize.authenticate()
   .then(() => {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      consoleLog(`Server is running on port ${PORT}`);
     });
   })
   .catch(err => {
-    console.error('Unable to connect to the database:', err);
+    consoleLog('Unable to connect to the database:', err);
   });
 
 module.exports = app; // Export the app for testing purposes

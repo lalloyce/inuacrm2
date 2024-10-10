@@ -61,17 +61,13 @@
                             <li><a href="#" class="nav-link" onclick="showCreateRepaymentForm()">Create Repayment</a></li>
                             <li><a href="#" class="nav-link" onclick="showCreateIssueForm()">Create Issue</a></li>
                             <li><a href="#" class="nav-link" onclick="showCustomerProfile()">View Profile</a></li>
+                            <li><a href="#" class="nav-link" onclick="showCustomerList()">View Customer List</a></li>
                         </ul>
                     </li>
                     <li>
                         <span class="font-bold">Groups:</span>
                         <ul>
-                            <li><a href="#" class="nav-link" onclick="showCreateGroupForm()">Create Group</a></li>
-                            <li><a href="#" class="nav-link" onclick="showCreateGroupLeaderForm()">Create Group Leader</a></li>
-                            <li><a href="#" class="nav-link" onclick="showAssignGLForm()">Assign GL</a></li>
-                            <li><a href="#" class="nav-link" onclick="showCreateEventForm()">Create Event</a></li>
-                            <li><a href="#" class="nav-link" onclick="showGroupProfile()">View Profile</a></li>
-                            <li><a href="#" class="nav-link" onclick="showCreateSaleForm()">Create Sale</a></li>
+                            <li><a href="#" class="nav-link" onclick="showGroupList()">View Group List</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -89,32 +85,107 @@
         <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
     </footer>
 
-    <script>
-        // Import the showCustomerProfile function
+    <script type="module">
         import { showCustomerProfile } from './js/customer-profile.js';
+        import { createCustomer } from './js/customer-management.js';
+        import { createIssue } from './js/tickets.js';
+        import { processRepayment } from './js/payments.js';
 
-        // Ensure the showCreateCustomerForm function is called when the nav item is clicked
-        document.querySelector('a[onclick="showCreateCustomerForm()"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            showCreateCustomerForm();
-        });
+        // View Profile
+        window.showCustomerProfile = function() {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">View Customer Profile</h2>
+                <div class="mb-4">
+                    <label for="customerIdProfile" class="block mb-2">Customer ID:</label>
+                    <input type="text" id="customerIdProfile" class="w-full p-2 border rounded" required>
+                    <button id="findCustomerProfile" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Find Customer</button>
+                </div>
+                <div id="customerProfileDetails"></div>
+            `;
 
-        // Ensure the showCreateIssueForm function is called when the nav item is clicked
-        document.querySelector('a[onclick="showCreateIssueForm()"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            showCreateIssueForm();
-        });
+            document.getElementById('findCustomerProfile').addEventListener('click', async () => {
+                const customerId = document.getElementById('customerIdProfile').value;
+                const profileDetails = await showCustomerProfile(customerId);
+                document.getElementById('customerProfileDetails').innerHTML = profileDetails;
+            });
+        };
 
-        function showCreateRepaymentForm() {
+        // Create Customer
+        window.showCreateCustomerForm = function() {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Create Customer</h2>
+                <form id="createCustomerForm">
+                    <div class="mb-4">
+                        <label for="fullName" class="block mb-2">Full Name:</label>
+                        <input type="text" id="fullName" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2">Email:</label>
+                        <input type="email" id="email" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="phone" class="block mb-2">Phone:</label>
+                        <input type="tel" id="phone" class="w-full p-2 border rounded" required>
+                    </div>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Create Customer</button>
+                </form>
+            `;
+
+            document.getElementById('createCustomerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const result = await createCustomer(fullName, email, phone);
+                alert(result.message);
+            });
+        };
+
+        // Create Issue
+        window.showCreateIssueForm = function() {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Create Issue</h2>
+                <form id="createIssueForm">
+                    <div class="mb-4">
+                        <label for="customerIdIssue" class="block mb-2">Customer ID:</label>
+                        <input type="text" id="customerIdIssue" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="issueTitle" class="block mb-2">Issue Title:</label>
+                        <input type="text" id="issueTitle" class="w-full p-2 border rounded" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="issueDescription" class="block mb-2">Issue Description:</label>
+                        <textarea id="issueDescription" class="w-full p-2 border rounded" required></textarea>
+                    </div>
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Create Issue</button>
+                </form>
+            `;
+
+            document.getElementById('createIssueForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const customerId = document.getElementById('customerIdIssue').value;
+                const title = document.getElementById('issueTitle').value;
+                const description = document.getElementById('issueDescription').value;
+                const result = await createIssue(customerId, title, description);
+                alert(result.message);
+            });
+        };
+
+        // Create Repayment
+        window.showCreateRepaymentForm = function() {
             const content = document.getElementById('customer-management-content');
             content.innerHTML = `
                 <h2 class="text-2xl font-bold mb-4">Create Repayment</h2>
                 <div class="mb-4">
-                    <label for="customerId" class="block mb-2">Customer ID:</label>
-                    <input type="text" id="customerId" class="w-full p-2 border rounded" required>
-                    <button id="findCustomer" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Find Customer</button>
+                    <label for="customerIdRepayment" class="block mb-2">Customer ID:</label>
+                    <input type="text" id="customerIdRepayment" class="w-full p-2 border rounded" required>
+                    <button id="findCustomerRepayment" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Find Customer</button>
                 </div>
-                <div id="customerDetails" class="mb-4"></div>
+                <div id="customerRepaymentDetails" class="mb-4"></div>
                 <form id="repaymentForm" style="display: none;">
                     <div class="mb-4">
                         <label for="repaymentAmount" class="block mb-2">Repayment Amount:</label>
@@ -127,9 +198,124 @@
                     <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Process Repayment</button>
                 </form>
             `;
-            
-            // Initialize the repayment process
-            initializeRepaymentProcess();
+
+            document.getElementById('findCustomerRepayment').addEventListener('click', async () => {
+                const customerId = document.getElementById('customerIdRepayment').value;
+                const customerDetails = await showCustomerProfile(customerId);
+                document.getElementById('customerRepaymentDetails').innerHTML = customerDetails;
+                document.getElementById('repaymentForm').style.display = 'block';
+            });
+
+            document.getElementById('repaymentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const customerId = document.getElementById('customerIdRepayment').value;
+                const amount = document.getElementById('repaymentAmount').value;
+                const transactionNumber = document.getElementById('transactionNumber').value;
+                const result = await processRepayment(customerId, amount, transactionNumber);
+                alert(result.message);
+            });
+        };
+
+        // View Customer List
+        window.showCustomerList = function() {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Customer List</h2>
+                <div id="customerList" class="space-y-4"></div>
+            `;
+
+            // Fetch and display customer list
+            fetchCustomerList().then(customers => {
+                const customerListElement = document.getElementById('customerList');
+                customers.forEach(customer => {
+                    customerListElement.innerHTML += `
+                        <div class="border p-4 rounded">
+                            <h3 class="font-bold">${customer.name}</h3>
+                            <p>ID: ${customer.id}</p>
+                            <p>Email: ${customer.email}</p>
+                            <button onclick="showCustomerProfile(${customer.id})" class="bg-blue-500 text-white px-2 py-1 rounded mt-2">View Profile</button>
+                        </div>
+                    `;
+                });
+            });
+        };
+
+        // View Group List
+        window.showGroupList = function() {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Group List</h2>
+                <div id="groupList" class="space-y-4"></div>
+            `;
+
+            // Fetch and display group list
+            fetchGroupList().then(groups => {
+                const groupListElement = document.getElementById('groupList');
+                groups.forEach(group => {
+                    groupListElement.innerHTML += `
+                        <div class="border p-4 rounded">
+                            <h3 class="font-bold">${group.name}</h3>
+                            <p>ID: ${group.id}</p>
+                            <p>Members: ${group.memberCount}</p>
+                            <button onclick="showGroupDetails(${group.id})" class="bg-blue-500 text-white px-2 py-1 rounded mt-2">View Details</button>
+                        </div>
+                    `;
+                });
+            });
+        };
+
+        // View Customer Profile
+        window.showCustomerProfile = function(customerId) {
+            const content = document.getElementById('customer-management-content');
+            content.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">Customer Profile</h2>
+                <div id="customerProfile"></div>
+            `;
+
+            // Fetch and display customer profile
+            fetchCustomerProfile(customerId).then(customer => {
+                const profileElement = document.getElementById('customerProfile');
+                profileElement.innerHTML = `
+                    <div class="border p-4 rounded">
+                        <h3 class="font-bold">${customer.name}</h3>
+                        <p>ID: ${customer.id}</p>
+                        <p>Email: ${customer.email}</p>
+                        <p>Phone: ${customer.phone}</p>
+                        <p>Address: ${customer.address}</p>
+                        <h4 class="font-bold mt-4">Loans:</h4>
+                        <ul>
+                            ${customer.loans.map(loan => `
+                                <li>
+                                    Loan ID: ${loan.id}, 
+                                    Amount: $${loan.amount}, 
+                                    Status: ${loan.status}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+        };
+
+        // Helper functions to fetch data (these should be implemented in your API file)
+        async function fetchCustomerList() {
+            // Implement API call to fetch customer list
+            // Return an array of customer objects
+        }
+
+        async function fetchGroupList() {
+            // Implement API call to fetch group list
+            // Return an array of group objects
+        }
+
+        async function fetchCustomerProfile(customerId) {
+            // Implement API call to fetch customer profile
+            // Return a customer object with detailed information
+        }
+
+        async function showGroupDetails(groupId) {
+            // Implement function to show group details
+            // This could be similar to showCustomerProfile but for groups
         }
     </script>
 </body>
