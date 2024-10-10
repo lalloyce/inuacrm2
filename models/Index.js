@@ -27,11 +27,11 @@ const db = {};
 /**
  * Reading all files in the current directory, filtering out non-model files, and importing them.
  * 
- * This process dynamically loads all model files in the directory, excluding the current file (index.js).
+ * This process dynamically loads all model files in the directory, excluding the current file (Index.js).
  * Each model is imported and added to the db object with its name as the key.
  */
 fs.readdirSync(__dirname)
-    .filter(file => file.endsWith('.js') && file !== 'index.js')
+    .filter(file => file.endsWith('.js') && file !== 'Index.js')
     .forEach(file => {
         const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
         db[model.name] = model;

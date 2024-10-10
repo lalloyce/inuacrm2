@@ -59,10 +59,10 @@
 │   ├── Session.js
 │   ├── Ticket.js
 │   ├── User.js
-│   ├── associations.js
-│   ├── customerGroup.js
-│   ├── index.js
-│   └── passwordResetToken.js
+│   ├── Associations.js
+│   ├── CustomerGroup.js
+│   ├── Index.js
+│   └── PasswordResetToken.js
 ├── package-lock.json
 ├── package.json
 ├── project-structure.txt
