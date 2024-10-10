@@ -1,22 +1,25 @@
 // Import required modules
-const express = require('express'); // Express.js for creating the server
-const mysql = require('mysql2/promise'); // MySQL2 for database connection
-const bcrypt = require('bcrypt'); // Bcrypt for password hashing
-const session = require('express-session'); // Express-session for session management
-const MySQLStore = require('express-mysql-session')(session); // MySQLStore for session store
-const nodemailer = require('nodemailer'); // Nodemailer for sending emails
-const dotenv = require('dotenv'); // Dotenv for loading environment variables
-const path = require('path'); // Path for file path operations
-const errorHandler = require('./middleware/errorHandler'); // Custom error handling middleware
-const bodyParser = require('body-parser'); // Body-parser for parsing request bodies
-const { authMiddleware } = require('./middleware/authMiddleware'); // Custom authentication middleware
-const jwt = require('jsonwebtoken'); // JSON Web Token for user authentication
-const { Sequelize } = require('sequelize'); // Sequelize for ORM
-const moment = require('moment-timezone'); // Moment.js for date and time manipulation
-const cors = require('cors'); // CORS for cross-origin resource sharing
+const express = require('express');
+const mysql = require('mysql2/promise');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
+const path = require('path');
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const { Sequelize } = require('sequelize');
+const moment = require('moment-timezone');
+const cors = require('cors');
 
 // Load environment variables from .env file
 dotenv.config();
+
+// Import middleware
+const { authMiddleware } = require('./middleware/authMiddleware');
+const auditMiddleware = require('./middleware/audit');
+const errorHandler = require('./middleware/errorHandler');
 
 // Initialize Express app
 const app = express();
@@ -93,6 +96,9 @@ app.use(cors());
 
 // Apply authentication middleware to all routes
 app.use(authMiddleware);
+
+// Apply audit middleware to all routes
+app.use(auditMiddleware);
 
 // Route to handle user login
 app.post('/api/login', async (req, res) => {
@@ -295,10 +301,6 @@ app.get('/api/audit-logs', async (req, res) => {
     }
 });
 
-// Apply the audit middleware to all routes
-const auditMiddleware = require('./middleware/audit');
-app.use(auditMiddleware);
-
 // Route to get all customers
 app.get('/api/customers', async (req, res) => {
     try {
@@ -360,8 +362,8 @@ app.post('/api/customers', async (req, res) => {
 app.post('/api/groups', async (req, res) => {
     try {
         const { name, leaderId } = req.body;
-        const group = await Group.create({ 
-            name, 
+        const group = await Group.create({
+            name,
             leaderId,
             created_by: req.user.id
         });
@@ -397,13 +399,13 @@ app.get('/api/counties', async (req, res) => {
     const { search } = req.query;
     const allCounties = [
         'Baringo', 'Bomet', 'Bungoma', 'Busia', 'Elgeyo Marakwet', 'Embu', 'Garissa', 'Homa Bay', 'Isiolo', 'Kajiado',
-        'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kakamega', 'Kericho', 'Kiambu', 
+        'Kakamega', 'Kericho', 'Kiambu', 'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kakamega', 'Kericho', 'Kiambu',
         'Kilifi', 'Kirinyaga', 'Kisii', 'Kisumu', 'Kitui', 'Kwale', 'Laikipia',
         'Lamu', 'Machakos', 'Makueni', 'Mandera', 'Marsabit', 'Meru', 'Migori', 'Mombasa', 'Murang\'a', 'Nairobi',
         'Nakuru', 'Nandi', 'Narok', 'Nyamira', 'Nyandarua', 'Nyeri', 'Samburu', 'Siaya', 'Taita Taveta', 'Tana River',
         'Tharaka Nithi', 'Trans Nzoia', 'Turkana', 'Uasin Gishu', 'Vihiga', 'Wajir', 'West Pokot'
     ];
-    const filteredCounties = allCounties.filter(county => 
+    const filteredCounties = allCounties.filter(county =>
         county.toLowerCase().startsWith(search.toLowerCase())
     );
     res.json(filteredCounties);
@@ -461,10 +463,10 @@ app.post('/api/repayments', async (req, res) => {
             date: new Date().toISOString()
         };
 
-        res.status(201).json({ 
-            success: true, 
-            message: 'Repayment processed successfully', 
-            receipt: receiptData 
+        res.status(201).json({
+            success: true,
+            message: 'Repayment processed successfully',
+            receipt: receiptData
         });
     } catch (error) {
         console.error('Error processing repayment:', error);
@@ -534,7 +536,7 @@ app.put('/api/tickets/:id', async (req, res) => {
   }
 });
 
-// Error handling middleware
+// Error handling middleware (should be last)
 app.use(errorHandler);
 
 // Sync all models with the database
