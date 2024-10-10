@@ -33,8 +33,8 @@ Inua CRM is a comprehensive customer relationship management system designed to 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/inua-crm.git
-   cd inuacrm
+   git clone https://github.com/lalloyce/inuacrm2.git
+   cd inuacrm2
    ```
 
 2. Install npm modules:

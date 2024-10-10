@@ -3,6 +3,7 @@
  */
 const fs = require('fs');
 const path = require('path');
+const basename = path.basename(__filename);
 
 /**
  * Importing Sequelize for database operations.
@@ -10,14 +11,9 @@ const path = require('path');
 const Sequelize = require('sequelize');
 
 /**
- * Importing database configuration.
+ * Importing the Sequelize instance from database.js
  */
-const config = require('../config/database');
-
-/**
- * Creating a new Sequelize instance with database configuration.
- */
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const sequelize = require('../config/database');
 
 /**
  * Initializing an empty object to hold all imported models.
@@ -27,15 +23,23 @@ const db = {};
 /**
  * Reading all files in the current directory, filtering out non-model files, and importing them.
  * 
- * This process dynamically loads all model files in the directory, excluding the current file (Index.js).
+ * This process dynamically loads all model files in the directory, excluding the current file (index.js).
  * Each model is imported and added to the db object with its name as the key.
  */
 fs.readdirSync(__dirname)
-    .filter(file => file.endsWith('.js') && file !== 'Index.js')
-    .forEach(file => {
-        const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-        db[model.name] = model;
-    });
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file));
+    if (model.prototype && model.prototype.constructor.name === 'Model') {
+      // For Sequelize models defined using `sequelize.define`
+      db[model.name] = model(sequelize, Sequelize.DataTypes);
+    } else {
+      // For Sequelize models defined as classes
+      db[model.name] = model.init(sequelize, Sequelize.DataTypes);
+    }
+  });
 
 /**
  * Associating models with each other.

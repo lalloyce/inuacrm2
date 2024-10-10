@@ -1,39 +1,39 @@
 // Import required modules
-const express = require('express');
-const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-const path = require('path');
-const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
-const { Sequelize } = require('sequelize');
-const moment = require('moment-timezone');
-const cors = require('cors');
+const express = require('express'); // Express.js for web application framework
+const mysql = require('mysql2/promise'); // MySQL2 for MySQL database connection
+const bcrypt = require('bcrypt'); // Bcrypt for password hashing
+const session = require('express-session'); // Express-session for session management
+const MySQLStore = require('express-mysql-session')(session); // MySQLStore for session store
+const nodemailer = require('nodemailer'); // Nodemailer for sending emails
+const dotenv = require('dotenv'); // Dotenv for loading environment variables
+const path = require('path'); // Path for file and directory path utilities
+const bodyParser = require('body-parser'); // Body-parser for parsing request bodies
+const jwt = require('jsonwebtoken'); // Jsonwebtoken for generating and verifying JWT tokens
+const { Sequelize } = require('sequelize'); // Sequelize for ORM
+const moment = require('moment-timezone'); // Moment-timezone for date and time manipulation
+const cors = require('cors'); // Cors for enabling CORS
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Import middleware
-const { authMiddleware } = require('./middleware/authMiddleware');
-const auditMiddleware = require('./middleware/audit');
-const errorHandler = require('./middleware/errorHandler');
+const { authMiddleware } = require('./middleware/authMiddleware'); // Authentication middleware
+const auditMiddleware = require('./middleware/audit'); // Audit middleware
+const errorHandler = require('./middleware/errorHandler'); // Error handling middleware
 
 // Initialize Express app
 const app = express();
 
 // Import Sequelize instance and models
-const sequelize = require('./config/database');
-const User = require('./models/User');
-const Notification = require('./models/Notification');
-const Customer = require('./models/Customer');
-const Group = require('./models/Group');
-const AuditLog = require('./models/AuditLog');
-const Payment = require('./models/Payment');
-const Ticket = require('./models/Ticket');
-const Deal = require('./models/Deal');
+const sequelize = require('./config/database'); // Sequelize instance
+const User = require('./models/User'); // User model
+const Notification = require('./models/Notification'); // Notification model
+const Customer = require('./models/Customer'); // Customer model
+const Group = require('./models/Group'); // Group model
+const AuditLog = require('./models/AuditLog'); // AuditLog model
+const Payment = require('./models/Payment'); // Payment model
+const Ticket = require('./models/Ticket'); // Ticket model
+const Deal = require('./models/Deal'); // Deal model
 
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
