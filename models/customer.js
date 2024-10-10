@@ -1,14 +1,6 @@
-const { sequelize } = require('../config/database');
 const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-
-/**
- * Customer Model
- * Represents a customer in the system.
- * 
- * This model captures essential information about a customer, including their personal details, contact information, and location.
- * It also includes fields related to their group sales contract and leadership status.
- */
 const Customer = sequelize.define('Customer', {
   id: {
     type: DataTypes.INTEGER,
