@@ -1,0 +1,18 @@
+/**
+ * This file exports the path to the database configuration file.
+ * 
+ * @module .sequelizerc
+ * @author [Your Name]
+ * @version 1.0
+ */
+
+const path = require('path');
+
+/**
+ * Exports the path to the database configuration file.
+ * 
+ * @returns {Object} An object containing the path to the database configuration file.
+ */
+module.exports = {
+  'config': path.resolve('config', 'database.js')
+}

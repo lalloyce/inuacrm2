@@ -1,42 +1,64 @@
-import GoTrue from 'gotrue-js';
+/**
+ * This function is executed when the DOM is fully loaded.
+ * It sets up the event listener for the login form submission.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // Get the login form element by its ID
+    const loginForm = document.getElementById('login-form');
+    
+    // Check if the login form exists
+    if (loginForm) {
+        // Add a submit event listener to the login form
+        loginForm.addEventListener('submit', async (e) => {
+            // Prevent the default form submission behavior
+            e.preventDefault();
+            
+            // Get the email and password values from the form inputs
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
 
-const auth = new GoTrue({
-    APIUrl: 'https://inuacrm.netlify.app/.netlify/identity',
-    audience: '',
-    setCookie: false,
+            try {
+                // Send a POST request to the login API endpoint with the email and password
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                // Parse the JSON response from the server
+                const result = await response.json();
+
+                // Log the response status and result for debugging purposes
+                console.log('Response status:', response.status);
+                console.log('Response result:', result);
+
+                // Check if the login was successful
+                if (response.status === 200) {
+                    console.log('Login successful:', result);
+                    // Store the JWT token in localStorage
+                    localStorage.setItem('jwt', result.token);
+                    
+                    // After successful login
+                    const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                    if (redirectUrl) {
+                        localStorage.removeItem('redirectAfterLogin'); // Clear the stored URL
+                        window.location.href = redirectUrl;
+                    } else {
+                        // Default redirect if no stored URL
+                        window.location.href = '/dashboard.html';
+                    }
+                } else {
+                    // Log an error message and show an alert if the login failed
+                    console.error('Login failed:', result);
+                    alert('Login failed: ' + result.error);
+                }
+            } catch (error) {
+                // Log an error message and show an alert if there was an error during the login process
+                console.error('Error during login:', error);
+                alert('An error occurred during login. Please try again.');
+            }
+        });
+    }
 });
-
-export const login = async (email, password) => {
-    try {
-        const response = await auth.login(email, password, true);
-        return { success: true, user: response };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-};
-
-export const register = async (email, password) => {
-    try {
-        const response = await auth.signup(email, password);
-        return { success: true, user: response };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-};
-
-export const resetPassword = async (email) => {
-    try {
-        await auth.requestPasswordRecovery(email);
-        return { success: true };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-};
-
-export const logout = () => {
-    const user = auth.currentUser();
-    if (user) {
-        return user.logout();
-    }
-    return Promise.resolve();
-};

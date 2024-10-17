@@ -1,0 +1,113 @@
+├── .DS_Store
+├── .env
+├── .github
+│   └── workflows
+│       └── node.js.yml
+├── .gitignore
+├── .idea
+│   ├── .gitignore
+│   ├── dataSources
+│   │   ├── da684273-781c-4b46-b367-d46b3a6b3ecd
+│   │   │   └── storage_v2
+│   │   │       └── _src_
+│   │   │           └── schema
+│   │   │               ├── Inua-crm.oiA3Jw.meta
+│   │   │               ├── Inua_crm.MNtNJw.meta
+│   │   │               ├── information_schema.FNRwLQ.meta
+│   │   │               ├── mysql.osA4Bg.meta
+│   │   │               └── performance_schema.kIw0nw.meta
+│   │   └── da684273-781c-4b46-b367-d46b3a6b3ecd.xml
+│   ├── dataSources.local.xml
+│   ├── dataSources.xml
+│   ├── inuacrm2.iml
+│   ├── jsLibraryMappings.xml
+│   ├── modules.xml
+│   ├── sqldialects.xml
+│   ├── vcs.xml
+│   └── workspace.xml
+├── .sequelizerc
+├── README.md
+├── config
+│   ├── config.json
+│   └── database.js
+├── db
+│   ├── schema.sql
+│   └── triggers.sql
+├── inuacrm.code-workspace
+├── middleware
+│   ├── audit.js
+│   ├── authMiddleware.js
+│   └── errorHandler.js
+├── migrations
+│   └── 20240903115224-add-created-by-to-customers-and-groups.js
+├── models
+│   ├── AuditLog.js
+│   ├── Customer.js
+│   ├── CustomerBalance.js
+│   ├── Deal.js
+│   ├── Group.js
+│   ├── GroupEvent.js
+│   ├── GroupEventAttendee.js
+│   ├── GroupEventGroup.js
+│   ├── GroupLeader.js
+│   ├── GroupSalesContract.js
+│   ├── Notification.js
+│   ├── Payment.js
+│   ├── Product.js
+│   ├── ProductSale.js
+│   ├── SalesTarget.js
+│   ├── Session.js
+│   ├── Ticket.js
+│   ├── User.js
+│   ├── associations.js
+│   ├── customerGroup.js
+│   ├── index.js
+│   └── passwordResetToken.js
+├── package-lock.json
+├── package.json
+├── project-structure.txt
+├── public
+│   ├── .DS_Store
+│   ├── css
+│   │   └── style.css
+│   ├── customer-management.html
+│   ├── dashboard.html
+│   ├── img
+│   │   ├── login-img.jpg
+│   │   ├── logo v1.jpeg
+│   │   ├── logo v2.jpeg
+│   │   ├── logo_v2-removebg-preview.png
+│   │   └── register-img.png
+│   ├── index.html
+│   ├── js
+│   │   ├── app.js
+│   │   ├── auth.js
+│   │   ├── customer-management.js
+│   │   ├── customer-profile.js
+│   │   ├── dashboard.js
+│   │   ├── notificationComponent.js
+│   │   ├── payments.js
+│   │   └── tickets.js
+│   ├── payment-tracking.html
+│   ├── profile.html
+│   ├── reports-analytics.html
+│   ├── sales-management.html
+│   ├── support-tickets.html
+│   └── user-management.html
+├── routes
+│   ├── auth.js
+│   ├── customers.js
+│   ├── notifications.js
+│   ├── payments.js
+│   ├── sales.js
+│   ├── support.js
+│   └── userRoutes.js
+├── scripts
+│   ├── generateStructure.js
+│   ├── project-structure-20241005-163318.txt
+│   ├── project-structure-20241005-163430.txt
+│   ├── project-structure-20241005-201437.txt
+│   └── project-structure.txt
+├── server.js
+└── utils
+    └── notificationManager.js
