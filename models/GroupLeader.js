@@ -154,6 +154,5 @@ GroupLeader.init(
     timestamps: true,
   },
 );
-
 // Exporting the GroupLeader model
 module.exports = GroupLeader;
