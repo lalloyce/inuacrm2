@@ -1,110 +1,148 @@
-
 :root {
-    --orange: #FFA500;
-    --navy-blue: #000080;
-    --grey: #808080;
+    --primary-color: #FFA500;   /* Orange */
+    --secondary-color: #000080; /* Navy Blue */
+    --text-color: #808080;      /* Grey */
+    --background-color: #f0f8ff; /* Light Azure */
+    --highlight-color: #FF6347; /* Tomato Red */
+    --border-color: #3498db;    /* Bright Blue */
     --white: #FFFFFF;
 }
 
+/* Body background */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: var(--white);
-    color: var(--navy-blue);
+    background-color: var(--background-color);
+    color: var(--secondary-color);
     margin: 0;
     padding: 0;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    flex-direction: column;
 }
 
+/* Navbar styling */
+.navbar {
+    background-color: var(--white) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    color: var(--secondary-color) !important;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: var(--secondary-color) !important;
+}
+
+.nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+.nav-link.active {
+    color: var(--primary-color) !important;
+}
+
+/* Container styling */
 .container {
-    background-color: var(--white);
+    flex: 1 0 auto;
     padding: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Main content area */
+.mt-4 {
+    background-color: var(--white);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    padding: 2rem;
 }
 
-h1 {
-    color: var(--navy-blue);
-    margin-bottom: 2rem;
+/* Button styling */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: var(--white) !important;
 }
 
-.btn {
-    background-color: var(--orange);
-    color: var(--white);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.btn-secondary {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    color: var(--white) !important;
 }
 
-.btn:hover {
-    background-color: darken(var(--orange), 10%);
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: var(--highlight-color) !important;
+    border-color: var(--highlight-color) !important;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
+/* Modal styling */
 .modal-content {
     background-color: var(--white);
-    margin: 15% auto;
-    padding: 2rem;
     border-radius: 8px;
-    width: 300px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.close {
-    color: var(--grey);
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
 }
 
-.close:hover {
-    color: var(--navy-blue);
+.modal-title {
+    color: var(--secondary-color);
 }
 
-.form-group {
-    margin-bottom: 1rem;
-    position: relative;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--grey);
+/* Form styling */
+.form-control {
+    border: 1px solid var(--text-color);
     border-radius: 4px;
-    font-size: 1rem;
 }
 
-.form-group label {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.75rem;
-    font-size: 0.8rem;
-    color: var(--grey);
-    transition: all 0.3s ease;
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
 }
 
-.form-group input:focus + label,
-.form-group input:not(:placeholder-shown) + label {
-    top: -0.5rem;
-    left: 0.5rem;
-    font-size: 0.7rem;
+.form-label {
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* Footer styling */
+.footer {
     background-color: var(--white);
-    padding: 0 0.25rem;
+    color: var(--text-color);
+    padding: 2rem 0;
+    margin-top: auto;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .navbar-nav {
+        margin: 0.5rem 0;
+    }
+
+    .nav-item {
+        margin: 0.25rem 0;
+    }
+
+    .modal-content {
+        margin: 1rem;
+    }
 }
