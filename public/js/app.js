@@ -1,56 +1,35 @@
 // app.js
-
-// When the DOM is fully loaded, the following code will be executed
 document.addEventListener('DOMContentLoaded', () => {
-    // Get the necessary elements from the DOM
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const resetPasswordBtn = document.getElementById('resetPasswordBtn');
-    const loginModal = document.getElementById('loginModal');
-    const registerModal = document.getElementById('registerModal');
-    const resetPasswordModal = document.getElementById('resetPasswordModal');
-    const closeBtns = document.getElementsByClassName('close');
-
-    // Open modals when the corresponding button is clicked
-    loginBtn.onclick = () => loginModal.style.display = 'block';
-    registerBtn.onclick = () => registerModal.style.display = 'block';
-    resetPasswordBtn.onclick = () => resetPasswordModal.style.display = 'block';
-
-    // Close modals when the close button is clicked
-    Array.from(closeBtns).forEach(btn => {
-        btn.onclick = function() {
-            this.closest('.modal').style.display = 'none';
-        }
-    });
-
-    // Close modals when clicking outside the modal
-    window.onclick = (event) => {
-        if (event.target.classList.contains('modal')) {
-            event.target.style.display = 'none';
-        }
+    // Form submission handlers
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            login(email, password);
+        });
     }
 
-    // Handle form submissions
-    document.getElementById('loginForm').onsubmit = (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        login(email, password);
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            register(name, email, password, confirmPassword);
+        });
     }
 
-    document.getElementById('registerForm').onsubmit = (e) => {
-        e.preventDefault();
-        const name = document.getElementById('registerName').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        register(name, email, password, confirmPassword);
-    }
-
-    document.getElementById('resetPasswordForm').onsubmit = (e) => {
-        e.preventDefault();
-        const email = document.getElementById('resetEmail').value;
-        resetPassword(email);
+    const resetPasswordForm = document.getElementById('resetPasswordForm');
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetPasswordEmail').value;
+            resetPassword(email);
+        });
     }
 });
 
@@ -71,17 +50,25 @@ async function login(email, password) {
 
         const data = await response.json();
         console.log('Login successful:', data);
-        // Handle successful login (e.g., store token, redirect)
+        window.location.href = 'dashboard.html'; // Redirect to dashboard
+
+        // Close the modal after successful login
+        const modalElement = document.getElementById('loginModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+
     } catch (error) {
         console.error('Login error:', error);
-        // Handle login error (e.g., show error message)
+        alert('Login failed. Please try again.');
     }
 }
 
 // Function to handle user registration
 async function register(name, email, password, confirmPassword) {
     if (password !== confirmPassword) {
-        console.error('Passwords do not match');
+        alert('Passwords do not match');
         return;
     }
 
@@ -100,10 +87,18 @@ async function register(name, email, password, confirmPassword) {
 
         const data = await response.json();
         console.log('Registration successful:', data);
-        // Handle successful registration (e.g., show success message, redirect to login)
+        alert('Registration successful! Please log in.');
+
+        // Close the modal after successful registration
+        const modalElement = document.getElementById('registerModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+
     } catch (error) {
         console.error('Registration error:', error);
-        // Handle registration error (e.g., show error message)
+        alert('Registration failed. Please try again.');
     }
 }
 
@@ -124,9 +119,4 @@ async function resetPassword(email) {
 
         const data = await response.json();
         console.log('Password reset request successful:', data);
-        // Handle successful password reset request (e.g., show success message)
-    } catch (error) {
-        console.error('Password reset error:', error);
-        // Handle password reset error (e.g., show error message)
-    }
-}
+        alert('Password reset link sent to your email.');
