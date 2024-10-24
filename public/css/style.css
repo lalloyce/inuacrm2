@@ -111,9 +111,18 @@ body {
     color: var(--secondary-color);
     text-decoration: none;
 }
+
 .footer a:hover {
     color: var(--primary-color);
     text-decoration: underline;
+}
+.footer .row {
+    justify-content: space-between;
+}
+/* Center social media icons horizontally */
+.d-flex.justify-content-center a {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 /* Card styling */
@@ -141,10 +150,10 @@ body {
     max-width: 80%; /* Adjust size for primary SDGs */
     height: auto; /* Maintain aspect ratio */
 }
-
 .secondary-sdg {
-    max-width: 60%; /* Adjust size for secondary SDGs */
+    max-width: 15%; /* Control image size */
     height: auto; /* Maintain aspect ratio */
+    margin: 0.5rem;
 }
 
 /* Responsive adjustments */

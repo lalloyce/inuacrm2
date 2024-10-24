@@ -29,7 +29,7 @@
                         <a class="nav-link" href="#impact">Impact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact Us</a>
+                        <a class="nav-link" href="#contact">Contact Us</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -248,15 +248,25 @@
         </div>
     </div>
     <div class="row">
-        <h5 class="text-center">Secondary Influences</h5>
+        <h3 class="text-center">Secondary Influences</h3>
         <!-- Secondary SDGs -->
-        <div class="col-6 col-md-12 mb-3">
-            <div class="card h-100 text-center">
-                <img src="img/goal1.png" alt="SDG 1: No Poverty" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Affordable household goods and group-based lending help lift people out of poverty by improving their living conditions and financial stability.">
-                <img src="img/goal5.png" alt="SDG 5: Gender Equality" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Efficient household products reduce the time and effort spent on domestic chores, alleviating the burden on women and promoting gender equality.">
-                <img src="img/goal8.png" alt="SDG 8: Decent Work and Economic Growth" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Products supporting small businesses and entrepreneurship can create jobs and promote economic growth.">
-                <img src="img/goal9.png" alt="SDG 9: Industry, Innovation, and Infrastructure" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Innovative household products and efficient appliances drive industry growth and improve infrastructure.">
-                <img src="img/goal10.png" alt="SDG 10: Reduced Inequalities" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Providing affordable and efficient household products to underserved communities can help reduce inequalities in access to resources.">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <strong>
+                    <p>
+                        Our activities also influences multiple SDGs: affordable goods and group-based lending lift people out of poverty (SDG 1)
+                        and reduce economic inequalities (SDG 10), efficient household products support gender equality (SDG 5), and promote
+                        sustainable living (SDG 11), while innovative and efficient appliances drive industry growth (SDG 9) and mitigate climate change
+                        (SDG 13), ultimately fostering decent work and economic growth (SDG 8).
+                    </p>
+                </strong>
+                <div class="d-flex flex-wrap justify-content-between">
+                    <img src="img/goal1.png" alt="SDG 1: No Poverty" class="secondary-sdg img-fluid" data-toggle="tooltip" title="Affordable household goods and group-based lending help lift people out of poverty by improving their living conditions and financial stability.">
+                    <img src="img/goal5.png" alt="SDG 5: Gender Equality" class="secondary-sdg img-fluid" data-toggle="tooltip" title="Efficient household products reduce the time and effort spent on domestic chores, alleviating the burden on women and promoting gender equality.">
+                    <img src="img/goal8.png" alt="SDG 8: Decent Work and Economic Growth" class="secondary-sdg img-fluid" data-toggle="tooltip" title="Products supporting small businesses and entrepreneurship can create jobs and promote economic growth.">
+                    <img src="img/goal9.png" alt="SDG 9: Industry, Innovation, and Infrastructure" class="secondary-sdg img-fluid" data-toggle="tooltip" title="Innovative household products and efficient appliances drive industry growth and improve infrastructure.">
+                    <img src="img/goal10.png" alt="SDG 10: Reduced Inequalities" class="secondary-sdg img-fluid" data-toggle="tooltip" title="Providing affordable and efficient household products to underserved communities can help reduce inequalities in access to resources.">
+                </div>
             </div>
         </div>
     </div>
@@ -265,7 +275,7 @@
 <!-- Impact content ends here -->
 
     <!-- Contact Us content starts here -->
-<div class="container mt-5">
+<div id="contact" class="container mt-5">
     <h2 class="text-center mb-4">Contact Us</h2>
     <div class="row">
         <!-- Contact Form -->
@@ -306,44 +316,40 @@
 
 
 
-    <!-- Footer -->
-<footer class="footer bg-light mt-4">
-    <div>
-        <div class="row text-center py-3 mt-3 mb-3">
-            <div class="col-md-4">
-                <h5>Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#model">Our Model</a></li>
-                    <li><a href="#impact">Impact</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
-                </ul>
-            </div>
-            <div class="col-md-2 mt-3 mb-3">
-                <h5>Follow Us On Social Media</h5><br>
-                <div class="d-flex justify-content-between">
-                    <a href="https://www.facebook.com" target="_blank" class="fa fa-facebook fa-2x"></a>
-                    <a href="https://www.twitter.com" target="_blank" class="fa fa-twitter fa-2x"></a>
-                    <a href="https://www.instagram.com" target="_blank" class="fa fa-instagram fa-2x"></a>
-                    <a href="https://www.linkedin.com" target="_blank" class="fa fa-linkedin fa-2x"></a>
+    <!-- Footer with Fixed Layout -->
+    <footer class="footer bg-light mt-4">
+        <div class="container">
+            <div class="row text-center py-3">
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#model">Our Model</a></li>
+                        <li><a href="#impact">Impact</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mt-3 mb-3">
+                    <h5>Follow Us On Social Media</h5><br>
+                    <div class="d-flex justify-content-center">
+                        <a href="https://www.facebook.com" target="_blank" class="fa fa-facebook fa-2x mx-3"></a>
+                        <a href="https://www.twitter.com" target="_blank" class="fa fa-twitter fa-2x mx-3"></a>
+                        <a href="https://www.instagram.com" target="_blank" class="fa fa-instagram fa-2x mx-3"></a>
+                        <a href="https://www.linkedin.com" target="_blank" class="fa fa-linkedin fa-2x mx-3"></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3 mb-3">
+                    <button onclick="scrollToTop()" class="btn btn-secondary">
+                        <i class="fa fa-arrow-up"></i> Back to Top
+                    </button>
+                    <p class="mt-2">
+                        <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+                    </p>
+                    <p>&copy; <span id="currentYear"></span> Inua Solutions. All rights reserved.</p>
                 </div>
             </div>
-            <div class="col-md-6 mt-3 mb-3">
-                <button onclick="scrollToTop()" class="btn btn-secondary">
-                    <i class="fa fa-arrow-up"></i> Back to Top
-                </button>
-                <br><br>
-                <p>
-                    <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
-                </p>
-                <br>
-                <h5>&copy; <span id="currentYear"></span> Inua Solutions. All rights reserved.</h5>
-
-
-            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
 
     <script src="https://kit.fontawesome.com/7154999e78.js" crossorigin="anonymous"></script>
