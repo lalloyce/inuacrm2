@@ -23,10 +23,10 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Our Model</a>
+                        <a class="nav-link" href="#model">Our Model</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Impact</a>
+                        <a class="nav-link" href="#impact">Impact</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contact Us</a>
@@ -166,48 +166,111 @@
     </div>
 
     <!-- Model content starts here -->
-<div class="container mt-4">
+    <div id="model" class="container mt-4">
+        <h2 class="text-center mb-4">Our Model</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa fa-users fa-3x mb-3" style="color: #FFA500;"></i> <!-- Orange -->
+                        <h5 class="card-title">Group-Based Lending</h5>
+                        <p class="card-text">
+                            We believe in the power of numbers, and the network effects of keeping a good thing going. Most of our clients are already in social groups, called Chama, where they practice table banking. Our business is an add-on.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa fa-cogs fa-3x mb-3" style="color: #000080;"></i> <!-- Navy Blue -->
+                        <h5 class="card-title">Automated Support</h5>
+                        <p class="card-text">
+                            We believe in the power of technology to do good. Our clients do not need a smartphone to interact with us or order new products. Their payments are automatically recorded and a payment receipt generated and sent to them as an SMS.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <i class="fa fa-leaf fa-3x mb-3" style="color: #FF6347;"></i> <!-- Tomato Red -->
+                        <h5 class="card-title">Dynamic & Sustainable</h5>
+                        <p class="card-text">
+                            Our products are shaped by the feedback from our clients, enabling us to provide market-ready services that keep our clients coming back. Each client in a group can purchase a product of their choice, enabling them to truly be independent while still accountable to their group.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Model content ends here -->
+
+<!-- Impact content starts here -->
+<div id="impact" class="container mt-4">
+    <h2 class="text-center mb-4">Our Impact</h2>
     <div class="row">
+        <!-- SDG 3: Good Health and Well-being -->
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center">
                 <div class="card-body">
-                    <i class="fa fa-users fa-3x mb-3" style="color: #FFA500;"></i> <!-- Orange -->
-                    <h5 class="card-title">Group-Based Lending</h5>
+                    <img src="img/goal3.png" alt="SDG 3: Good Health and Well-being" class="mb-3 img-fluid primary-sdg">
+                    <h5 class="card-title">SDG 3: Good Health and Well-being</h5>
                     <p class="card-text">
-                        We believe in the power of numbers, and the network effects of keeping a good thing going. Most of our clients are already in social groups, called Chama, where they practice table banking. Our business is an add-on.
+                        Our products like pressure cookers and clean cookstoves reduce household air pollution and improve cooking efficiency, contributing to better health and well-being.
                     </p>
                 </div>
             </div>
         </div>
+        <!-- SDG 7: Affordable and Clean Energy -->
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center">
                 <div class="card-body">
-                    <i class="fa fa-cogs fa-3x mb-3" style="color: #000080;"></i> <!-- Navy Blue -->
-                    <h5 class="card-title">Automated Support</h5>
+                    <img src="img/goal7.png" alt="SDG 7: Affordable and Clean Energy" class="mb-3 img-fluid primary-sdg">
+                    <h5 class="card-title">SDG 7: Affordable and Clean Energy</h5>
                     <p class="card-text">
-                        We believe in the power of technology to do good. Our clients do not need a smartphone to interact with us or order new products. Their payments are automatically recorded and a payment receipt generated and sent to them as an SMS.
+                        By promoting the use of energy-efficient products like clean cookstoves and pressure cookers, we help reduce energy consumption and support sustainable energy use.
                     </p>
                 </div>
             </div>
         </div>
+        <!-- SDG 12: Responsible Consumption and Production -->
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center">
                 <div class="card-body">
-                    <i class="fa fa-leaf fa-3x mb-3" style="color: #FF6347;"></i> <!-- Tomato Red -->
-                    <h5 class="card-title">Dynamic & Sustainable</h5>
+                    <img src="img/goal12.png" alt="SDG 12: Responsible Consumption and Production" class="mb-3 img-fluid primary-sdg">
+                    <h5 class="card-title">SDG 12: Responsible Consumption and Production</h5>
                     <p class="card-text">
-                        Our products are shaped by the feedback from our clients, enabling us to provide market-ready services that keep our clients coming back. Each client in a group can purchase a product of their choice, enabling them to truly be independent while still accountable to their group.
+                        Our durable and eco-friendly products promote sustainable consumption patterns, reducing waste and encouraging responsible production.
                     </p>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <h5 class="text-center">Secondary Influences</h5>
+        <!-- Secondary SDGs -->
+        <div class="col-6 col-md-12 mb-3">
+            <div class="card h-100 text-center">
+                <img src="img/goal1.png" alt="SDG 1: No Poverty" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Affordable household goods and group-based lending help lift people out of poverty by improving their living conditions and financial stability.">
+                <img src="img/goal5.png" alt="SDG 5: Gender Equality" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Efficient household products reduce the time and effort spent on domestic chores, alleviating the burden on women and promoting gender equality.">
+                <img src="img/goal8.png" alt="SDG 8: Decent Work and Economic Growth" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Products supporting small businesses and entrepreneurship can create jobs and promote economic growth.">
+                <img src="img/goal9.png" alt="SDG 9: Industry, Innovation, and Infrastructure" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Innovative household products and efficient appliances drive industry growth and improve infrastructure.">
+                <img src="img/goal10.png" alt="SDG 10: Reduced Inequalities" class="card-img-top img-fluid secondary-sdg" data-toggle="tooltip" title="Providing affordable and efficient household products to underserved communities can help reduce inequalities in access to resources.">
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Impact content ends here -->
+
+    <!-- Contact Us content starts here -->
 
 
 
-    <!--Model content ends here -->
+    <!-- Contact Us content ends here -->
+
+
 
     <!-- Footer -->
 <footer class="footer bg-light mt-4">
@@ -253,5 +316,8 @@
     <script src="./js/footerYear.js"></script>
     <script src="./js/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+
 </body>
 </html>
