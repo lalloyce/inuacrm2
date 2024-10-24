@@ -173,3 +173,49 @@ body {
         max-width: 80%; /* Adjust for secondary SDGs on smaller screens */
     }
 }
+
+/* Contact Us Section */
+.contact-info {
+    background-color: var(--text-color); /* Darker background for contact info */
+    color: var(--white); /* White text for contrast */
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 200px; /* Reduced height */
+}
+
+.contact-info a {
+    color: var(--white); /* Ensure links remain white */
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    color: var(--primary-color); /* Hover effect for links */
+}
+
+/* Ensure FA icons and text are aligned */
+.contact-info li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.contact-info i {
+    margin-right: 10px; /* Space between icon and text */
+}
+
+/* Increase gap between columns */
+.row > .col-md-6 {
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .row > .col-md-6 {
+        margin-bottom: 0;
+        margin-right: 30px; /* Increased gap between the two columns */
+    }
+
+    /* Ensure contact-info column height doesn't stretch unnecessarily */
+    .contact-info {
+        height: auto;
+    }
+}
