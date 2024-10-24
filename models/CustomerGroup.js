@@ -1,57 +1,33 @@
-/**
- * Importing Sequelize and setting up the database connection.
- */
-const { DataTypes } = require('sequelize');
+// models/CustomerGroup.js
 
 /**
- * Defining the CustomerGroup model.
- * 
- * This model represents a customer group within the system.
- * 
- * @param {sequelize} sequelize - The Sequelize instance.
- * @returns {CustomerGroup} - The CustomerGroup model.
+ * Defines the CustomerGroup model.
+ *
+ * @param {object} sequelize - The Sequelize instance.
+ * @param {object} DataTypes - The data types provided by Sequelize.
+ * @returns {object} The CustomerGroup model.
  */
-module.exports = (sequelize) => {
-    /**
-     * Initializing the CustomerGroup model with its attributes.
-     * 
-     * @param {object} attributes - The attributes of the CustomerGroup model.
-     */
-    const CustomerGroup = sequelize.define('CustomerGroup', {
-        /**
-         * The name of the customer group, not null.
-         * 
-         * @param {string} name - The name of the customer group.
-         */
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-    });
+module.exports = (sequelize, DataTypes) => {
+  /**
+   * The CustomerGroup model schema.
+   */
+  const CustomerGroup = sequelize.define('CustomerGroup', {
+    groupName: { type: DataTypes.STRING, allowNull: false },
+  }, {
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
+  });
 
-    /**
-     * Associating the CustomerGroup model with other models.
-     * 
-     * @param {object} models - The models object.
-     */
-    CustomerGroup.associate = (models) => {
-        /**
-         * Establishing a belongsTo relationship with the User model, indicating the coordinator of the customer group.
-         * 
-         * @param {string} as - The alias for the association.
-         * @param {string} foreignKey - The foreign key referencing the User model.
-         */
-        CustomerGroup.belongsTo(models.User, { as: 'coordinator', foreignKey: 'coordinatorId' });
-        /**
-         * Establishing a hasMany relationship with the Customer model.
-         */
-        CustomerGroup.hasMany(models.Customer);
-    };
+  /**
+   * Associates the CustomerGroup model with other models.
+   *
+   * @param {object} models - The models to associate with.
+   */
+  CustomerGroup.associate = (models) => {
+    CustomerGroup.belongsTo(models.GroupLeader, { foreignKey: 'group_leader_id' });
+    CustomerGroup.hasMany(models.Customer, { foreignKey: 'group_id' });
+  };
 
-    /**
-     * Returning the CustomerGroup model.
-     * 
-     * @returns {CustomerGroup} - The CustomerGroup model.
-     */
-    return CustomerGroup;
+  return CustomerGroup;
 };
